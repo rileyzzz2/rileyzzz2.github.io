@@ -51,9 +51,24 @@
                 margin-right: 25px;
                 padding: 10px;
                 border-style: solid;
+                background-image: url("https://thumbor.forbes.com/thumbor/960x0/https%3A%2F%2Fspecials-images.forbesimg.com%2Fdam%2Fimageserve%2F765877054%2F960x0.jpg%3Ffit%3Dscale");
+            }
+            @keyframes example {
+                0%   {transform: rotate(0deg);}
+                100% {transform: rotate(360deg);}
+            }
+            @keyframes test {
+                0% {transform: rotate3d(1, 1, 1, 0deg);}
+                100% {transform: rotate3d(0, 1, 0.2, 360deg);}
             }
             .sidebar img {
                 width: 200px;
+                animation-name: test;
+                animation-duration: 4s;
+                animation-iteration-count: infinite;
+                animation-timing-function: linear;
+                filter: invert(1);
+                mix-blend-mode: difference;
             }
             .content {
                 flex: 1;
