@@ -3,6 +3,8 @@
     <head>
         <title>Riley's Epic Website</title>
         <style>
+            @import url('https://fonts.googleapis.com/css2?family=Overpass&display=swap');
+
             body {
                 background: rgb(125, 198, 205);
                 color: rgb(45, 45, 45);
@@ -74,16 +76,13 @@
 
             @keyframes wave {
                 0% { transform : translateY(0) rotate(0deg);}
-                50% { transform : translateY( -20px ) rotate( -5deg ); }
+                50% { transform : translateY( -10px ) rotate( -5deg ); }
                 100% { transform : translateY(0);}
             }
-            /* @epic-font {
-                font-family: 'YourFontName';
-                src: url('http://domain.com/fonts/font.ttf');
-            } */
-
+            
             .wavetext2 {
-                font-size: 30px;
+                font-size: 20px;
+                font-family: 'Overpass', sans-serif;
                 float: left;
                 animation-name: wave;
                 animation-duration: 1s;
