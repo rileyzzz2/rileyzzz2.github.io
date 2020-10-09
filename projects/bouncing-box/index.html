@@ -91,17 +91,19 @@
                 positionX += speedX;
                 positionY += speedY;
 
-                if(positionX + boxWidth >= boardWidth || positionX < 0)
+                if(positionX + boxWidth >= board.width() || positionX < 0)
                 {
+                    positionX = Math.min(positionX, board.width() - boxWidth);
                     speedX = -speedX;
-                    RandomizeBoxColor()
+                    RandomizeBoxColor();
                     
                 }
                     
-                if(positionY + boxHeight >= boardHeight || positionY < 0)
+                if(positionY + boxHeight >= board.height() || positionY < 0)
                 {
+                    positionY = Math.min(positionY, board.height() - boxHeight);
                     speedY = -speedY;
-                    RandomizeBoxColor()
+                    RandomizeBoxColor();
                 }
 
                 moveBoxTo(positionX);
