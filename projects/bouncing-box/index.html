@@ -46,6 +46,8 @@
 			var board = jQuery('.board');	// reference to the HTML .board element
 			var boardWidth = board.width();	// the maximum X-Coordinate of the screen
             var boardHeight = board.height();
+            var boxWidth = box.width();
+            var boxHeight = box.height();
 			// Every 50 milliseconds, call the update Function (see below)
 			setInterval(update, 50);
 			
@@ -89,14 +91,14 @@
                 positionX += speedX;
                 positionY += speedY;
 
-                if(positionX >= boardWidth || positionX < 0)
+                if(positionX + boxWidth >= boardWidth || positionX < 0)
                 {
                     speedX = -speedX;
                     RandomizeBoxColor()
                     
                 }
                     
-                if(positionY >= boardHeight || positionY < 0)
+                if(positionY + boxHeight >= boardHeight || positionY < 0)
                 {
                     speedY = -speedY;
                     RandomizeBoxColor()
