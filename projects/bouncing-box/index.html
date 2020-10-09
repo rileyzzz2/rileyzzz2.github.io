@@ -5,8 +5,9 @@
 	<title>Bouncing Box</title>
 	<script src="jquery.min.js"></script>
 	<style>
-        .board {
-            height: 200px;
+        html,
+        body {
+            height: 100%;
             background-color: black;
         }
 		.box {
@@ -69,8 +70,9 @@
 			var cycle = 0;
             function RandomizeBoxColor() {
                 var back = ["red", "orange", "yellow", "green", "blue"];
-                var rand = back[Math.floor(Math.random() * back.length)];
+                var rand = back[cycle];
                 box.css("background-color", rand);
+                if(++cycle >= back.length) cycle = 0;
             }
 			
 			/* 
