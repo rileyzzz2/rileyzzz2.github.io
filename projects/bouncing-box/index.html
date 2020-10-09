@@ -7,16 +7,21 @@
 	<style>
         .board {
             height: 200px;
+            background-color: black;
         }
 		.box {
-			width: 70px;
-			height: 70px;
-			background-color: teal;
+			width: 120px;
+			height: 90px;
+			background-color: blue;
 			font-size: 300%;
 			text-align: center;
 			display: block;
 			position: absolute;
-			top: 100px;
+            background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/DVD_logo.svg/800px-DVD_logo.svg.png");
+			background-size: 100px 70px;
+            background-repeat: no-repeat;
+            background-position: center;
+            top: 100px;
 			left: 0px;  /* <--- Change me! */
 		}
 	</style>
@@ -25,7 +30,7 @@
 </head>
 <body class="board">
 	<!-- HTML for the box -->
-	<div class="box">?</div>
+	<div class="box"></div>
 
 	<script>
 		(function(){
@@ -61,8 +66,12 @@
 			//////////////////////////////////////////////////////////////////
 			
 			// TODO 2 - Variable declarations 
-			
-
+			var cycle = 0;
+            function RandomizeBoxColor() {
+                var back = ["red", "orange", "yellow", "green", "blue"];
+                var rand = back[Math.floor(Math.random() * back.length)];
+                box.css("background-color", rand);
+            }
 			
 			/* 
 			This Function will be called 20 times/second. Each time it is called,
@@ -72,18 +81,26 @@
             var positionX = 0;
             var positionY = 0;
             var score = 0;
-            var speedX = 10;
-            var speedY = 9;
+            var speedX = 5;
+            var speedY = 4;
 			function update() {
                 positionX += speedX;
                 positionY += speedY;
 
                 if(positionX >= boardWidth || positionX < 0)
+                {
                     speedX = -speedX;
+                    RandomizeBoxColor()
+                    
+                }
+                    
                 if(positionY >= boardHeight || positionY < 0)
+                {
                     speedY = -speedY;
+                    RandomizeBoxColor()
+                }
 
-				moveBoxTo(positionX);
+                moveBoxTo(positionX);
                 box.css("top", positionY);
 			};
 
@@ -94,9 +111,9 @@
 			*/
 			function handleBoxClick() {
                 score += 1;
-                speedX += Math.sign(speed) * 3;
-
-                positionX = 0;
+                speedX += Math.sign(speedX) * 3;
+                speedY += Math.sign(speedY) * 3;
+                //positionX = 0;
                 changeBoxText(score);
 			};
 		})();
