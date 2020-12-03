@@ -20,13 +20,20 @@ var init = function (window) {
         ////////////////////////////////////////////////////////////
         
         // TODO 1 : Declare and initialize our variables
-
-
+        var circle;
+        var circles = [];
+        const circleCount = 100;
         // TODO 2 : Create a function that draws a circle 
-        
+        function drawCircle() {
+            circle = draw.randomCircleInArea(canvas, true, true, '#999', 2);
+            physikz.addRandomVelocity(circle, canvas);
+            view.addChild(circle);
+            circles.push(circle);
+        }
 
         // TODO 3 / 7 : Call the drawCircle() function 
-
+        for(let i = 0; i < circleCount; i++)
+            drawCircle();
 
         ////////////////////////////////////////////////////////////
         ///////////////// PROGRAM LOGIC ////////////////////////////
@@ -39,10 +46,14 @@ var init = function (window) {
         */
         function update() {
             // TODO 4 : Update the circle's position //
-
+            for(let i = 0; i < circles.length; i++) {
+                physikz.updatePosition(circles[i]);
+                game.checkCirclePosition(circles[i]);
+            }
+            
             
             // TODO 5 : Call game.checkCirclePosition() on your circles.
-           
+
 
             // TODO 8 : Iterate over the array
            
@@ -57,10 +68,18 @@ var init = function (window) {
         game.checkCirclePosition = function(circle) {
 
             // if the circle has gone past the RIGHT side of the screen then place it on the LEFT
-            if ( circle.x > canvas.width ) {
-                circle.x = 0;
-            }
-            
+
+            if ( circle.x + circle.radius > canvas.width )
+                circle.x = -circle.radius;
+            if ( circle.x - circle.radius < 0 )
+                circle.x = canvas.width - circle.radius;
+
+            if ( circle.y + circle.radius > canvas.height )
+                circle.y = -circle.radius;
+            if ( circle.y - circle.radius < 0 )
+                circle.y = canvas.height - circle.radius;
+            //circle.x = circle.x % canvas.width;
+            //circle.y = circle.y % canvas.height;
             // TODO 6 : YOUR CODE STARTS HERE //////////////////////
             
 
