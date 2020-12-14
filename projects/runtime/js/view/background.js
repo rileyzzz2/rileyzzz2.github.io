@@ -47,7 +47,13 @@ var background = function (window) {
             phil.scaleY = 1.0;
             background.addChild(phil);
 
-            
+            var m;
+            for(let i = 0; i < 1000; i++) {
+                m = draw.bitmap("img/mnm.jpg");
+                m.x = canvasWidth * Math.random();
+                m.y = groundY * Math.random();
+                background.addChild(m);
+            }
             // TODO: 5 - Add buildings!     Q: This is before TODO 4 for a reason! Why?
             
             
