@@ -113,7 +113,7 @@ var level01 = function (window) {
 
             aaaa.onPlayerCollision = function() {
                 game.increaseScore(100);
-                enemy.fadeOut();
+                aaaa.fadeOut();
             };
         }
 
