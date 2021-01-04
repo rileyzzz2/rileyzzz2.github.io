@@ -7,6 +7,12 @@ var Engine = Matter.Engine,
 
 // create an engine
 var engine = Engine.create();
+// var engine = Engine.create({
+//      render: {
+//        element: document.body,
+//        canvas: $("#gameWindow")[0]
+//      }
+// });
 
 // create two boxes and a ground
 //var boxA = Bodies.rectangle(400, 200, 80, 80);
@@ -48,7 +54,9 @@ class game {
 
     box(_x, _y, _w, _h, is_static) {
         var box = Bodies.rectangle(_x, _y, _w, _h, { isStatic: is_static });
-        this.objects.push(box);
+        this.objects.push({obj: box,
+                           color: [Math.random() * 255, Math.random() * 255, Math.random() * 255]
+                          });
         World.add(engine.world, [box]);
         return box;
     }
@@ -59,11 +67,16 @@ class game {
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         var bodies = Composite.allBodies(engine.world);
-        //ctx.fillStyle = 'orange';
+        ctx.fillStyle = 'orange';
         
-        ctx.beginPath();
+        //ctx.beginPath();
 
         for (var i = 0; i < bodies.length; i++) { 
+            ctx.beginPath();
+            var obj = this.objects[i];
+            var col = obj.color;
+            ctx.fillStyle = 'rgb(' + String(col[0]) + ', ' + String(col[1]) + ', ' + String(col[2]) + ')';
+            console.log(col);
             // var r = Math.random() * 255;
             // var g = Math.random() * 255;
             // var b = Math.random() * 255;

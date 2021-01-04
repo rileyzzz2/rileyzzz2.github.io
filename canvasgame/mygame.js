@@ -8,10 +8,10 @@ $( document ).ready(function() {
     g.box(0, g.height, 810, 20, true);
 });
 
-$("#gameWindow").click(function() {
-    var posX = $(this).position().left,
-        posY = $(this).position().top;
-    
-    alert((e.pageX - posX) + ' , ' + (e.pageY - posY));
+$("#gameWindow").click(function(e) {
+    var posX = e.pageX - $(this).position().left,
+        posY = e.pageY - $(this).position().top;
+
+    g.box(posX, posY, 50, 50, false);
 });
 //alert("test");
