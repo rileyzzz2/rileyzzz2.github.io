@@ -38,7 +38,7 @@ renderer.toneMappingExposure = 1;
 renderer.outputEncoding = THREE.sRGBEncoding;
 let pmremGenerator = new THREE.PMREMGenerator(renderer);
 pmremGenerator.compileEquirectangularShader();
-let envMap = pmremGenerator.fromEquirectangular(ENVTEX).texture;
+//let envMap = pmremGenerator.fromEquirectangular(ENVTEX).texture;
 //scene.environment = envMap;
 pmremGenerator.dispose();
 
@@ -56,6 +56,38 @@ $( document ).ready(function() {
 $( document ).on('pointerlockchange', function() {
 
 });
+
+var bMoveForward = false;
+var bMoveBackward = false;
+var bMoveRight = false;
+var bMoveLeft = false;
+
+function ProcessInput (key, state) {
+    switch(event.key)
+    {
+    case "ArrowUp":
+        bMoveForward = state;
+    case "ArrowDown":
+        bMoveBackward = state;
+        case "ArrowRight":
+            bMoveRight = state;
+    default:
+        break;
+    }
+}
+
+$( document ).on('keydown', function (event) {
+    if (event.defaultPrevented)
+        return;
+    ProcessInput(event.key, true);
+})
+
+$( document ).on('keyup', function (event) {
+    if (event.defaultPrevented)
+        return;
+    ProcessInput(event.key, false);
+})
+
 
 var prevX = 0;
 var prevY = 0;
