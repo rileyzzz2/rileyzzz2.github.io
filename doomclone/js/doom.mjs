@@ -11,15 +11,6 @@ var params = {
 };
 
 
-var ENVTEX;
-
-new RGBELoader()
-.setDataType(THREE.UnsignedByteType)
-.setPath('3d/')
-.load('env_small.hdr', function (texture) { //async 
-	ENVTEX = texture;
-});
-
 
 
 
@@ -36,11 +27,18 @@ composer.addPass(renderScene);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 renderer.outputEncoding = THREE.sRGBEncoding;
-let pmremGenerator = new THREE.PMREMGenerator(renderer);
-pmremGenerator.compileEquirectangularShader();
-//let envMap = pmremGenerator.fromEquirectangular(ENVTEX).texture;
-//scene.environment = envMap;
-pmremGenerator.dispose();
+
+new RGBELoader()
+.setDataType(THREE.UnsignedByteType)
+.setPath('3d/')
+.load('env_small.hdr', async function (texture) { //async 
+    //ENVTEX = texture;
+    let pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+    let envMap = pmremGenerator.fromEquirectangular(texture).texture;
+    scene.environment = envMap;
+    pmremGenerator.dispose();
+});
 
 let pointlight = new THREE.PointLight(0xffffff, 0.8, 100);
 pointlight.position.set(2, 2, 4);
@@ -67,10 +65,15 @@ function ProcessInput (key, state) {
     {
     case "ArrowUp":
         bMoveForward = state;
+        break;
     case "ArrowDown":
         bMoveBackward = state;
-        case "ArrowRight":
-            bMoveRight = state;
+        break;
+    case "ArrowRight":
+        bMoveRight = state;
+        break;
+    case "ArrowLeft":
+        bMoveLeft = state;
     default:
         break;
     }
@@ -124,7 +127,27 @@ var cube;
 function render() {
     requestAnimationFrame(render);
 
+    var forward = new THREE.Vector3();
+    camera.getWorldDirection(forward);
+    var right = forward.clone();
 
+    var axis = new THREE.Vector3( 0, 1, 0 );
+    right.applyAxisAngle(axis, Math.PI / 2);
+
+    const speed = 0.1;
+    forward.multiplyScalar(speed);
+    right.multiplyScalar(speed);
+
+    if(bMoveForward)
+        camera.position.add(forward);
+    if(bMoveBackward)
+        camera.position.sub(forward);
+    if(bMoveRight)
+        camera.position.add(right);
+    if(bMoveLeft)
+        camera.position.sub(right);
+
+    camera.lookAt(0.0, 0.0, 0.0);
     if(cube)
         cube.rotation.x += 0.1;
     //renderer.render(scene, camera);
@@ -143,7 +166,7 @@ function beginPlay() {
     scene.add(cube);
 
     console.log("begin load");
-    loadModel("3d/testcyl.glb");
+    loadModel("3d/castle.glb");
     console.log("load finished");
     camera.position.z = 5;
 
