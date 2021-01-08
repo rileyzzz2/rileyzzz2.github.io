@@ -52,7 +52,11 @@ $( document ).ready(function() {
 });
 
 $( document ).on('pointerlockchange', function() {
-
+    if(document.pointerLockElement === canvas) {
+        document.removeEventListener('click', beginCapture);
+    } else {
+        document.addEventListener('click', beginCapture);
+    }
 });
 
 var bMoveForward = false;
@@ -91,22 +95,27 @@ $( document ).on('keyup', function (event) {
     ProcessInput(event.key, false);
 })
 
-
 var prevX = 0;
 var prevY = 0;
 $("#gameWindow").mousemove(function(event) {
     //console.log("mousemove " + event.movementX + " " + event.movementY);
     //console.log("mousemove " + event.movementX + " " + event.movementY);
-    var X = event.screenX - prevX;
-    var Y = event.screenY - prevY;
+    var X = event.movementX || (prevX ? event.screenX - prevX : 0);
+    var Y = event.movementY || (prevY ? event.screenY - prevY : 0);
+
     //console.log("mousemove " + X + " " + Y);
+    //camera.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), -X / 100.0);
+    //camera.rotation.y -= X / 100.0;
+    camera.rotateOnWorldAxis(new THREE.Vector3(0.0, 1.0, 0.0), -X / 100.0);
+    camera.rotateOnAxis(new THREE.Vector3(1.0, 0.0, 0.0), -Y / 100.0);
+    //camera.rotation.y -= X / 100.0;
+    //camera.rotation.x -= Y / 100.0;
 
     prevX = event.screenX;
     prevY = event.screenY;
 });
 
 function beginCapture() {
-    document.removeEventListener('click', beginCapture);
     canvas.requestPointerLock();
 }
 document.addEventListener('click', beginCapture);
@@ -132,9 +141,11 @@ function render() {
     var right = forward.clone();
 
     var axis = new THREE.Vector3( 0, 1, 0 );
-    right.applyAxisAngle(axis, Math.PI / 2);
+    right.applyAxisAngle(axis, -Math.PI / 2);
+    right.y = 0.0;
+    right.normalize();
 
-    const speed = 0.1;
+    const speed = 0.2;
     forward.multiplyScalar(speed);
     right.multiplyScalar(speed);
 
@@ -147,7 +158,8 @@ function render() {
     if(bMoveLeft)
         camera.position.sub(right);
 
-    camera.lookAt(0.0, 0.0, 0.0);
+    //camera.lookAt(0.0, 0.0, 0.0);
+
     if(cube)
         cube.rotation.x += 0.1;
     //renderer.render(scene, camera);
