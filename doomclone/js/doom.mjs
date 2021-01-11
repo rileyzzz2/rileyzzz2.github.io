@@ -3,6 +3,37 @@ import { RenderPass } from './lib/three/examples/jsm/postprocessing/RenderPass.j
 import { GLTFLoader } from './lib/three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from './lib/three/examples/jsm/loaders/RGBELoader.js';
 
+const output = $("#outputlog")[0];
+function print(msg) {
+    output.textContent += msg + '\n';
+}
+window.onerror = function(message, source, lineno, colno, error) {
+    print(message + " line: " + lineno + " col: " + colno);
+    //this.output("ERROR: " + message + " line: " + lineno + " col: " + colno);
+};
+
+var _log = console.log,
+    _warn = console.warn,
+    _error = console.error;
+
+console.log = function() {
+    for(var k in arguments)
+        print("LOG: " + arguments[k]);
+    return _log.apply(console, arguments);
+};
+
+console.warn = function() {
+    for(var k in arguments)
+        print("WARN: " + arguments[k]);
+    return _warn.apply(console, arguments);
+};
+
+console.error = function() {
+    for(var k in arguments)
+        print("ERR: " + arguments[k]);
+    return _error.apply(console, arguments);
+};
+
 let physicsWorld;
 var rigidBodies = [], tmpTrans;
 function initPhysicsWorld() {
@@ -19,8 +50,8 @@ Ammo().then(start);
 function start() {
     initPhysicsWorld();
     tmpTrans = new Ammo.btTransform();
-    clock = new THREE.Clock();
-    
+    var clock = new THREE.Clock();
+
     var params = {
         exposure:   1.0,
         bloomStrength: 0.4,
@@ -37,7 +68,7 @@ function start() {
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas });
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     var renderScene = new RenderPass(scene, camera);
     var composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
@@ -52,23 +83,28 @@ function start() {
     .setPath('3d/')
     .load('env_small.hdr', async function (texture) { //async 
         //ENVTEX = texture;
+        
         let pmremGenerator = new THREE.PMREMGenerator(renderer);
         pmremGenerator.compileEquirectangularShader();
         let envMap = pmremGenerator.fromEquirectangular(texture).texture;
         scene.environment = envMap;
+        scene.background = envMap;
         pmremGenerator.dispose();
     });
 
-    let pointlight = new THREE.PointLight(0xffffff, 0.8, 100);
-    pointlight.position.set(2, 2, 4);
-    pointlight.castShadow = true;
-    scene.add(pointlight);
+    // let pointlight = new THREE.PointLight(0xffffff, 0.8, 100);
+    // pointlight.position.set(2, 2, 4);
+    // pointlight.castShadow = true;
+    // scene.add(pointlight);
+    let sunlight = new THREE.DirectionalLight(0xffffff, 0.5 );
+    sunlight.position.set(100, 100, 100);
+    scene.add(sunlight);
 
-    $( document ).ready(function() {
-        beginPlay();
-        onWindowResize();
-        render();
-    });
+    // $( document ).ready(function() {
+    //     beginPlay();
+    //     onWindowResize();
+    //     render();
+    // });
 
     $( document ).on('pointerlockchange', function() {
         if(document.pointerLockElement === canvas) {
@@ -164,6 +200,7 @@ function start() {
     function render() {
         requestAnimationFrame(render);
         let deltaTime = clock.getDelta();
+        //if(physicsWorld)
         physicsWorld.stepSimulation(deltaTime);
 
         var forward = new THREE.Vector3();
@@ -174,7 +211,8 @@ function start() {
         right.y = 0.0;
         right.normalize();
 
-        const speed = 0.5;
+        //const speed = 0.5 * deltaTime;
+        let speed = 50.0 * deltaTime;
         forward.multiplyScalar(speed);
         right.multiplyScalar(speed);
 
@@ -202,13 +240,17 @@ function start() {
 
     function pvec(vec)
     {
-        return new Ammo.btVector3();
+        return new Ammo.btVector3(vec.x, vec.y, vec.z);
+    }
+    function pquat(quat)
+    {
+        return new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w);
     }
     function createTransform(mesh) {
         let transform = new Ammo.btTransform();
         transform.setIdentity();
-        transform.setOrigin( new Ammo.btVector3( mesh.position.x, mesh.position.y, mesh.position.z ) );
-        transform.setRotation( new Ammo.btQuaternion( mesh.quaternion.x, mesh.quaternion.y, mesh.quaternion.z, mesh.quaternion.w ) );
+        transform.setOrigin(pvec(mesh.position));
+        transform.setRotation(pquat(mesh.quaternion));
         return transform;
     }
     function createRigidBox(mesh) {
@@ -216,8 +258,8 @@ function start() {
         let motionState = new Ammo.btDefaultMotionState( transform );
         mesh.geometry.computeBoundingBox();
         //mesh.geometry.boundingBox.min/max
-        let colShape = new Ammo.btBoxShape( new Ammo.btVector3( scale.x * 0.5, scale.y * 0.5, scale.z * 0.5 ) );
-        colShape.setMargin( 0.05 );
+        //let colShape = new Ammo.btBoxShape( new Ammo.btVector3( scale.x * 0.5, scale.y * 0.5, scale.z * 0.5 ) );
+        //colShape.setMargin( 0.05 );
     }
 
     function beginPlay() {
@@ -231,15 +273,15 @@ function start() {
         createRigidBox(cube);
 
         console.log("begin load");
-        loadModel("3d/castle.glb");
+        //loadModel("3d/castle.glb");
         console.log("load finished");
         camera.position.z = 5;
 
     }
 
 
-    function loadModel(file) {
-        loader.load(file, function (gltf) {
+    async function loadModel(file) {
+        loader.load(file, async function (gltf) {
             // let uniforms = {
             // 	colorA: { type: 'vec3', value: new THREE.Color(0x4100f2) }, //0xb967ff
             // 	colorB: { type: 'vec3', value: new THREE.Color(0xfaa80f) },
@@ -260,7 +302,7 @@ function start() {
 
 
             castle = gltf.scene;
-            
+            castle.castShadow = true;
             scene.add(castle);
 
         }, undefined, function (error) {
@@ -270,4 +312,7 @@ function start() {
         });
     }
 
+    beginPlay();
+    onWindowResize();
+    render();
 }
