@@ -43,7 +43,7 @@ function initPhysicsWorld() {
     solver                  = new Ammo.btSequentialImpulseConstraintSolver();
 
     physicsWorld           = new Ammo.btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
-    physicsWorld.setGravity(new Ammo.btVector3(0, -10, 0));
+    physicsWorld.setGravity(new Ammo.btVector3(0.0, -9.8, 0.0));
 }
 
 Ammo().then(start);
@@ -152,11 +152,10 @@ function start() {
 
     var prevX = 0;
     var prevY = 0;
+    
     camera.rotation.order = 'ZYX';
     $("#gameWindow")[0].addEventListener("mousemove", mousemove);
     function mousemove(event) {
-        //console.log("mousemove " + event.movementX + " " + event.movementY);
-        //console.log("mousemove " + event.movementX + " " + event.movementY);
         var X = event.movementX;// || (prevX ? event.screenX - prevX : 0);
         var Y = event.movementY;// || (prevY ? event.screenY - prevY : 0);
 
@@ -165,10 +164,9 @@ function start() {
         //camera.rotation.y -= X / 100.0;
 
         //camera.rotateOnWorldAxis(new THREE.Vector3(0.0, 1.0, 0.0), -X / 100.0);
-        camera.rotation.y += -X / 100.0;
         //camera.rotateOnAxis(new THREE.Vector3(1.0, 0.0, 0.0), -Y / 100.0);
+        camera.rotation.y += -X / 100.0;
         camera.rotation.x += -Y / 100.0;
-        //if(camera.rotation.x > -Math.PI / 2.0 && camera.rotation.x < Math.PI / 2.0)
         camera.rotation.x = Math.min(camera.rotation.x, Math.PI / 2.0);
         camera.rotation.x = Math.max(camera.rotation.x, -Math.PI / 2.0);
         console.log(camera.rotation);
@@ -265,7 +263,7 @@ function start() {
     function beginPlay() {
         let pos = {x: 0, y: 0, z: 0};
         let scale = {x: 1, y: 1, z: 1};
-        const box = new THREE.BoxGeometry();
+        const box = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
         cube = new THREE.Mesh( box, material );
         scene.add(cube);
         cube.position.set(pos.x, pos.y, pos.z);
