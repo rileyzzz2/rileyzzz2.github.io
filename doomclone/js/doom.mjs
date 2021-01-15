@@ -82,7 +82,7 @@ function start() {
     new RGBELoader()
     .setDataType(THREE.UnsignedByteType)
     .setPath('3d/')
-    .load('env_small.hdr', async function (texture) { //async 
+    .load('env.hdr', async function (texture) { //async 
         //ENVTEX = texture;
         
         let pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -97,8 +97,16 @@ function start() {
     // pointlight.position.set(2, 2, 4);
     // pointlight.castShadow = true;
     // scene.add(pointlight);
-    let sunlight = new THREE.DirectionalLight(0xffffff, 0.5 );
+
+    let sunlight = new THREE.DirectionalLight(0xffffff, 1, 100);
     sunlight.position.set(100, 100, 100);
+    sunlight.castShadow = true;
+
+    sunlight.shadow.mapSize.width = 512; // default
+    sunlight.shadow.mapSize.height = 512; // default
+    sunlight.shadow.camera.near = 0.5; // default
+    sunlight.shadow.camera.far = 500; // default
+
     scene.add(sunlight);
 
     // $( document ).ready(function() {
@@ -299,6 +307,7 @@ function start() {
         let scale = {x: 1, y: 1, z: 1};
         const box = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
         cube = new THREE.Mesh( box, material );
+        cube.castShadow = true;
         scene.add(cube);
         cube.position.set(pos.x, pos.y, pos.z);
         cube.scale.set(scale.x, scale.y, scale.z);
@@ -306,13 +315,14 @@ function start() {
 
         const planemesh = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
         let plane = new THREE.Mesh( planemesh, planematerial );
+        plane.castShadow = true;
         scene.add(plane);
         plane.position.set(0.0, -10.0, 0.0);
         plane.scale.set(10.0, 0.2, 10.0);
         createRigidBox(plane, 0.0);
 
         console.log("begin load");
-        //loadModel("3d/castle.glb");
+        loadModel("3d/wario.glb");
         console.log("load finished");
         camera.position.z = 5;
 
