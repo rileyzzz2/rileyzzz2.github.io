@@ -5,7 +5,6 @@ import { RGBELoader } from './lib/three/examples/jsm/loaders/RGBELoader.js';
 
 
 export function startRenderer() {
-    initPhysicsWorld();
     tmpTrans = new Ammo.btTransform();
     var clock = new THREE.Clock();
 
@@ -16,14 +15,6 @@ export function startRenderer() {
         bloomRadius: 0.4
     };
 
-
-
-    //https://medium.com/@bluemagnificent/intro-to-javascript-3d-physics-using-ammo-js-and-three-js-dd48df81f591
-    //https://medium.com/media/4841d3cf6d0b8898cca4b1474dbf32b6
-    //https://github.com/kripken/ammo.js/blob/master/examples/webgl_demo_softbody_volume/index.html
-
-    var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     var renderScene = new RenderPass(scene, camera);
     var composer = new EffectComposer(renderer);
@@ -37,9 +28,7 @@ export function startRenderer() {
     new RGBELoader()
     .setDataType(THREE.UnsignedByteType)
     .setPath('3d/')
-    .load('env.hdr', async function (texture) { //async 
-        //ENVTEX = texture;
-        
+    .load('env.hdr', async function (texture) {
         let pmremGenerator = new THREE.PMREMGenerator(renderer);
         pmremGenerator.compileEquirectangularShader();
         let envMap = pmremGenerator.fromEquirectangular(texture).texture;
@@ -66,7 +55,7 @@ export function startRenderer() {
 
 
     camera.rotation.order = 'ZYX';
-    $("#gameWindow")[0].addEventListener("mousemove", mousemove);
+    canvas.addEventListener("mousemove", mousemove);
     function mousemove(event) {
         var X = event.movementX;// || (prevX ? event.screenX - prevX : 0);
         var Y = event.movementY;// || (prevY ? event.screenY - prevY : 0);
@@ -93,18 +82,22 @@ export function startRenderer() {
         let deltaTime = clock.getDelta();
         //if(physicsWorld)
         physicsWorld.stepSimulation(deltaTime, 10);
-        for ( let i = 0; i < rigidBodies.length; i++ ) {
-            let objThree = rigidBodies[i];
-            let objAmmo = objThree.userData.physicsBody;
-            let ms = objAmmo.getMotionState();
-            if ( ms ) {
-                ms.getWorldTransform( tmpTrans );
-                let p = tmpTrans.getOrigin();
-                let q = tmpTrans.getRotation();
-                objThree.position.set( p.x(), p.y(), p.z() );
-                objThree.quaternion.set( q.x(), q.y(), q.z(), q.w() );
-            }
-        }
+
+        for(let i = 0; i < objects.length; i++)
+            objects[i].update(deltaTime);
+
+        // for ( let i = 0; i < rigidBodies.length; i++ ) {
+        //     let objThree = rigidBodies[i];
+        //     let objAmmo = objThree.userData.physicsBody;
+        //     let ms = objAmmo.getMotionState();
+        //     if ( ms ) {
+        //         ms.getWorldTransform( tmpTrans );
+        //         let p = tmpTrans.getOrigin();
+        //         let q = tmpTrans.getRotation();
+        //         objThree.position.set( p.x(), p.y(), p.z() );
+        //         objThree.quaternion.set( q.x(), q.y(), q.z(), q.w() );
+        //     }
+        // }
         var forward = new THREE.Vector3();
         camera.getWorldDirection(forward);
         var right = forward.clone();
@@ -136,26 +129,6 @@ export function startRenderer() {
 
     var loader = new GLTFLoader();
     var castle;
-    const material = new THREE.MeshStandardMaterial( { color: 0x00ff00 } );
-    const planematerial = new THREE.MeshStandardMaterial( { color: 0xffffff } );
-
-
-    function beginPlay() {
-        const planemesh = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
-        let plane = new THREE.Mesh( planemesh, planematerial );
-        plane.castShadow = true;
-        scene.add(plane);
-        plane.position.set(0.0, -10.0, 0.0);
-        plane.scale.set(10.0, 0.2, 10.0);
-        createRigidBox(plane, 0.0);
-
-        console.log("begin load");
-        loadModel("3d/wario.glb");
-        console.log("load finished");
-        camera.position.z = 5;
-
-    }
-
 
     async function loadModel(file) {
         loader.load(file, async function (gltf) {
@@ -189,7 +162,6 @@ export function startRenderer() {
         });
     }
 
-    beginPlay();
     onWindowResize();
     render();
 }

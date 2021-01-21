@@ -1,4 +1,9 @@
 
+//https://medium.com/@bluemagnificent/intro-to-javascript-3d-physics-using-ammo-js-and-three-js-dd48df81f591
+//https://medium.com/media/4841d3cf6d0b8898cca4b1474dbf32b6
+//https://github.com/kripken/ammo.js/blob/master/examples/webgl_demo_softbody_volume/index.html
+
+
 let physicsWorld;
 var rigidBodies = [], tmpTrans;
 function initPhysicsWorld() {
