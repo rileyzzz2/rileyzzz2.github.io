@@ -22,8 +22,6 @@ export function startRenderer() {
     //https://medium.com/media/4841d3cf6d0b8898cca4b1474dbf32b6
     //https://github.com/kripken/ammo.js/blob/master/examples/webgl_demo_softbody_volume/index.html
 
-    var canvas = $("#gameWindow")[0];
-
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
@@ -80,18 +78,6 @@ export function startRenderer() {
     }
 
 
-
-    document.addEventListener('click', onClick);
-    function onClick() {
-        const box = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
-        let newcube = new THREE.Mesh( box, material );
-        newcube.castShadow = true;
-        scene.add(newcube);
-        newcube.position.set(camera.position.x, camera.position.y, camera.position.z);
-        newcube.scale.set(1.0, 1.0, 1.0);
-        createRigidBox(newcube, 0.2);
-    }
-
     window.addEventListener('resize', onWindowResize, false);
     function onWindowResize() {
 
@@ -101,8 +87,6 @@ export function startRenderer() {
         renderer.setSize(window.innerWidth, window.innerHeight);
         composer.setSize(window.innerWidth, window.innerHeight);
     }
-
-    var cube;
 
     function render() {
         requestAnimationFrame(render);
@@ -145,8 +129,6 @@ export function startRenderer() {
 
         //camera.lookAt(0.0, 0.0, 0.0);
 
-        if(cube)
-            cube.rotation.x += 0.1;
         //renderer.render(scene, camera);
         composer.render(scene, camera);
     }
@@ -157,52 +139,8 @@ export function startRenderer() {
     const material = new THREE.MeshStandardMaterial( { color: 0x00ff00 } );
     const planematerial = new THREE.MeshStandardMaterial( { color: 0xffffff } );
 
-    function pvec(vec)
-    {
-        return new Ammo.btVector3(vec.x, vec.y, vec.z);
-    }
-    function pquat(quat)
-    {
-        return new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w);
-    }
-    function createTransform(mesh) {
-        let transform = new Ammo.btTransform();
-        transform.setIdentity();
-        transform.setOrigin(pvec(mesh.position));
-        transform.setRotation(pquat(mesh.quaternion));
-        return transform;
-    }
-    function createRigidBox(mesh, mass) {
-        let transform = createTransform(mesh);
-        let motionState = new Ammo.btDefaultMotionState( transform );
-        var localInertia = new Ammo.btVector3( 0, 0, 0 );
-        mesh.geometry.computeBoundingBox();
-        var shape = new Ammo.btBoxShape(new Ammo.btVector3(mesh.scale.x * 0.5, mesh.scale.y * 0.5, mesh.scale.z * 0.5));
-        shape.setMargin( 0.05 );
-        //let mass = 0.5;
-
-		shape.calculateLocalInertia( mass, localInertia );
-        var rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, shape, localInertia );
-        var body = new Ammo.btRigidBody( rbInfo );
-        physicsWorld.addRigidBody( body );
-        mesh.userData.physicsBody = body;
-        rigidBodies.push(mesh);
-        //mesh.geometry.boundingBox.min/max
-        //let colShape = new Ammo.btBoxShape( new Ammo.btVector3( scale.x * 0.5, scale.y * 0.5, scale.z * 0.5 ) );
-        //colShape.setMargin( 0.05 );
-    }
 
     function beginPlay() {
-        let pos = {x: 0, y: 0, z: 0};
-        let scale = {x: 1, y: 1, z: 1};
-        const box = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
-        cube = new THREE.Mesh( box, material );
-        cube.castShadow = true;
-        scene.add(cube);
-        cube.position.set(pos.x, pos.y, pos.z);
-        cube.scale.set(scale.x, scale.y, scale.z);
-        createRigidBox(cube, 0.2);
-
         const planemesh = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
         let plane = new THREE.Mesh( planemesh, planematerial );
         plane.castShadow = true;

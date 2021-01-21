@@ -22,12 +22,15 @@
                 height: 100%;
             }
             .menuOverlay {
-                margin: 0;
-                width: 100%;
-                height: 100%;
+                position: fixed;
+                display: none;
                 z-index: 2;
-                opacity: 0.5;
-                backdrop-filter: blur(6px);
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                backdrop-filter: blur(8px);
+                background-color: rgba(20, 20, 20, 0.9);
             }
             #gameWindow {
                 margin: 0;
@@ -54,13 +57,14 @@
         
         <div class="gameContainer">
             <canvas id="gameWindow"></canvas>
-        </div>
-        <div class="menuOverlay">
+            <div class="menuOverlay">
 
+            </div>
         </div>
 
         <!-- Multiplayer SDK -->
         <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
+        <script src="js/globals.js"></script>
         <script src="js/network.js"></script>
         <script src="js/interface.js"></script>
         <script type="module" src="js/render.mjs"></script>

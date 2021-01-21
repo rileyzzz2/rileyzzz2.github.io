@@ -1,3 +1,6 @@
+
+//https://itnext.io/how-to-build-a-realtime-multiplayer-game-in-javascript-using-pubnub-5f410fd62f33
+
 const uuid = PubNub.generateUUID();
 const pubnub = new PubNub({
     publishKey: "pub-c-d2355256-7b44-4146-94f0-8d664c5ddf90",
