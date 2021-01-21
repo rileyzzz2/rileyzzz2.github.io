@@ -20,3 +20,30 @@ class GameObject {
         }
     }
 }
+
+class Kart {
+    constructor() {
+        const mass = 0.2;
+        const box = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
+        let mesh = new THREE.Mesh( box, new THREE.MeshStandardMaterial( { color: 0x00ff00 } ) );
+        scene.add(mesh);
+
+        let transform = createTransform(mesh);
+        let motionState = new Ammo.btDefaultMotionState( transform );
+        var localInertia = new Ammo.btVector3( 0, 0, 0 );
+        var shape = new Ammo.btBoxShape(new Ammo.btVector3(mesh.scale.x * 0.5, mesh.scale.y * 0.5, mesh.scale.z * 0.5));
+        shape.setMargin( 0.05 );
+
+        shape.calculateLocalInertia( mass, localInertia );
+        var rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, shape, localInertia );
+        var body = new Ammo.btRigidBody( rbInfo );
+        physicsWorld.addRigidBody(body);
+        this.gameObject = new GameObject(mesh, body);
+        objects.push(this.gameObject);
+
+
+    }
+}
+
+var localPlayer;
+var Players = [];

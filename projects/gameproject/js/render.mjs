@@ -54,17 +54,17 @@ export function startRenderer() {
     scene.add(sunlight);
 
 
-    camera.rotation.order = 'ZYX';
-    canvas.addEventListener("mousemove", mousemove);
-    function mousemove(event) {
-        var X = event.movementX;// || (prevX ? event.screenX - prevX : 0);
-        var Y = event.movementY;// || (prevY ? event.screenY - prevY : 0);
+    // camera.rotation.order = 'ZYX';
+    // canvas.addEventListener("mousemove", mousemove);
+    // function mousemove(event) {
+    //     var X = event.movementX;// || (prevX ? event.screenX - prevX : 0);
+    //     var Y = event.movementY;// || (prevY ? event.screenY - prevY : 0);
 
-        camera.rotation.y += -X / 100.0;
-        camera.rotation.x += -Y / 100.0;
-        camera.rotation.x = Math.min(camera.rotation.x, Math.PI / 2.0);
-        camera.rotation.x = Math.max(camera.rotation.x, -Math.PI / 2.0);
-    }
+    //     camera.rotation.y += -X / 100.0;
+    //     camera.rotation.x += -Y / 100.0;
+    //     camera.rotation.x = Math.min(camera.rotation.x, Math.PI / 2.0);
+    //     camera.rotation.x = Math.max(camera.rotation.x, -Math.PI / 2.0);
+    // }
 
 
     window.addEventListener('resize', onWindowResize, false);
@@ -98,28 +98,30 @@ export function startRenderer() {
         //         objThree.quaternion.set( q.x(), q.y(), q.z(), q.w() );
         //     }
         // }
-        var forward = new THREE.Vector3();
-        camera.getWorldDirection(forward);
-        var right = forward.clone();
 
-        right.applyAxisAngle(new THREE.Vector3( 0, 1, 0 ), -Math.PI / 2);
-        right.y = 0.0;
-        right.normalize();
+        //DEBUG MOVEMENT =====================================================================
+        // var forward = new THREE.Vector3();
+        // camera.getWorldDirection(forward);
+        // var right = forward.clone();
 
-        //const speed = 0.5 * deltaTime;
-        let speed = 50.0 * deltaTime;
-        forward.multiplyScalar(speed);
-        right.multiplyScalar(speed);
+        // right.applyAxisAngle(new THREE.Vector3( 0, 1, 0 ), -Math.PI / 2);
+        // right.y = 0.0;
+        // right.normalize();
 
-        if(bMoveForward)
-            camera.position.add(forward);
-        if(bMoveBackward)
-            camera.position.sub(forward);
-        if(bMoveRight)
-            camera.position.add(right);
-        if(bMoveLeft)
-            camera.position.sub(right);
+        // //const speed = 0.5 * deltaTime;
+        // let speed = 50.0 * deltaTime;
+        // forward.multiplyScalar(speed);
+        // right.multiplyScalar(speed);
 
+        // if(bMoveForward)
+        //     camera.position.add(forward);
+        // if(bMoveBackward)
+        //     camera.position.sub(forward);
+        // if(bMoveRight)
+        //     camera.position.add(right);
+        // if(bMoveLeft)
+        //     camera.position.sub(right);
+        //END DEBUG MOVEMENT =================================================================
         //camera.lookAt(0.0, 0.0, 0.0);
 
         //renderer.render(scene, camera);

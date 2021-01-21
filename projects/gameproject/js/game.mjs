@@ -34,6 +34,12 @@ function beginPlay() {
     initPhysicsWorld();
     startRenderer();
 
+    localPlayer = new Kart();
+    camera.parent = localPlayer.gameObject.mesh;
+    //camera.position.y = 5;
+    camera.position.z = 5;
+    //camera.lookAt(0.0, 0.0, 0.0);
+
     const mass = 0.0;
     const planemesh = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
     let plane = new THREE.Mesh( planemesh, new THREE.MeshStandardMaterial( { color: 0xffffff } ) );
@@ -58,6 +64,4 @@ function beginPlay() {
     //console.log("begin load");
     //loadModel("3d/wario.glb");
     //console.log("load finished");
-    camera.position.z = 5;
-    
 }
