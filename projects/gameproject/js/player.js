@@ -98,9 +98,9 @@ class Kart {
 
 
         thinkers.push(this);
+        objects.push(this);
     }
-
-    tick() {
+    update() {
         var tm, p, q;
         for(let i = 0; i < this.wheels.length; i++) {
             tm = this.vehicle.getWheelTransformWS(i);
@@ -109,6 +109,9 @@ class Kart {
             this.wheels[i].mesh.position.set( p.x(), p.y(), p.z() );
             this.wheels[i].mesh.quaternion.set( q.x(), q.y(), q.z(), q.w() );
         }
+    }
+    tick() {
+        
     }
 }
 
