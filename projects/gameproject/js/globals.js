@@ -1,7 +1,14 @@
 var canvas = $("#gameWindow")[0];
 var objects = [];
+var thinkers = [];
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+//var cameraHelper = new THREE.CameraHelper(camera);
+//scene.add(cameraHelper);
+window.setInterval(function() {
+    for(let i = 0; i < thinkers.length; i++)
+        thinkers[i].tick();
+}, 1.0 / 60.0 * 1000.0);
 
 class GameObject {
     constructor(mesh, rigidBody) {
@@ -20,30 +27,3 @@ class GameObject {
         }
     }
 }
-
-class Kart {
-    constructor() {
-        const mass = 0.2;
-        const box = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
-        let mesh = new THREE.Mesh( box, new THREE.MeshStandardMaterial( { color: 0x00ff00 } ) );
-        scene.add(mesh);
-
-        let transform = createTransform(mesh);
-        let motionState = new Ammo.btDefaultMotionState( transform );
-        var localInertia = new Ammo.btVector3( 0, 0, 0 );
-        var shape = new Ammo.btBoxShape(new Ammo.btVector3(mesh.scale.x * 0.5, mesh.scale.y * 0.5, mesh.scale.z * 0.5));
-        shape.setMargin( 0.05 );
-
-        shape.calculateLocalInertia( mass, localInertia );
-        var rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, shape, localInertia );
-        var body = new Ammo.btRigidBody( rbInfo );
-        physicsWorld.addRigidBody(body);
-        this.gameObject = new GameObject(mesh, body);
-        objects.push(this.gameObject);
-
-
-    }
-}
-
-var localPlayer;
-var Players = [];

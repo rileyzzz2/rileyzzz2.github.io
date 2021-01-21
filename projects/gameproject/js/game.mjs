@@ -35,10 +35,10 @@ function beginPlay() {
     startRenderer();
 
     localPlayer = new Kart();
-    camera.parent = localPlayer.gameObject.mesh;
-    //camera.position.y = 5;
+    //camera.parent = localPlayer.gameObject.mesh;
+    camera.position.y = 2;
     camera.position.z = 5;
-    //camera.lookAt(0.0, 0.0, 0.0);
+    camera.lookAt(0.0, 0.0, 0.0);
 
     const mass = 0.0;
     const planemesh = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
@@ -46,7 +46,7 @@ function beginPlay() {
     plane.castShadow = true;
     scene.add(plane);
     plane.position.set(0.0, -10.0, 0.0);
-    plane.scale.set(10.0, 0.2, 10.0);
+    plane.scale.set(40.0, 0.2, 40.0);
     //createRigidBox(plane, 0.0);
     let transform = createTransform(plane);
     let motionState = new Ammo.btDefaultMotionState( transform );
