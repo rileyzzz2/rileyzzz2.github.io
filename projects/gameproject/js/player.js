@@ -85,15 +85,15 @@ class Kart {
         var breakingForce = 0;
         var tuning = new Ammo.btVehicleTuning();
         var rayCaster = new Ammo.btDefaultVehicleRaycaster(physicsWorld);
-        var vehicle = new Ammo.btRaycastVehicle(tuning, body, rayCaster);
-        vehicle.setCoordinateSystem(0, 1, 2);
-        physicsWorld.addAction(vehicle);
+        this.vehicle = new Ammo.btRaycastVehicle(tuning, body, rayCaster);
+        this.vehicle.setCoordinateSystem(0, 1, 2);
+        physicsWorld.addAction(this.vehicle);
         
         this.wheels = [
-            new Wheel(true, vehicle, new Ammo.btVector3(1, wheelAxisHeightFront, wheelAxisFrontPosition), .35, .2, tuning),
-            new Wheel(true, vehicle, new Ammo.btVector3(-1, wheelAxisHeightFront, wheelAxisFrontPosition), .35, .2, tuning),
-            new Wheel(false, vehicle, new Ammo.btVector3(1, wheelAxisHeightBack, wheelAxisBackPosition), .4, .3, tuning),
-            new Wheel(false, vehicle, new Ammo.btVector3(-1, wheelAxisHeightBack, wheelAxisBackPosition), .4, .3, tuning)
+            new Wheel(true, this.vehicle, new Ammo.btVector3(1, wheelAxisHeightFront, wheelAxisFrontPosition), .35, .2, tuning),
+            new Wheel(true, this.vehicle, new Ammo.btVector3(-1, wheelAxisHeightFront, wheelAxisFrontPosition), .35, .2, tuning),
+            new Wheel(false, this.vehicle, new Ammo.btVector3(1, wheelAxisHeightBack, wheelAxisBackPosition), .4, .3, tuning),
+            new Wheel(false, this.vehicle, new Ammo.btVector3(-1, wheelAxisHeightBack, wheelAxisBackPosition), .4, .3, tuning)
         ];
 
 
@@ -101,7 +101,14 @@ class Kart {
     }
 
     tick() {
-
+        var tm, p, q;
+        for(let i = 0; i < this.wheels.length; i++) {
+            tm = this.vehicle.getWheelTransformWS(i);
+            p = tm.getOrigin();
+            q = tm.getRotation();
+            this.wheels[i].mesh.position.set( p.x(), p.y(), p.z() );
+            this.wheels[i].mesh.quaternion.set( q.x(), q.y(), q.z(), q.w() );
+        }
     }
 }
 
