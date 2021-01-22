@@ -56,7 +56,7 @@ class Wheel {
 
 const steeringClamp = .25;
 class Kart {
-    constructor() {
+    constructor(startPos) {
         this.drifting = false;
         this.steeringClampL = steeringClamp;
         this.steeringClampR = steeringClamp;
@@ -87,6 +87,7 @@ class Kart {
         
         console.log(Object.keys(gameModels).length + "LOADED MODELS");
         var mesh = gameModels.standardKart.scene.clone();//.clone();
+
         mesh.traverse(function (child) {
             if(child.name === "wheel_bl") {
                 child.position.x += backWheelWidth / 2;
@@ -124,6 +125,11 @@ class Kart {
 
 
         let transform = createTransform(mesh);
+
+        var start = startPos.clone();
+        start.z += 4.0;
+        transform.setOrigin(pvec(start));
+
         let motionState = new Ammo.btDefaultMotionState( transform );
         var localInertia = new Ammo.btVector3( 0, 0, 0 );
         var shape = new Ammo.btBoxShape(new Ammo.btVector3(chassisWidth * .5, chassisHeight * .5, chassisLength * .5));

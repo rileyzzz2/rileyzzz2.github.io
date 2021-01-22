@@ -7,7 +7,7 @@ export async function initResources() {
     gameModels.slickWheel = await loadModel("3d/wheels/slick.glb");
 }
 
-function loadModel(file) {
+export function loadModel(file) {
     return new Promise((resolve, reject) => {
         loader.load(file, data => resolve(data), null, reject);
     });
