@@ -56,21 +56,34 @@
 function contact_obj(cp, colObj, partId, index) {
     //const btCollisionShape *shape = colObj->getCollisionShape();
     const shape = colObj.getCollisionShape();
-    const parent = colObj.getRootCollisionShape();
-    //if (shape->getShapeType() != TRIANGLE_SHAPE_PROXYTYPE)
-    if(shape.getShapeType() !== TRIANGLE_SHAPE_PROXYTYPE) {
-        console.log("not triangle shape");
-        return;
-    }
+    //const parent = colObj.getRootCollisionShape();
 
-    if(parent === null) {
-        console.log("null parent");
-        return;
-    }
-    if(parent.getShapeType() !== TRIANGLE_SHAPE_PROXYTYPE) {
-        console.log("parent not triangle shape");
-        return;
-    }
+    //if (shape->getShapeType() != TRIANGLE_SHAPE_PROXYTYPE)
+
+    // if(shape.getShapeType() !== TRIANGLE_SHAPE_PROXYTYPE) {
+    //     console.log("not triangle shape");
+    //     return;
+    // }
+
+    // if(parent === null) {
+    //     console.log("null parent");
+    //     return;
+    // }
+    // if(parent.getShapeType() !== TRIANGLE_SHAPE_PROXYTYPE) {
+    //     console.log("parent not triangle shape");
+    //     return;
+    // }
+
+    var orient = colObj.getWorldTransform();
+    orient.setOrigin(new Ammo.btVector3(0.0, 0.0, 0.0));
+
+    //console.log("vert " + shape.m_vertices1[0]);
+    console.log("vert: " + shape.a);
+    //Object.keys(shape).forEach((prop)=> console.log(prop));
+
+
+    //         btTransform orient = colObj->getWorldTransform();
+//         orient.setOrigin( btVector3(0.0f,0.0f,0.0f ) );
 
 }
 
@@ -91,14 +104,14 @@ function initPhysicsWorld() {
     //world.set_gContactAddedCallback
     let callback = Ammo.addFunction((cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => { //cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1
         console.log("contact!");
-        let colObj0 = Ammo.wrapPointer(colObj0, Ammo.btCollisionObjectWrapper);
+        let colObj0 = Ammo.wrapPointer(colObj0Wrap, Ammo.btCollisionObjectWrapper);
         //let colObj0 = colObj0Wrap.getCollisionObject();
 
-        let colObj1 = Ammo.wrapPointer(colObj1, Ammo.btCollisionObjectWrapper);
+        let colObj1 = Ammo.wrapPointer(colObj1Wrap, Ammo.btCollisionObjectWrapper);
         //let colObj1 = colObj1Wrap.getCollisionObject();
 
-        contact_obj(cp, colObj0, partId0, index0);
-        contact_obj(cp, colObj1, partId1, index1);
+        contact_obj(cp, colObj0.getCollisionObject(), partId0, index0);
+        contact_obj(cp, colObj1.getCollisionObject(), partId1, index1);
 //         contact_added_callback_obj(cp, colObj0, partId0, index0);
 //         contact_added_callback_obj(cp, colObj1, partId1, index1);
     }, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
