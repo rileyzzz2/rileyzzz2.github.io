@@ -4,7 +4,7 @@ const loader = new GLTFLoader();
 
 export async function initResources() {
     gameModels.standardKart = await loadModel("3d/karts/standard.glb");
-
+    gameModels.slickWheel = await loadModel("3d/wheels/slick.glb");
 }
 
 function loadModel(file) {

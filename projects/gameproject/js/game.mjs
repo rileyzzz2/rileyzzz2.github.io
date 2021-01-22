@@ -37,15 +37,20 @@ async function beginPlay() {
     startRenderer();
 
     localPlayer = new Kart();
+
     //camera.parent = localPlayer.gameObject.mesh;
-    //camera.position.x = 2;
+    //camera.position.x = -2;
+
     camera.position.y = 2;
     camera.position.z = -3;
-    camera.lookAt(0.0, 0.0, 0.0);
+    camera.lookAt(0.0, 0.4, 0.0);
+
+    const loader = new THREE.TextureLoader();
+    var planeMaterial = new THREE.MeshBasicMaterial({ map: loader.load('debug/mc.png') });// { color: 0xffffff } 
 
     const mass = 0.0;
     const planemesh = new THREE.BufferGeometry().fromGeometry(new THREE.BoxGeometry());
-    let plane = new THREE.Mesh( planemesh, new THREE.MeshStandardMaterial( { color: 0xffffff } ) );
+    let plane = new THREE.Mesh(planemesh, planeMaterial);
     plane.castShadow = true;
     scene.add(plane);
     plane.position.set(0.0, -10.0, 0.0);

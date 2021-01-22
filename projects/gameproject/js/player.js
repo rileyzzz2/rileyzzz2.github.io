@@ -6,9 +6,9 @@ class Wheel {
         this.radius = radius;
         this.width = width;
 
-        var friction = 1000;
-        var suspensionStiffness = 20.0;
-        var suspensionDamping = 2.3;
+        this.friction = 1000; //1000
+        var suspensionStiffness = 2.0;
+        var suspensionDamping = 2.3; //2.3
         var suspensionCompression = 4.4;
         var suspensionRestLength = 0.1; //0.6
         var rollInfluence = 0.2;
@@ -16,7 +16,7 @@ class Wheel {
         var wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0);
         var wheelAxleCS = new Ammo.btVector3(-1, 0, 0);
         
-        var wheelInfo = vehicle.addWheel(
+        this.wheelInfo = vehicle.addWheel(
 							pos,
 							wheelDirectionCS0,
 							wheelAxleCS,
@@ -25,24 +25,39 @@ class Wheel {
 							tuning,
                             isFront);
         
-        wheelInfo.set_m_suspensionStiffness(suspensionStiffness);
-		wheelInfo.set_m_wheelsDampingRelaxation(suspensionDamping);
-		wheelInfo.set_m_wheelsDampingCompression(suspensionCompression);
-		wheelInfo.set_m_frictionSlip(friction);
-        wheelInfo.set_m_rollInfluence(rollInfluence);
+        this.wheelInfo.set_m_suspensionStiffness(suspensionStiffness);
+		this.wheelInfo.set_m_wheelsDampingRelaxation(suspensionDamping);
+		this.wheelInfo.set_m_wheelsDampingCompression(suspensionCompression);
+		this.wheelInfo.set_m_frictionSlip(this.friction);
+        this.wheelInfo.set_m_rollInfluence(rollInfluence);
         
         var wheelMat = new THREE.MeshStandardMaterial( { color: 0xffffff } );
-        var t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
-        t.rotateZ(Math.PI / 2);
-		this.mesh = new THREE.Mesh(t, wheelMat);
-		this.mesh.add(new THREE.Mesh(new THREE.BoxGeometry(width * 1.5, radius * 1.75, radius*.25, 1, 1, 1), wheelMat));
+
+        
+        //var t = new THREE.CylinderGeometry(radius, radius, width, 24, 1);
+        //t.rotateZ(Math.PI / 2);
+		//var cyl = new THREE.Mesh(t, wheelMat);
+        //this.mesh.add(new THREE.Mesh(new THREE.BoxGeometry(width * 1.5, radius * 1.75, radius*.25, 1, 1, 1), wheelMat));
+
+        this.mesh = new THREE.Group();
+        var wheelMesh = gameModels.slickWheel.scene.clone();
+        //console.log("wheel x " + pos.x());
+        if(pos.x() > 0.0)
+            wheelMesh.rotation.set(0.0, 0.0, Math.PI);
+        if(!isFront)
+            wheelMesh.scale.set(1.2, 1.2, 1.2);
+        this.mesh.add(wheelMesh);
+        //this.mesh.add(cyl);
+
 		scene.add(this.mesh);
     }
 }
 
+const steeringClamp = .25;
 class Kart {
     constructor() {
         this.drifting = false;
+        this.steeringClamp = steeringClamp;
         //vehicle variables
         var chassisWidth = 1.0; //1.8
         var chassisHeight = .2; //.6
@@ -55,7 +70,8 @@ class Kart {
         var wheelAxisFrontPosition = 1.7;
         var wheelAxisHeightFront = .3;
 
-        const wheelWidth = 0.4;
+        const frontWheelWidth = 0.3;
+        const backWheelWidth = 0.4;
         const mass = 800;
         //const box = new THREE.BoxGeometry(chassisWidth, chassisHeight, chassisLength, 1, 1, 1);
         //let mesh = new THREE.Mesh( box, new THREE.MeshStandardMaterial( { color: 0x0000ff } ) );
@@ -70,21 +86,20 @@ class Kart {
         console.log(Object.keys(gameModels).length + "LOADED MODELS");
         var mesh = gameModels.standardKart.scene.clone();//.clone();
         mesh.traverse(function (child) {
-            console.log("gltf element " + child.name);
             if(child.name === "wheel_bl") {
-                child.position.x += wheelWidth / 2;
+                child.position.x += backWheelWidth / 2;
                 BackLeftPosition = pvec(child.position);
             }
             else if(child.name === "wheel_br") {
-                child.position.x -= wheelWidth / 2;
+                child.position.x -= backWheelWidth / 2;
                 BackRightPosition = pvec(child.position);
             }
             else if(child.name === "wheel_fl") {
-                child.position.x += wheelWidth / 2;
+                child.position.x += frontWheelWidth / 2;
                 FrontLeftPosition = pvec(child.position);
             }
             else if(child.name === "wheel_fr") {
-                child.position.x -= wheelWidth / 2;
+                child.position.x -= frontWheelWidth / 2;
                 FrontRightPosition = pvec(child.position);
             }
 
@@ -93,7 +108,15 @@ class Kart {
                 //     //child.material = material;
                 // }
         });
+
+        this.cameraTarget = new THREE.Object3D();
+        this.cameraTarget.position.y = 2;
+        this.cameraTarget.position.z = -3;
+        this.cameraTarget.lookAt(0.0, 0.4, 0.0);
+        mesh.add(this.cameraTarget);
+
         mesh.add(camera);
+
         scene.add(mesh);
 
 
@@ -121,10 +144,10 @@ class Kart {
         physicsWorld.addAction(this.vehicle);
         
         this.wheels = [
-            new Wheel(true, this.vehicle, FrontLeftPosition, .2, wheelWidth, tuning),
-            new Wheel(true, this.vehicle, FrontRightPosition, .2, wheelWidth, tuning),
-            new Wheel(false, this.vehicle, BackLeftPosition, .3, wheelWidth, tuning),
-            new Wheel(false, this.vehicle, BackRightPosition, .3, wheelWidth, tuning)
+            new Wheel(true, this.vehicle, FrontLeftPosition, .18, frontWheelWidth, tuning),
+            new Wheel(true, this.vehicle, FrontRightPosition, .18, frontWheelWidth, tuning),
+            new Wheel(false, this.vehicle, BackLeftPosition, .22, backWheelWidth, tuning),
+            new Wheel(false, this.vehicle, BackRightPosition, .22, backWheelWidth, tuning)
         ];
 
         //keep upright physics
@@ -132,21 +155,28 @@ class Kart {
         c.setIdentity();
         c.getBasis().setEulerZYX(-Math.PI / 2, 0, 0);
         var uprightConstraint = new Ammo.btGeneric6DofConstraint(this.gameObject.rigidBody, c, false);
-        uprightConstraint.setLimit(0, 1.0, 0.0);
-        uprightConstraint.setLimit(1, 1.0, 0.0);
-        uprightConstraint.setLimit(2, 1.0, 0.0);
-        uprightConstraint.setLimit(3, 1.0, 0.0);
-        uprightConstraint.setLimit(4, 0.0, 0.0);
-        uprightConstraint.setLimit(5, 1.0, 0.0);
-        //physicsWorld.addConstraint(uprightConstraint);
+        uprightConstraint.setLinearLowerLimit(new Ammo.btVector3(1.0, 1.0, 1.0));
+        uprightConstraint.setLinearUpperLimit(new Ammo.btVector3(0.0, 0.0, 0.0));
+
+        uprightConstraint.setAngularLowerLimit(new Ammo.btVector3(1.0, 0.0, 1.0));
+        uprightConstraint.setAngularUpperLimit(new Ammo.btVector3(0.0, 0.0, 0.0));
+        physicsWorld.addConstraint(uprightConstraint);
 
         thinkers.push(this);
         objects.push(this);
     }
     update() {
+        var tm, p, q;
+        for(let i = 0; i < this.wheels.length; i++) {
+            tm = this.vehicle.getWheelTransformWS(i);
+            p = tm.getOrigin();
+            q = tm.getRotation();
+            this.wheels[i].mesh.position.set( p.x(), p.y(), p.z() );
+            this.wheels[i].mesh.quaternion.set( q.x(), q.y(), q.z(), q.w() );
+        }
+
         const steeringIncrement = .04;
-        const steeringClamp = .3;
-        const maxEngineForce = 2000; //2000
+        const maxEngineForce = 3000; //2000
         const maxBreakingForce = 200;
 
         var speed = this.vehicle.getCurrentSpeedKmHour();
@@ -154,7 +184,6 @@ class Kart {
         this.breakingForce = 0;
         
         if(bMoveForward) {
-            console.log("move forward");
             if (speed < -1)
 				this.breakingForce = maxBreakingForce;
 			else this.engineForce = maxEngineForce;
@@ -165,11 +194,11 @@ class Kart {
 			else this.engineForce = -maxEngineForce / 2;
         }
         if(bMoveLeft) {
-            if (this.vehicleSteering < steeringClamp)
+            if (this.vehicleSteering < this.steeringClamp)
 				this.vehicleSteering += steeringIncrement;
         }
         else if(bMoveRight){
-            if (this.vehicleSteering > -steeringClamp)
+            if (this.vehicleSteering > -this.steeringClamp)
 				this.vehicleSteering -= steeringIncrement;
         }
         else { //return steering to default
@@ -193,12 +222,13 @@ class Kart {
         const BACK_LEFT = 2;
         const BACK_RIGHT = 3;
 
+        //console.log("engine " + this.engineForce + " brake " + this.breakingForce);
         //apply force to back wheels
         this.vehicle.applyEngineForce(this.engineForce, BACK_LEFT);
         this.vehicle.applyEngineForce(this.engineForce, BACK_RIGHT);
         
-        //this.vehicle.applyEngineForce(this.engineForce / 2, FRONT_LEFT);
-        //this.vehicle.applyEngineForce(this.engineForce / 2, FRONT_RIGHT);
+        this.vehicle.applyEngineForce(this.engineForce / 2, FRONT_LEFT);
+        this.vehicle.applyEngineForce(this.engineForce / 2, FRONT_RIGHT);
         
         this.vehicle.setBrake(this.breakingForce / 2, FRONT_LEFT);
 		this.vehicle.setBrake(this.breakingForce / 2, FRONT_RIGHT);
@@ -208,23 +238,41 @@ class Kart {
         this.vehicle.setSteeringValue(this.vehicleSteering, FRONT_LEFT);
         this.vehicle.setSteeringValue(this.vehicleSteering, FRONT_RIGHT);
         
-        var tm, p, q;
-        for(let i = 0; i < this.wheels.length; i++) {
-            tm = this.vehicle.getWheelTransformWS(i);
-            p = tm.getOrigin();
-            q = tm.getRotation();
-            this.wheels[i].mesh.position.set( p.x(), p.y(), p.z() );
-            this.wheels[i].mesh.quaternion.set( q.x(), q.y(), q.z(), q.w() );
-        }
+        // var tm, p, q;
+        // for(let i = 0; i < this.wheels.length; i++) {
+        //     tm = this.vehicle.getWheelTransformWS(i);
+        //     p = tm.getOrigin();
+        //     q = tm.getRotation();
+        //     this.wheels[i].mesh.position.set( p.x(), p.y(), p.z() );
+        //     this.wheels[i].mesh.quaternion.set( q.x(), q.y(), q.z(), q.w() );
+        // }
     }
     tick() {
+        var forward = new THREE.Vector3();
+        this.gameObject.mesh.getWorldDirection(forward);
+        forward.normalize();
+        forward.multiplyScalar(500.0);
         if(bDrift && !this.drifting) {
             console.log("jump");
             this.drifting = true;
-            this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(0.0, 2000.0, 0.0));
+            this.steeringClamp = .2;
+            this.vehicleSteering = Math.min(this.vehicleSteering, this.steeringClamp);
+            this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClamp);
+
+            //apply slip friction to back wheels
+            const slipFriction = 30;
+            this.wheels[2].wheelInfo.set_m_frictionSlip(slipFriction);
+            this.wheels[3].wheelInfo.set_m_frictionSlip(slipFriction);
+
+            //this.wheels[2].wheelInfo
+            //this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(0.0, 2000.0, 0.0));
+            this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 1000.0, forward.z));
         }
         else if(!bDrift && this.drifting) {
             this.drifting = false;
+            this.wheels[2].wheelInfo.set_m_frictionSlip(this.wheels[2].friction);
+            this.wheels[3].wheelInfo.set_m_frictionSlip(this.wheels[3].friction);
+            this.steeringClamp = steeringClamp;
         }
     }
 }

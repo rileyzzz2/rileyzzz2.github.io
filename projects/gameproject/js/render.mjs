@@ -81,6 +81,17 @@ export function startRenderer() {
         requestAnimationFrame(render);
         let deltaTime = clock.getDelta();
         //if(physicsWorld)
+
+        //camera smoothing
+        // if(localPlayer) {
+        //     var target = new THREE.Vector3();
+        //     var lookTarget = localPlayer.gameObject.mesh.position.clone();
+        //     lookTarget.y += 0.4;
+        //     target.setFromMatrixPosition(localPlayer.cameraTarget.matrixWorld);
+        //     camera.position.lerp(target, 0.1);
+        //     camera.lookAt(lookTarget);
+        // }
+
         physicsWorld.stepSimulation(deltaTime, 10);
 
         for(let i = 0; i < objects.length; i++)
@@ -98,6 +109,9 @@ export function startRenderer() {
         //         objThree.quaternion.set( q.x(), q.y(), q.z(), q.w() );
         //     }
         // }
+
+        
+        
 
         //DEBUG MOVEMENT =====================================================================
         // var forward = new THREE.Vector3();
