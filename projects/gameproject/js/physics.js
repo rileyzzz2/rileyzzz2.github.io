@@ -76,8 +76,8 @@ function initPhysicsWorld() {
 
     };
 
-    callback.pointer = Ammo.addFunction(callback, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
-    physicsWorld.setContactAddedCallback(callback.pointer);
+    contactCallback.pointer = Ammo.addFunction(contactCallback, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
+    physicsWorld.setContactAddedCallback(contactCallback.pointer);
 }
 
 function createTransform(mesh) {
