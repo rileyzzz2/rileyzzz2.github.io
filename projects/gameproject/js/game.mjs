@@ -53,7 +53,7 @@ async function beginPlay() {
     let plane = new THREE.Mesh(planemesh, planeMaterial);
     plane.castShadow = true;
     scene.add(plane);
-    plane.position.set(0.0, -10.0, 0.0);
+    plane.position.set(0.0, -2.0, 0.0);
     plane.scale.set(100.0, 0.2, 100.0);
     //createRigidBox(plane, 0.0);
     let transform = createTransform(plane);

@@ -176,7 +176,8 @@ class Kart {
             this.wheels[i].mesh.position.set( p.x(), p.y(), p.z() );
             this.wheels[i].mesh.quaternion.set( q.x(), q.y(), q.z(), q.w() );
         }
-
+    }
+    movementTick() {
         const steeringIncrement = .04;
         const maxEngineForce = 3000; //2000
         const maxBreakingForce = 200;
@@ -204,15 +205,14 @@ class Kart {
 				this.vehicleSteering -= steeringIncrement;
         }
         else { //return steering to default
-            if (this.vehicleSteering < -steeringIncrement)
-				this.vehicleSteering += steeringIncrement;
-			else {
-			    if (this.vehicleSteering > steeringIncrement)
-					this.vehicleSteering -= steeringIncrement;
-				else {
-					this.vehicleSteering = 0;
-				}
-			}
+            if(!this.drifting) {
+                if (this.vehicleSteering < -steeringIncrement)
+                    this.vehicleSteering += steeringIncrement;
+                else if (this.vehicleSteering > steeringIncrement)
+                    this.vehicleSteering -= steeringIncrement;
+                else
+                    this.vehicleSteering = 0;
+            }
         }
 
         //top speed
@@ -239,22 +239,14 @@ class Kart {
         
         this.vehicle.setSteeringValue(this.vehicleSteering, FRONT_LEFT);
         this.vehicle.setSteeringValue(this.vehicleSteering, FRONT_RIGHT);
-        
-        // var tm, p, q;
-        // for(let i = 0; i < this.wheels.length; i++) {
-        //     tm = this.vehicle.getWheelTransformWS(i);
-        //     p = tm.getOrigin();
-        //     q = tm.getRotation();
-        //     this.wheels[i].mesh.position.set( p.x(), p.y(), p.z() );
-        //     this.wheels[i].mesh.quaternion.set( q.x(), q.y(), q.z(), q.w() );
-        // }
     }
     tick() {
+        var speed = this.vehicle.getCurrentSpeedKmHour();
         var forward = new THREE.Vector3();
         this.gameObject.mesh.getWorldDirection(forward);
         forward.normalize();
         forward.multiplyScalar(500.0);
-        if(bDrift && !this.drifting && (bMoveLeft || bMoveRight)) {
+        if(bDrift && !this.drifting && speed > 1 && (bMoveLeft || bMoveRight)) {
             console.log("jump");
             this.drifting = true;
             if(bMoveLeft) {
@@ -289,6 +281,8 @@ class Kart {
             this.vehicleSteering = Math.min(this.vehicleSteering, this.steeringClampL);
             this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClampR);
         }
+
+        this.movementTick();
     }
 }
 
