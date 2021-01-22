@@ -127,7 +127,9 @@ class Kart {
         let transform = createTransform(mesh);
 
         var start = startPos.clone();
-        start.z += 4.0;
+        start.x = 0;
+        start.z = 0;
+        start.y = 100.0;
         transform.setOrigin(pvec(start));
 
         let motionState = new Ammo.btDefaultMotionState( transform );

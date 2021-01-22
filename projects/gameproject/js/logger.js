@@ -3,7 +3,7 @@ function print(msg) {
     output.textContent += msg + '\n';
 }
 window.onerror = function(message, source, lineno, colno, error) {
-    print(message + " line: " + lineno + " col: " + colno);
+    print(message + " line: " + lineno + " col: " + colno + " src: " + source);
     //this.output("ERROR: " + message + " line: " + lineno + " col: " + colno);
 };
 

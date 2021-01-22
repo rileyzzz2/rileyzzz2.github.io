@@ -22,22 +22,32 @@ class Map {
 
         this.mapScene.traverse(function (child) {
             if(child.isMesh) {
-                const collideMesh = new Ammo.btTriangleMesh(true, true);
+                let collideMesh = new Ammo.btTriangleMesh(true, true);
+                collideMesh.setScaling(pvec(child.scale)); //.getWorldScale
+
+                //const mapTransform = new Ammo.btTransform();
+                //mapTransform.setIdentity();
+                let mapTransform = createTransform(child);
+                let mapMotionState = new Ammo.btDefaultMotionState(mapTransform);
+
                 let geom = new THREE.Geometry().fromBufferGeometry(child.geometry); //confirmed
                 let vertices = geom.vertices;
-                let indices = geom.indices;
+                let faces = geom.faces;
+                console.log("mesh has " + faces.length + " faces");
+                console.log("face " + vertices[faces[0].a].x + " " + vertices[faces[0].a].y + " " + vertices[faces[0].a].z);
                 //mesh.setScaling(new Ammo.btVector3(scale[0], scale[1], scale[2]));
-                for(let i = 0; i * 3 < indices.length; i++) {
-                    mesh.addTriangle(
-                        new Ammo.btVector3(vertices[indices[i * 3] * 3], vertices[indices[i * 3] * 3 + 1], vertices[indices[i * 3] * 3 + 2]),
-                        new Ammo.btVector3(vertices[indices[i * 3 + 1] * 3], vertices[indices[i * 3 + 1] * 3 + 1], vertices[indices[i * 3 + 1] * 3 + 2]),
-                        new Ammo.btVector3(vertices[indices[i * 3 + 2] * 3], vertices[indices[i * 3 + 2] * 3 + 1], vertices[indices[i * 3 + 2] * 3 + 2]),
+                for(let i = 0; i < faces.length; i++) {
+                    let face = faces[i];
+                    collideMesh.addTriangle(
+                        pvec(vertices[face.a]),
+                        pvec(vertices[face.b]),
+                        pvec(vertices[face.c]),
                         false
                     );
                 }
-                const collideShape = new Ammo.btBvhTriangleMeshShape(collideMesh, true, true);
-                const localInertia = new Ammo.btVector3(0, 0, 0);
-                const object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0, motionState, collideShape, localInertia));
+                let collideShape = new Ammo.btBvhTriangleMeshShape(collideMesh, true, true);
+                let localInertia = new Ammo.btVector3(0, 0, 0);
+                let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0, mapMotionState, collideShape, localInertia));
                 physicsWorld.addRigidBody(object);
             }
         });
