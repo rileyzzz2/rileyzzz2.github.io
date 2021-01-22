@@ -41,3 +41,7 @@ class GameObject {
         }
     }
 }
+
+//helpers
+const CF_CUSTOM_MATERIAL_CALLBACK = 8;
+const TRIANGLE_SHAPE_PROXYTYPE = 1; //unsure

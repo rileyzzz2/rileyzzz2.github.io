@@ -140,7 +140,9 @@ class Kart {
 
         shape.calculateLocalInertia( mass, localInertia );
         var body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo( mass, motionState, shape, localInertia ));
+        body.setCollisionFlags(body.collisionFlags | CF_CUSTOM_MATERIAL_CALLBACK);
         physicsWorld.addRigidBody(body);
+        
         this.gameObject = new GameObject(mesh, body);
         objects.push(this.gameObject);
 

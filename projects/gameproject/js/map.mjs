@@ -64,6 +64,9 @@ class Map {
                 let localInertia = new Ammo.btVector3(0, 0, 0);
                 collideShape.calculateLocalInertia( 0.0, localInertia );
                 let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0.0, mapMotionState, collideShape, localInertia));
+                
+                object.setCollisionFlags(object.collisionFlags | CF_CUSTOM_MATERIAL_CALLBACK);
+
                 physicsWorld.addRigidBody(object);
             }
         });

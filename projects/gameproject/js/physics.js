@@ -53,6 +53,27 @@
 //         return true;
 // }
 
+function contact_obj(cp, colObj, partId, index) {
+    //const btCollisionShape *shape = colObj->getCollisionShape();
+    const shape = colObj.getCollisionShape();
+    const parent = colObj.getRootCollisionShape();
+    //if (shape->getShapeType() != TRIANGLE_SHAPE_PROXYTYPE)
+    if(shape.getShapeType() !== TRIANGLE_SHAPE_PROXYTYPE) {
+        console.log("not triangle shape");
+        return;
+    }
+
+    if(parent === null) {
+        console.log("null parent");
+        return;
+    }
+    if(parent.getShapeType() !== TRIANGLE_SHAPE_PROXYTYPE) {
+        console.log("parent not triangle shape");
+        return;
+    }
+
+}
+
 let physicsWorld;
 var rigidBodies = [], tmpTrans;
 function initPhysicsWorld() {
@@ -68,17 +89,22 @@ function initPhysicsWorld() {
     //https://github.com/kripken/ammo.js/blob/a4bec933859e452acd2c18e4152ac2a6a95e806f/tests/add-function.js
     console.log("adding callback");
     //world.set_gContactAddedCallback
-    let callback = Ammo.addFunction((cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => {
-        alert("contact!");
-        colObj0Wrap = Ammo.wrapPointer(colObj0Wrap, Ammo.btCollisionObjectWrapper);
-        let colObj0 = colObj0Wrap.getCollisionObject();
+    let callback = Ammo.addFunction((cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => { //cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1
+        console.log("contact!");
+        let colObj0 = Ammo.wrapPointer(colObj0, Ammo.btCollisionObjectWrapper);
+        //let colObj0 = colObj0Wrap.getCollisionObject();
 
-        colObj1Wrap = Ammo.wrapPointer(colObj1Wrap, Ammo.btCollisionObjectWrapper);
-        let colObj1 = colObj1Wrap.getCollisionObject();
+        let colObj1 = Ammo.wrapPointer(colObj1, Ammo.btCollisionObjectWrapper);
+        //let colObj1 = colObj1Wrap.getCollisionObject();
 
+        contact_obj(cp, colObj0, partId0, index0);
+        contact_obj(cp, colObj1, partId1, index1);
+//         contact_added_callback_obj(cp, colObj0, partId0, index0);
+//         contact_added_callback_obj(cp, colObj1, partId1, index1);
     }, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
     //physicsWorld.set_gContactAddedCallback(callback);
     physicsWorld.setContactAddedCallback(callback);
+    console.log("added callback");
 }
 
 function createTransform(mesh) {
