@@ -2,6 +2,7 @@
 
 class Wheel {
     constructor(isFront, vehicle, pos, radius, width, tuning) {
+        this.driftDir = 0;
         this.HalfTrack = 1;
         this.radius = radius;
         this.width = width;
@@ -57,7 +58,8 @@ const steeringClamp = .25;
 class Kart {
     constructor() {
         this.drifting = false;
-        this.steeringClamp = steeringClamp;
+        this.steeringClampL = steeringClamp;
+        this.steeringClampR = steeringClamp;
         //vehicle variables
         var chassisWidth = 1.0; //1.8
         var chassisHeight = .2; //.6
@@ -194,11 +196,11 @@ class Kart {
 			else this.engineForce = -maxEngineForce / 2;
         }
         if(bMoveLeft) {
-            if (this.vehicleSteering < this.steeringClamp)
+            if (this.vehicleSteering < this.steeringClampL)
 				this.vehicleSteering += steeringIncrement;
         }
         else if(bMoveRight){
-            if (this.vehicleSteering > -this.steeringClamp)
+            if (this.vehicleSteering > -this.steeringClampR)
 				this.vehicleSteering -= steeringIncrement;
         }
         else { //return steering to default
@@ -252,12 +254,22 @@ class Kart {
         this.gameObject.mesh.getWorldDirection(forward);
         forward.normalize();
         forward.multiplyScalar(500.0);
-        if(bDrift && !this.drifting) {
+        if(bDrift && !this.drifting && (bMoveLeft || bMoveRight)) {
             console.log("jump");
             this.drifting = true;
-            this.steeringClamp = .2;
-            this.vehicleSteering = Math.min(this.vehicleSteering, this.steeringClamp);
-            this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClamp);
+            if(bMoveLeft) {
+                this.steeringClampL = 0.2;
+                this.steeringClampR = -0.05;
+            }
+            else if(bMoveRight) {
+                this.steeringClampL = -0.05;
+                this.steeringClampR = 0.2;
+            }
+
+            this.vehicleSteering = Math.min(this.vehicleSteering, this.steeringClampL);
+            this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClampR);
+            //this.vehicleSteering = Math.min(this.vehicleSteering, this.steeringClamp);
+            //this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClamp);
 
             //apply slip friction to back wheels
             const slipFriction = 30;
@@ -272,7 +284,10 @@ class Kart {
             this.drifting = false;
             this.wheels[2].wheelInfo.set_m_frictionSlip(this.wheels[2].friction);
             this.wheels[3].wheelInfo.set_m_frictionSlip(this.wheels[3].friction);
-            this.steeringClamp = steeringClamp;
+            this.steeringClampL = steeringClamp;
+            this.steeringClampR = steeringClamp;
+            this.vehicleSteering = Math.min(this.vehicleSteering, this.steeringClampL);
+            this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClampR);
         }
     }
 }
