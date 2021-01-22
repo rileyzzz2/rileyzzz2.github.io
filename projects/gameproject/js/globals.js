@@ -1,10 +1,24 @@
 var canvas = $("#gameWindow")[0];
 var objects = [];
 var thinkers = [];
+
+//resources
+var gameModels = {};
+
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 //var cameraHelper = new THREE.CameraHelper(camera);
 //scene.add(cameraHelper);
+
+function pvec(vec)
+{
+    return new Ammo.btVector3(vec.x, vec.y, vec.z);
+}
+function pquat(quat)
+{
+    return new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w);
+}
+
 window.setInterval(function() {
     for(let i = 0; i < thinkers.length; i++)
         thinkers[i].tick();

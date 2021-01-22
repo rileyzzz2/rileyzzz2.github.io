@@ -1,3 +1,4 @@
+import {initResources} from './res.mjs';
 import {startRenderer} from './render.mjs';
 
 Ammo().then(beginPlay);
@@ -30,14 +31,16 @@ function onClick() {
     // createRigidBox(newcube, 0.2);
 }
 
-function beginPlay() {
+async function beginPlay() {
+    await initResources();
     initPhysicsWorld();
     startRenderer();
 
     localPlayer = new Kart();
     //camera.parent = localPlayer.gameObject.mesh;
+    //camera.position.x = 2;
     camera.position.y = 2;
-    camera.position.z = 5;
+    camera.position.z = -3;
     camera.lookAt(0.0, 0.0, 0.0);
 
     const mass = 0.0;
@@ -46,7 +49,7 @@ function beginPlay() {
     plane.castShadow = true;
     scene.add(plane);
     plane.position.set(0.0, -10.0, 0.0);
-    plane.scale.set(40.0, 0.2, 40.0);
+    plane.scale.set(100.0, 0.2, 100.0);
     //createRigidBox(plane, 0.0);
     let transform = createTransform(plane);
     let motionState = new Ammo.btDefaultMotionState( transform );

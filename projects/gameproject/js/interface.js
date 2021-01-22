@@ -2,6 +2,7 @@ var bMoveForward = false;
 var bMoveBackward = false;
 var bMoveRight = false;
 var bMoveLeft = false;
+var bDrift = false;
 
 function ProcessInput (key, state) {
     switch(event.key)
@@ -17,6 +18,10 @@ function ProcessInput (key, state) {
         break;
     case "ArrowLeft":
         bMoveLeft = state;
+        break;
+    case " ":
+        bDrift = state;
+        break;
     default:
         break;
     }

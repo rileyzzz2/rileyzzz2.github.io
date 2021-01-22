@@ -16,15 +16,6 @@ function initPhysicsWorld() {
     physicsWorld.setGravity(new Ammo.btVector3(0.0, -9.8, 0.0));
 }
 
-function pvec(vec)
-{
-    return new Ammo.btVector3(vec.x, vec.y, vec.z);
-}
-function pquat(quat)
-{
-    return new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w);
-}
-
 function createTransform(mesh) {
     let transform = new Ammo.btTransform();
     transform.setIdentity();
