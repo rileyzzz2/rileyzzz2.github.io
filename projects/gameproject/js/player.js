@@ -11,7 +11,7 @@ class Wheel {
         var suspensionStiffness = 2.0;
         var suspensionDamping = 2.3; //2.3
         var suspensionCompression = 4.4;
-        var suspensionRestLength = 0.1; //0.6
+        var suspensionRestLength = 0.3; //0.6 0.1
         var rollInfluence = 0.2;
 
         var wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0);
@@ -127,9 +127,10 @@ class Kart {
         let transform = createTransform(mesh);
 
         var start = startPos.clone();
-        start.x = 0;
-        start.z = 0;
-        start.y = 100.0;
+        //start.x = 0;
+        //start.z = 0;
+        //start.y = 100.0;
+        start.y += 8.0;
         transform.setOrigin(pvec(start));
 
         let motionState = new Ammo.btDefaultMotionState( transform );
@@ -187,7 +188,7 @@ class Kart {
     }
     movementTick() {
         const steeringIncrement = .04;
-        const maxEngineForce = 3000; //2000
+        const maxEngineForce = 3000; //2000 3000
         const maxBreakingForce = 200;
 
         var speed = this.vehicle.getCurrentSpeedKmHour();
@@ -277,7 +278,6 @@ class Kart {
             this.wheels[3].wheelInfo.set_m_frictionSlip(slipFriction);
 
             //this.wheels[2].wheelInfo
-            //this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(0.0, 2000.0, 0.0));
             this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 1000.0, forward.z));
         }
         else if(!bDrift && this.drifting) {

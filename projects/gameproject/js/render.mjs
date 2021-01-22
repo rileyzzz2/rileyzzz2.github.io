@@ -92,7 +92,7 @@ export function startRenderer() {
         //     camera.lookAt(lookTarget);
         // }
 
-        physicsWorld.stepSimulation(deltaTime, 10);
+        physicsWorld.stepSimulation(deltaTime, 25); //10
 
         for(let i = 0; i < objects.length; i++)
             objects[i].update(deltaTime);

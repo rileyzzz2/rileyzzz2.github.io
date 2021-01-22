@@ -4,6 +4,55 @@
 //https://github.com/kripken/ammo.js/blob/master/examples/webgl_demo_softbody_volume/index.html
 
 
+//https://pybullet.org/Bullet/phpBB3/viewtopic.php?f=9&t=3052&start=15
+// void contact_added_callback_obj (btManifoldPoint& cp,
+//                                  const btCollisionObject* colObj,
+//                                  int partId, int index)
+// {
+//         (void) partId;
+//         (void) index;
+//         const btCollisionShape *shape = colObj->getCollisionShape();
+
+//         if (shape->getShapeType() != TRIANGLE_SHAPE_PROXYTYPE) return;
+//         const btTriangleShape *tshape =
+//                static_cast<const btTriangleShape*>(colObj->getCollisionShape());
+
+
+//         const btCollisionShape *parent = colObj->getRootCollisionShape();
+//         if (parent == NULL) return;
+//         if (parent->getShapeType() != TRIANGLE_MESH_SHAPE_PROXYTYPE) return;
+
+//         btTransform orient = colObj->getWorldTransform();
+//         orient.setOrigin( btVector3(0.0f,0.0f,0.0f ) );
+
+//         btVector3 v1 = tshape->m_vertices1[0];
+//         btVector3 v2 = tshape->m_vertices1[1];
+//         btVector3 v3 = tshape->m_vertices1[2];
+
+//         btVector3 normal = (v2-v1).cross(v3-v1);
+
+//         normal = orient * normal;
+//         normal.normalize();
+
+//         btScalar dot = normal.dot(cp.m_normalWorldOnB);
+//         btScalar magnitude = cp.m_normalWorldOnB.length();
+//         normal *= dot > 0 ? magnitude : -magnitude;
+
+//         cp.m_normalWorldOnB = normal;
+// }
+
+// bool contact_added_callback (btManifoldPoint& cp,
+//                              const btCollisionObject* colObj0,
+//                              int partId0, int index0,
+//                              const btCollisionObject* colObj1,
+//                              int partId1, int index1)
+// {
+//         contact_added_callback_obj(cp, colObj0, partId0, index0);
+//         contact_added_callback_obj(cp, colObj1, partId1, index1);
+//         //std::cout << to_ogre(cp.m_normalWorldOnB) << std::endl;
+//         return true;
+// }
+
 let physicsWorld;
 var rigidBodies = [], tmpTrans;
 function initPhysicsWorld() {
@@ -14,6 +63,21 @@ function initPhysicsWorld() {
 
     physicsWorld           = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
     physicsWorld.setGravity(new Ammo.btVector3(0.0, -9.8, 0.0));
+
+
+    //https://github.com/kripken/ammo.js/blob/a4bec933859e452acd2c18e4152ac2a6a95e806f/tests/add-function.js
+
+    const contactCallback = (cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => {
+        colObj0Wrap = Ammo.wrapPointer(colObj0Wrap, Ammo.btCollisionObjectWrapper);
+        let colObj0 = colObj0Wrap.getCollisionObject();
+
+        colObj1Wrap = Ammo.wrapPointer(colObj1Wrap, Ammo.btCollisionObjectWrapper);
+        let colObj1 = colObj1Wrap.getCollisionObject();
+
+    };
+
+    callback.pointer = Ammo.addFunction(callback, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
+    physicsWorld.setContactAddedCallback(callback.pointer);
 }
 
 function createTransform(mesh) {

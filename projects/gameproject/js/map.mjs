@@ -3,11 +3,15 @@ import { loadModel } from './res.mjs';
 class Map {
     constructor(mapScene) {
         this.mapScene = mapScene;
-        var startPos, startQuat;
-        this.mapScene.traverse(function (child) {
+
+        this.mapScene.scale.multiplyScalar(0.5);
+
+        var startPos = new THREE.Vector3()
+        var startQuat = new THREE.Quaternion();
+        this.mapScene.traverse((child) => {
             if(child.name === "course_start") {
-                startPos = child.position;
-                startQuat = child.quaternion;
+                child.getWorldPosition(startPos);
+                child.getWorldQuaternion(startQuat);
             }
         });
         this.startPos = startPos;
@@ -19,15 +23,24 @@ class Map {
         //create map physics
         //const mapCollision = new Ammo.btTriangleMesh(true, true);
 
-
         this.mapScene.traverse(function (child) {
             if(child.isMesh) {
                 let collideMesh = new Ammo.btTriangleMesh(true, true);
-                collideMesh.setScaling(pvec(child.scale)); //.getWorldScale
+                let childPos = new THREE.Vector3();
+                let childQuat = new THREE.Quaternion();
+                let childScale = new THREE.Vector3();
+                child.getWorldPosition(childPos);
+                child.getWorldQuaternion(childQuat);
+                child.getWorldScale(childScale);
+                //collideMesh.setScaling(pvec(child.scale)); //.getWorldScale
+                collideMesh.setScaling(pvec(childScale));
 
-                //const mapTransform = new Ammo.btTransform();
-                //mapTransform.setIdentity();
-                let mapTransform = createTransform(child);
+                const mapTransform = new Ammo.btTransform();
+                mapTransform.setIdentity();
+                mapTransform.setOrigin(pvec(childPos));
+                mapTransform.setRotation(pquat(childQuat));
+
+                //let mapTransform = createTransform(child);
                 let mapMotionState = new Ammo.btDefaultMotionState(mapTransform);
 
                 let geom = new THREE.Geometry().fromBufferGeometry(child.geometry); //confirmed
@@ -42,12 +55,15 @@ class Map {
                         pvec(vertices[face.a]),
                         pvec(vertices[face.b]),
                         pvec(vertices[face.c]),
-                        false
+                        true //remove doubles
                     );
                 }
                 let collideShape = new Ammo.btBvhTriangleMeshShape(collideMesh, true, true);
+                //let collideShape = new Ammo.btConvexTriangleMeshShape(collideMesh, true);
+                collideShape.setMargin( 0.15 );
                 let localInertia = new Ammo.btVector3(0, 0, 0);
-                let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0, mapMotionState, collideShape, localInertia));
+                collideShape.calculateLocalInertia( 0.0, localInertia );
+                let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0.0, mapMotionState, collideShape, localInertia));
                 physicsWorld.addRigidBody(object);
             }
         });
