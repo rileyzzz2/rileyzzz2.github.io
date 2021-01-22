@@ -66,18 +66,19 @@ function initPhysicsWorld() {
 
 
     //https://github.com/kripken/ammo.js/blob/a4bec933859e452acd2c18e4152ac2a6a95e806f/tests/add-function.js
-
-    const contactCallback = (cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => {
+    console.log("adding callback");
+    //world.set_gContactAddedCallback
+    let callback = Ammo.addFunction((cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => {
+        alert("contact!");
         colObj0Wrap = Ammo.wrapPointer(colObj0Wrap, Ammo.btCollisionObjectWrapper);
         let colObj0 = colObj0Wrap.getCollisionObject();
 
         colObj1Wrap = Ammo.wrapPointer(colObj1Wrap, Ammo.btCollisionObjectWrapper);
         let colObj1 = colObj1Wrap.getCollisionObject();
 
-    };
-
-    contactCallback.pointer = Ammo.addFunction(contactCallback, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
-    physicsWorld.setContactAddedCallback(contactCallback.pointer);
+    }, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
+    //physicsWorld.set_gContactAddedCallback(callback);
+    physicsWorld.setContactAddedCallback(callback);
 }
 
 function createTransform(mesh) {

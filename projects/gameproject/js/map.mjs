@@ -46,8 +46,8 @@ class Map {
                 let geom = new THREE.Geometry().fromBufferGeometry(child.geometry); //confirmed
                 let vertices = geom.vertices;
                 let faces = geom.faces;
-                console.log("mesh has " + faces.length + " faces");
-                console.log("face " + vertices[faces[0].a].x + " " + vertices[faces[0].a].y + " " + vertices[faces[0].a].z);
+                //console.log("mesh has " + faces.length + " faces");
+                //console.log("face " + vertices[faces[0].a].x + " " + vertices[faces[0].a].y + " " + vertices[faces[0].a].z);
                 //mesh.setScaling(new Ammo.btVector3(scale[0], scale[1], scale[2]));
                 for(let i = 0; i < faces.length; i++) {
                     let face = faces[i];
