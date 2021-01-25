@@ -11,7 +11,7 @@ class Wheel {
         var suspensionStiffness = 2.0;
         var suspensionDamping = 2.3; //2.3
         var suspensionCompression = 4.4;
-        var suspensionRestLength = 0.3; //0.6 0.1
+        var suspensionRestLength = 0.3; //0.6 0.3
         var rollInfluence = 0.2;
 
         var wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0);
@@ -255,16 +255,23 @@ class Kart {
         var speed = this.vehicle.getCurrentSpeedKmHour();
         var forward = new THREE.Vector3();
         this.gameObject.mesh.getWorldDirection(forward);
+        var right = forward.clone();
+        right.applyAxisAngle(new THREE.Vector3( 0, 1, 0 ), -Math.PI / 2);
+        right.y = 0.0;
+        right.normalize();
+
         forward.normalize();
         forward.multiplyScalar(500.0);
         if(bDrift && !this.drifting && speed > 1 && (bMoveLeft || bMoveRight)) {
             console.log("jump");
             this.drifting = true;
             if(bMoveLeft) {
+                this.driftDir = -1;
                 this.steeringClampL = 0.2;
                 this.steeringClampR = -0.05;
             }
             else if(bMoveRight) {
+                this.driftDir = 1;
                 this.steeringClampL = -0.05;
                 this.steeringClampR = 0.2;
             }
@@ -284,6 +291,7 @@ class Kart {
         }
         else if(!bDrift && this.drifting) {
             this.drifting = false;
+            this.driftDir = 0;
             this.wheels[2].wheelInfo.set_m_frictionSlip(this.wheels[2].friction);
             this.wheels[3].wheelInfo.set_m_frictionSlip(this.wheels[3].friction);
             this.steeringClampL = steeringClamp;
@@ -292,6 +300,12 @@ class Kart {
             this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClampR);
         }
 
+        //sidways drift movement
+        if(this.drifting)
+        {
+            right.multiplyScalar(-1 * this.driftDir * speed);
+            this.gameObject.rigidBody.applyCentralImpulse(pvec(right));
+        }
         this.movementTick();
     }
 }
