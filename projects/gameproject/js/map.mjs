@@ -1,7 +1,7 @@
 import { loadModel } from './res.mjs';
 //https://stackoverflow.com/questions/59665854/ammo-js-custom-mesh-collision-with-sphere
 
-function createFaceCollision(child, geom, face) {
+function createFaceCollision(child, geom, faces) {
     let collideMesh = new Ammo.btTriangleMesh(false, true);
     let childPos = new THREE.Vector3();
     let childQuat = new THREE.Quaternion();
@@ -21,17 +21,23 @@ function createFaceCollision(child, geom, face) {
     let mapMotionState = new Ammo.btDefaultMotionState(mapTransform);
 
     let vertices = geom.vertices;
-    collideMesh.addTriangle(
+    for(let i = 0; i < faces.length; i++)
+    {
+        let face = faces[i];
+        collideMesh.addTriangle(
             pvec(vertices[face.a]),
             pvec(vertices[face.b]),
             pvec(vertices[face.c]),
             false //remove doubles
         );
+    }
+    
 
-    //let collideShape = new Ammo.btBvhTriangleMeshShape(collideMesh, true, true);
-    let collideShape = new Ammo.btConvexTriangleMeshShape(collideMesh, true);
+    let collideShape = new Ammo.btBvhTriangleMeshShape(collideMesh, true, true);
+    mapCollisionData[collideShape] = geom;
+    //let collideShape = new Ammo.btConvexTriangleMeshShape(collideMesh, true);
     //let collideShape = collideMesh;
-    collideShape.setMargin( 0.1 );
+    collideShape.setMargin( 0.2 );
     let localInertia = new Ammo.btVector3(0, 0, 0);
     collideShape.calculateLocalInertia( 0.0, localInertia );
     let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0.0, mapMotionState, collideShape, localInertia));
@@ -76,6 +82,20 @@ class Map {
                 let materialGroup = exp.exec(child.material.name)[1];
 
                 if(materialGroup === "wall" ||materialGroup === "road" || materialGroup === "offroad") {
+                    let geom = new THREE.Geometry().fromBufferGeometry(child.geometry); //confirmed
+                    let faces = geom.faces;
+                    //createFaceCollision(child, geom, face)
+                    //console.log("Creating collision for " + child.material.name);
+                    // let chunk = 2000;
+                    // for(let i = 0; i < faces.length; i += chunk) {
+                    //     let tempFaces = faces.slice(i, i + chunk);
+                    //     createFaceCollision(child, geom, tempFaces);
+                    // }
+                    createFaceCollision(child, geom, faces);
+
+                    // for(let i = 0; i < faces.length; i++)
+                    //     createFaceCollision(child, geom, [faces[i]]);
+                    //console.log("Done.");
                     // let collideMesh = new Ammo.btTriangleMesh(true, true);
                     // //let collideMesh = new Ammo.btConvexHullShape();
                     // let childPos = new THREE.Vector3();

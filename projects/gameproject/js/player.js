@@ -64,7 +64,7 @@ class Kart {
         var chassisWidth = 1.0; //1.8
         var chassisHeight = .2; //.6
         var chassisLength = 2.2; //2
-        var massVehicle = 800;
+        var massVehicle = 800; //800
 
         var wheelAxisBackPosition = -1;
         var wheelAxisHeightBack = .3;
@@ -130,6 +130,7 @@ class Kart {
         //start.x = 0;
         //start.z = 0;
         //start.y = 100.0;
+        //start.y += 4.0;
         start.y += 4.0;
         transform.setOrigin(pvec(start));
 

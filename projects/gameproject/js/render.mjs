@@ -88,7 +88,7 @@ export function startRenderer() {
         //     var lookTarget = localPlayer.gameObject.mesh.position.clone();
         //     lookTarget.y += 0.4;
         //     target.setFromMatrixPosition(localPlayer.cameraTarget.matrixWorld);
-        //     camera.position.lerp(target, 0.1);
+        //     camera.position.lerp(target, 0.2);
         //     camera.lookAt(lookTarget);
         // }
 
