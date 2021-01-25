@@ -24,16 +24,18 @@ class Map {
         //const mapCollision = new Ammo.btTriangleMesh(true, true);
 
         this.mapScene.traverse(function (child) {
-            if(child.isMesh) {
+            let isRelevant = (child.name === "polygon147" || child.name === "polygon145");
+            if(child.isMesh && isRelevant) {
                 let collideMesh = new Ammo.btTriangleMesh(true, true);
+                //let collideMesh = new Ammo.btConvexHullShape();
                 let childPos = new THREE.Vector3();
                 let childQuat = new THREE.Quaternion();
                 let childScale = new THREE.Vector3();
                 child.getWorldPosition(childPos);
                 child.getWorldQuaternion(childQuat);
                 child.getWorldScale(childScale);
-                //collideMesh.setScaling(pvec(child.scale)); //.getWorldScale
                 collideMesh.setScaling(pvec(childScale));
+                //collideMesh.setLocalScaling(pvec(childScale));
 
                 const mapTransform = new Ammo.btTransform();
                 mapTransform.setIdentity();
@@ -57,9 +59,13 @@ class Map {
                         pvec(vertices[face.c]),
                         true //remove doubles
                     );
+                    // collideMesh.addPoint(pvec(vertices[face.a]), true);
+                    // collideMesh.addPoint(pvec(vertices[face.b]), true);
+                    // collideMesh.addPoint(pvec(vertices[face.c]), true);
                 }
                 let collideShape = new Ammo.btBvhTriangleMeshShape(collideMesh, true, true);
                 //let collideShape = new Ammo.btConvexTriangleMeshShape(collideMesh, true);
+                //let collideShape = collideMesh;
                 collideShape.setMargin( 0.15 );
                 let localInertia = new Ammo.btVector3(0, 0, 0);
                 collideShape.calculateLocalInertia( 0.0, localInertia );

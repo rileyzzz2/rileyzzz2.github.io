@@ -57,6 +57,11 @@ function contact_obj(cp, colObj, partId, index) {
     //const btCollisionShape *shape = colObj->getCollisionShape();
     const shape = colObj.getCollisionShape();
     //const parent = colObj.getRootCollisionShape();
+    // console.log("shape properties: ");
+    // Object.getOwnPropertyNames(shape).map(item => {
+    //     console.log(item);
+    // });
+    console.log("margin " + shape);
 
     //if (shape->getShapeType() != TRIANGLE_SHAPE_PROXYTYPE)
 
@@ -81,6 +86,20 @@ function contact_obj(cp, colObj, partId, index) {
     console.log("vert: " + shape.a);
     //Object.keys(shape).forEach((prop)=> console.log(prop));
 
+//         btVector3 v1 = tshape->m_vertices1[0];
+//         btVector3 v2 = tshape->m_vertices1[1];
+//         btVector3 v3 = tshape->m_vertices1[2];
+
+//         btVector3 normal = (v2-v1).cross(v3-v1);
+
+//         normal = orient * normal;
+//         normal.normalize();
+
+//         btScalar dot = normal.dot(cp.m_normalWorldOnB);
+//         btScalar magnitude = cp.m_normalWorldOnB.length();
+//         normal *= dot > 0 ? magnitude : -magnitude;
+
+//         cp.m_normalWorldOnB = normal;
 
     //         btTransform orient = colObj->getWorldTransform();
 //         orient.setOrigin( btVector3(0.0f,0.0f,0.0f ) );
@@ -100,24 +119,23 @@ function initPhysicsWorld() {
 
 
     //https://github.com/kripken/ammo.js/blob/a4bec933859e452acd2c18e4152ac2a6a95e806f/tests/add-function.js
-    console.log("adding callback");
-    //world.set_gContactAddedCallback
-    let callback = Ammo.addFunction((cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => { //cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1
-        console.log("contact!");
-        let colObj0 = Ammo.wrapPointer(colObj0Wrap, Ammo.btCollisionObjectWrapper);
-        //let colObj0 = colObj0Wrap.getCollisionObject();
+//     console.log("adding callback");
+//     //world.set_gContactAddedCallback
+//     let callback = Ammo.addFunction((cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => { //cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1
+//         console.log("contact!");
+//         let colObj0 = Ammo.wrapPointer(colObj0Wrap, Ammo.btCollisionObjectWrapper);
+//         //let colObj0 = colObj0Wrap.getCollisionObject();
 
-        let colObj1 = Ammo.wrapPointer(colObj1Wrap, Ammo.btCollisionObjectWrapper);
-        //let colObj1 = colObj1Wrap.getCollisionObject();
+//         let colObj1 = Ammo.wrapPointer(colObj1Wrap, Ammo.btCollisionObjectWrapper);
+//         //let colObj1 = colObj1Wrap.getCollisionObject();
 
-        contact_obj(cp, colObj0.getCollisionObject(), partId0, index0);
-        contact_obj(cp, colObj1.getCollisionObject(), partId1, index1);
-//         contact_added_callback_obj(cp, colObj0, partId0, index0);
-//         contact_added_callback_obj(cp, colObj1, partId1, index1);
-    }, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
-    //physicsWorld.set_gContactAddedCallback(callback);
-    physicsWorld.setContactAddedCallback(callback);
-    console.log("added callback");
+//         contact_obj(cp, colObj0.getCollisionObject(), partId0, index0);
+//         contact_obj(cp, colObj1.getCollisionObject(), partId1, index1);
+// //         contact_added_callback_obj(cp, colObj0, partId0, index0);
+// //         contact_added_callback_obj(cp, colObj1, partId1, index1);
+//     }, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
+//     physicsWorld.setContactAddedCallback(callback);
+//     console.log("added callback");
 }
 
 function createTransform(mesh) {
