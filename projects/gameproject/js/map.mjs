@@ -4,7 +4,7 @@ class Map {
     constructor(mapScene) {
         this.mapScene = mapScene;
 
-        this.mapScene.scale.multiplyScalar(0.5);
+        this.mapScene.scale.multiplyScalar(0.25); // 0.5
 
         var startPos = new THREE.Vector3()
         var startQuat = new THREE.Quaternion();
@@ -25,6 +25,7 @@ class Map {
 
         this.mapScene.traverse(function (child) {
             let isRelevant = (child.name === "polygon147" || child.name === "polygon145");
+            isRelevant = true;
             if(child.isMesh && isRelevant) {
                 let collideMesh = new Ammo.btTriangleMesh(true, true);
                 //let collideMesh = new Ammo.btConvexHullShape();
@@ -66,7 +67,7 @@ class Map {
                 let collideShape = new Ammo.btBvhTriangleMeshShape(collideMesh, true, true);
                 //let collideShape = new Ammo.btConvexTriangleMeshShape(collideMesh, true);
                 //let collideShape = collideMesh;
-                collideShape.setMargin( 0.15 );
+                collideShape.setMargin( 0.2 );
                 let localInertia = new Ammo.btVector3(0, 0, 0);
                 collideShape.calculateLocalInertia( 0.0, localInertia );
                 let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0.0, mapMotionState, collideShape, localInertia));
