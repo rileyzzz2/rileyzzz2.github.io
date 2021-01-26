@@ -4,6 +4,7 @@ var thinkers = [];
 
 //resources
 var gameModels = {};
+var gameTextures = {};
 var activeMap;
 var mapCollisionData = {};
 var scene = new THREE.Scene();
