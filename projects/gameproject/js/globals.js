@@ -20,6 +20,17 @@ function pquat(quat)
     return new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w);
 }
 
+function tvec(vec)
+{
+    return new THREE.Vector3(vec.x(), vec.y(), vec.z());
+}
+
+function tquat(quat)
+{
+    return new THREE.Quaternion(quat.x(), quat.y(), quat.z(), quat.w());
+}
+
+
 window.setInterval(function() {
     for(let i = 0; i < thinkers.length; i++)
         thinkers[i].tick();

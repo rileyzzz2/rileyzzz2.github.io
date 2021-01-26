@@ -58,13 +58,45 @@ function contact_obj(cp, colObj, partId, index) {
     //const btCollisionShape *shape = colObj->getCollisionShape();
     const shape = colObj.getCollisionShape();
 
-    let found = mapCollisionData[shape];
-    if(found) {
+    var orient = colObj.getWorldTransform();
+    orient.setOrigin(new Ammo.btVector3(0.0, 0.0, 0.0));
+
+    // var buffer = Ammo._malloc(16*4);
+    // orient.getOpenGLMatrix(buffer);
+    // var jsBuffer = HEAPF32.subarray(buffer/4, buffer/4 + 16);
+    // Ammo.free(buffer);
+
+    let transform = new THREE.Matrix4();
+    //transform.fromArray(jsBuffer);
+    transform.compose(tvec(orient.getOrigin()), tquat(orient.getRotation()), new THREE.Vector3(1.0, 1.0, 1.0));
+    let geom = mapCollisionData[shape];
+    if(geom && index < geom.vertices.length) {
         //unsure
-        let a = geom.vertices[index];
-        let b = geom.vertices[index + 1];
-        let c = geom.vertices[index + 2];
+        let a = geom.vertices[index].clone();
+        let b = geom.vertices[index + 1].clone();
+        let c = geom.vertices[index + 2].clone();
         console.log("found collision match!");
+
+        let normal = (b.sub(a)).cross(c.sub(a));
+
+        normal.applyMatrix4(transform);
+        normal.normalize();
+
+        let dot = normal.dot(tvec(cp.getPositionWorldOnB())); //m_normalWorldOnB
+        let magnitude = cp.m_normalWorldOnB.length();
+
+        normal.multiplyScalar(dot > 0.0 ? magnitude : -magnitude);
+
+        cp.m_normalWorldOnB = pvec(normal);
+        //         btVector3 normal = (v2-v1).cross(v3-v1);
+
+//         normal = orient * normal;
+//         normal.normalize();
+
+//         btScalar dot = normal.dot(cp.m_normalWorldOnB);
+//         btScalar magnitude = cp.m_normalWorldOnB.length();
+//         normal *= dot > 0 ? magnitude : -magnitude;
+
     }
     //let arr = colObj.getIndexedMeshArray();
     // if(arr) {
@@ -93,8 +125,7 @@ function contact_obj(cp, colObj, partId, index) {
     //     return;
     // }
 
-    var orient = colObj.getWorldTransform();
-    orient.setOrigin(new Ammo.btVector3(0.0, 0.0, 0.0));
+   
 
     //console.log("vert " + shape.m_vertices1[0]);
     //console.log("vert: " + shape.a);
@@ -136,7 +167,8 @@ function initPhysicsWorld() {
     console.log("adding callback");
     //world.set_gContactAddedCallback
     let callback = Ammo.addFunction((cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => { //cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1
-        console.log("contact!");
+        let testcp = Ammo.wrapPointer(cp, Ammo.btManifoldPoint);
+        console.log("contact! manifold distance " + cp.getDistance());
         let colObj0 = Ammo.wrapPointer(colObj0Wrap, Ammo.btCollisionObjectWrapper);
         //let colObj0 = colObj0Wrap.getCollisionObject();
 
