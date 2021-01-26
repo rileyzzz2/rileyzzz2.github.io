@@ -137,13 +137,15 @@ class Kart {
         let motionState = new Ammo.btDefaultMotionState( transform );
         var localInertia = new Ammo.btVector3( 0, 0, 0 );
         var shape = new Ammo.btBoxShape(new Ammo.btVector3(chassisWidth * .5, chassisHeight * .5, chassisLength * .5));
-        shape.setMargin( 0.05 );
+        shape.setMargin( 0.04 );
 
         shape.calculateLocalInertia( mass, localInertia );
         var body = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo( mass, motionState, shape, localInertia ));
         body.setCollisionFlags(body.collisionFlags | CF_CUSTOM_MATERIAL_CALLBACK);
+        body.setContactProcessingThreshold(0.0);
+
         physicsWorld.addRigidBody(body);
-        
+
         this.gameObject = new GameObject(mesh, body);
         objects.push(this.gameObject);
 

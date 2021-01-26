@@ -37,13 +37,16 @@ function createFaceCollision(child, geom, faces) {
     mapCollisionData[collideShape] = geom;
     //let collideShape = new Ammo.btConvexTriangleMeshShape(collideMesh, true);
     //let collideShape = collideMesh;
-    collideShape.setMargin( 0.2 );
+
+    collideShape.setMargin( 0.1 );
+
     let localInertia = new Ammo.btVector3(0, 0, 0);
     collideShape.calculateLocalInertia( 0.0, localInertia );
     let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0.0, mapMotionState, collideShape, localInertia));
     
     object.setCollisionFlags(object.collisionFlags | CF_CUSTOM_MATERIAL_CALLBACK);
-
+    object.setContactProcessingThreshold(0.0);
+    
     physicsWorld.addRigidBody(object);
 }
 
