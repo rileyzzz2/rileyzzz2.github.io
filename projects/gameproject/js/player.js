@@ -120,6 +120,9 @@ class Kart {
 
         mesh.add(camera);
 
+        this.spark = new sparkParticleSystem();
+        mesh.add(this.spark.particleSystem);
+
         scene.add(mesh);
 
 
