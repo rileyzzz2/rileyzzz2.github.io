@@ -65,6 +65,9 @@ class Map {
                 child.getWorldPosition(startPos);
                 child.getWorldQuaternion(startQuat);
             }
+            if(child.isMesh) {
+                child.material.roughness = 1.0;
+            }
         });
         this.startPos = startPos;
         this.startQuat = startQuat;
