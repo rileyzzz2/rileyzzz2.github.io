@@ -88,7 +88,7 @@ class Map {
                 let exp = /([a-z]+)_.*/g;
                 let materialGroup = exp.exec(child.material.name)[1];
                 console.log("material group " + child.material.name);
-                if(materialGroup === "wall" ||materialGroup === "road" || materialGroup === "offroad") {
+                if(materialGroup === "wall" ||materialGroup === "road" || materialGroup === "offroad" || materialGroup === "fast") {
                     let geom = new THREE.Geometry().fromBufferGeometry(child.geometry); //confirmed
                     let faces = geom.faces;
                     //createFaceCollision(child, geom, face)
@@ -172,14 +172,14 @@ class Map {
         //camera.position.x = -2;
 
         //third person
-        camera.position.y = 2;
-        camera.position.z = -3;
-        camera.lookAt(0.0, 0.4, 0.0);
+        // camera.position.y = 2;
+        // camera.position.z = -3;
+        // camera.lookAt(0.0, 0.4, 0.0);
 
         //first person
-        // camera.position.y = 0.9;
-        // camera.position.z = -0.2;
-        // camera.rotation.y = Math.PI;
+        camera.position.y = 0.9;
+        camera.position.z = -0.2;
+        camera.rotation.y = Math.PI;
 
         const loader = new THREE.TextureLoader();
         var planeMaterial = new THREE.MeshBasicMaterial({ map: loader.load('debug/mc.png') });// { color: 0xffffff } 
