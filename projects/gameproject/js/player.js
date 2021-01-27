@@ -118,10 +118,23 @@ class Kart {
         this.cameraTarget.lookAt(0.0, 0.4, 0.0);
         mesh.add(this.cameraTarget);
 
+        this.sparkTarget_L = new THREE.Object3D();
+        this.sparkTarget_L.position.x = 0.4;
+        this.sparkTarget_L.position.y = 0;
+        this.sparkTarget_L.position.z = -0.7;
+        mesh.add(this.sparkTarget_L);
+        
+        this.sparkTarget_R = new THREE.Object3D();
+        this.sparkTarget_R.position.x = 0.4;
+        this.sparkTarget_R.position.y = 0;
+        this.sparkTarget_R.position.z = -0.7;
+        mesh.add(this.sparkTarget_R);
+
         mesh.add(camera);
 
-        this.spark = new sparkParticleSystem();
-        mesh.add(this.spark.particleSystem);
+        this.sparks = new sparkParticleSystem();
+        this.sparks.setEmissionRate(0.0);
+        //mesh.add(this.spark.particleGroup.mesh);
 
         scene.add(mesh);
 
@@ -185,6 +198,11 @@ class Kart {
         objects.push(this);
     }
     update() {
+        var targetPos = new THREE.Vector3(0.0, 0.0, 0.0);
+        this.sparkTarget_L.getWorldPosition(targetPos);
+        //this.sparks.emitter.position.value.copy(targetPos);
+        this.sparks.emitter.position.value = targetPos;
+
         var tm, p, q;
         for(let i = 0; i < this.wheels.length; i++) {
             tm = this.vehicle.getWheelTransformWS(i);
@@ -291,7 +309,7 @@ class Kart {
             const slipFriction = 30;
             this.wheels[2].wheelInfo.set_m_frictionSlip(slipFriction);
             this.wheels[3].wheelInfo.set_m_frictionSlip(slipFriction);
-
+            this.sparks.setEmissionRate(1.0);
             //this.wheels[2].wheelInfo
             this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 1000.0, forward.z));
         }
@@ -304,6 +322,7 @@ class Kart {
             this.steeringClampR = steeringClamp;
             this.vehicleSteering = Math.min(this.vehicleSteering, this.steeringClampL);
             this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClampR);
+            this.sparks.setEmissionRate(0.0);
         }
 
         //sidways drift movement

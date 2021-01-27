@@ -6,7 +6,7 @@ const texLoader = new THREE.TextureLoader();
 export async function initResources() {
     gameModels.standardKart = await loadModel("3d/karts/standard.glb");
     gameModels.slickWheel = await loadModel("3d/wheels/slick.glb");
-    gameTextures.p_spark = await loadTexture("particles/spark.jpg");
+    gameTextures.p_spark = await loadTexture("particles/flare_01.png");
 }
 
 export function loadModel(file) {
