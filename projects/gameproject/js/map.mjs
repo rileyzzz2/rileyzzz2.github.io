@@ -66,7 +66,7 @@ class Map {
                 child.getWorldQuaternion(startQuat);
             }
             if(child.isMesh) {
-                child.material.roughness = 1.0;
+                child.material.roughness = 0.9;
             }
         });
         this.startPos = startPos;
@@ -87,7 +87,7 @@ class Map {
             if(child.isMesh) {
                 let exp = /([a-z]+)_.*/g;
                 let materialGroup = exp.exec(child.material.name)[1];
-                console.log("material group " + child.material.name);
+                //console.log("material group " + child.material.name);
                 if(materialGroup === "wall" ||materialGroup === "road" || materialGroup === "offroad" || materialGroup === "fast") {
                     let geom = new THREE.Geometry().fromBufferGeometry(child.geometry); //confirmed
                     let faces = geom.faces;
