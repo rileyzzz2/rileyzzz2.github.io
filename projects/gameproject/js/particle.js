@@ -3,6 +3,10 @@
 
 class sparkParticleSystem {
     constructor() {
+        this.driftColor_1 = new THREE.Color( 1, 0.5, 0 );
+        this.driftColor_2 = new THREE.Color( 0.25, 0.25, 1.0 );
+        this.driftColor_3 = new THREE.Color( 1.0, 0.0, 0.75 );
+
         this.particleGroup = new SPE.Group({
                 texture: {
                     value: gameTextures.p_spark
@@ -37,7 +41,7 @@ class sparkParticleSystem {
                     value: [ 1, 0 ]
                 },
                 color: {
-                    value: new THREE.Color( 1, 0.75, 0 ),
+                    value: this.driftColor_1,
                     spread: new THREE.Color( 0.1, 0.1, 0.1 )
                 },
                 angle: {
@@ -73,5 +77,14 @@ class sparkParticleSystem {
 
     setEmissionRate(rate) {
         this.emitter.activeMultiplier = rate;
+    }
+
+    setDriftTime(time) {
+        if(time > 3.0)
+            this.emitter.color.value = this.driftColor_3;
+        else if(time > 1.0)
+            this.emitter.color.value = this.driftColor_2;
+        else
+            this.emitter.color.value = this.driftColor_1;
     }
 }

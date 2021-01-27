@@ -58,6 +58,7 @@ const steeringClamp = .25;
 class Kart {
     constructor(startPos) {
         this.drifting = false;
+        this.driftTime = 0.0;
         this.steeringClampL = steeringClamp;
         this.steeringClampR = steeringClamp;
         //vehicle variables
@@ -125,15 +126,18 @@ class Kart {
         mesh.add(this.sparkTarget_L);
         
         this.sparkTarget_R = new THREE.Object3D();
-        this.sparkTarget_R.position.x = 0.4;
+        this.sparkTarget_R.position.x = -0.4;
         this.sparkTarget_R.position.y = 0;
         this.sparkTarget_R.position.z = -0.7;
         mesh.add(this.sparkTarget_R);
 
         mesh.add(camera);
 
-        this.sparks = new sparkParticleSystem();
-        this.sparks.setEmissionRate(0.0);
+        this.sparks_L = new sparkParticleSystem();
+        this.sparks_L.setEmissionRate(0.0);
+
+        this.sparks_R = new sparkParticleSystem();
+        this.sparks_R.setEmissionRate(0.0);
         //mesh.add(this.spark.particleGroup.mesh);
 
         scene.add(mesh);
@@ -197,11 +201,13 @@ class Kart {
         thinkers.push(this);
         objects.push(this);
     }
-    update() {
-        var targetPos = new THREE.Vector3(0.0, 0.0, 0.0);
-        this.sparkTarget_L.getWorldPosition(targetPos);
-        //this.sparks.emitter.position.value.copy(targetPos);
-        this.sparks.emitter.position.value = targetPos;
+    update(dt) {
+        var targetPos_L = new THREE.Vector3(0.0, 0.0, 0.0);
+        var targetPos_R = new THREE.Vector3(0.0, 0.0, 0.0);
+        this.sparkTarget_L.getWorldPosition(targetPos_L);
+        this.sparks_L.emitter.position.value = targetPos_L;
+        this.sparkTarget_R.getWorldPosition(targetPos_R);
+        this.sparks_R.emitter.position.value = targetPos_R;
 
         var tm, p, q;
         for(let i = 0; i < this.wheels.length; i++) {
@@ -211,6 +217,9 @@ class Kart {
             this.wheels[i].mesh.position.set( p.x(), p.y(), p.z() );
             this.wheels[i].mesh.quaternion.set( q.x(), q.y(), q.z(), q.w() );
         }
+
+        if(this.drifting)
+            this.driftTime += dt;
     }
     movementTick() {
         const steeringIncrement = .04;
@@ -288,6 +297,7 @@ class Kart {
         forward.multiplyScalar(500.0);
         if(bDrift && !this.drifting && speed > 1 && (bMoveLeft || bMoveRight)) {
             console.log("jump");
+            this.driftTime = 0.0;
             this.drifting = true;
             if(bMoveLeft) {
                 this.driftDir = -1;
@@ -309,9 +319,10 @@ class Kart {
             const slipFriction = 30;
             this.wheels[2].wheelInfo.set_m_frictionSlip(slipFriction);
             this.wheels[3].wheelInfo.set_m_frictionSlip(slipFriction);
-            this.sparks.setEmissionRate(1.0);
+            this.sparks_L.setEmissionRate(1.0);
+            this.sparks_R.setEmissionRate(1.0);
             //this.wheels[2].wheelInfo
-            this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 1000.0, forward.z));
+            this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 1000.0, forward.z)); //1000.0
         }
         else if(!bDrift && this.drifting) {
             this.drifting = false;
@@ -322,7 +333,13 @@ class Kart {
             this.steeringClampR = steeringClamp;
             this.vehicleSteering = Math.min(this.vehicleSteering, this.steeringClampL);
             this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClampR);
-            this.sparks.setEmissionRate(0.0);
+            this.sparks_L.setEmissionRate(0.0);
+            this.sparks_R.setEmissionRate(0.0);
+            this.sparks_L.setDriftTime(0.0);
+            this.sparks_R.setDriftTime(0.0);
+
+            //speed boost based on drift time
+            
         }
 
         //sidways drift movement
@@ -330,6 +347,9 @@ class Kart {
         {
             right.multiplyScalar(-1 * this.driftDir * speed);
             this.gameObject.rigidBody.applyCentralImpulse(pvec(right));
+
+            this.sparks_L.setDriftTime(this.driftTime);
+            this.sparks_R.setDriftTime(this.driftTime);
         }
         this.movementTick();
     }
