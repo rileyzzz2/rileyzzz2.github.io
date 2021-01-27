@@ -35,7 +35,8 @@ Ammo().then(beginPlay);
 async function beginPlay() {
     await initResources();
     initPhysicsWorld();
-    activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb');
+    //activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb');
+    activeMap = await loadMap('3d/maps/mall.glb', '3d/maps/mall_collision.glb');
     startRenderer();
     
     activeMap.beginPlay();

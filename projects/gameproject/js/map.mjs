@@ -72,6 +72,7 @@ class Map {
         this.startPos = startPos;
         this.startQuat = startQuat;
         scene.add(this.mapScene);
+        //scene.add(this.collisionScene);
     }
 
     beginPlay() {
@@ -86,7 +87,7 @@ class Map {
             if(child.isMesh) {
                 let exp = /([a-z]+)_.*/g;
                 let materialGroup = exp.exec(child.material.name)[1];
-
+                console.log("material group " + child.material.name);
                 if(materialGroup === "wall" ||materialGroup === "road" || materialGroup === "offroad") {
                     let geom = new THREE.Geometry().fromBufferGeometry(child.geometry); //confirmed
                     let faces = geom.faces;
