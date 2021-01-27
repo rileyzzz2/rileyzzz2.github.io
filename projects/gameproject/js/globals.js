@@ -32,7 +32,7 @@ function tquat(quat)
 }
 
 
-window.setInterval(function() {
+window.setInterval(async function() {
     for(let i = 0; i < thinkers.length; i++)
         thinkers[i].tick();
 }, 1.0 / 60.0 * 1000.0);

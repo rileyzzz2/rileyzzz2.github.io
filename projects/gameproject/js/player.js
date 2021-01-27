@@ -7,11 +7,11 @@ class Wheel {
         this.radius = radius;
         this.width = width;
 
-        this.friction = 1000; //1000
-        var suspensionStiffness = 2.0;
+        this.friction = 2000; //1000
+        var suspensionStiffness = 20.0;
         var suspensionDamping = 2.3; //2.3
-        var suspensionCompression = 4.4;
-        var suspensionRestLength = 0.3; //0.6 0.3
+        var suspensionCompression = 1.4;
+        var suspensionRestLength = 0.2; //0.6 0.3
         var rollInfluence = 0.2;
 
         var wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0);
@@ -65,7 +65,7 @@ class Kart {
         var chassisWidth = 1.0; //1.8
         var chassisHeight = .2; //.6
         var chassisLength = 2.2; //2
-        var massVehicle = 800; //800
+        var massVehicle = 400; //800
 
         var wheelAxisBackPosition = -1;
         var wheelAxisHeightBack = .3;
@@ -148,6 +148,7 @@ class Kart {
 
         var start = startPos.clone();
         //start.x = 0;
+        //start.y = 0;
         //start.z = 0;
         //start.y = 100.0;
         //start.y += 4.0;
@@ -316,15 +317,14 @@ class Kart {
             //this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClamp);
 
             //apply slip friction to back wheels
-            const slipFriction = 30;
+            const slipFriction = 200;
             this.wheels[2].wheelInfo.set_m_frictionSlip(slipFriction);
             this.wheels[3].wheelInfo.set_m_frictionSlip(slipFriction);
-            this.sparks_L.setEmissionRate(1.0);
-            this.sparks_R.setEmissionRate(1.0);
             //this.wheels[2].wheelInfo
-            this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 1000.0, forward.z)); //1000.0
+            //this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 1000.0, forward.z)); //1000.0
+            this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(0.0, 1000.0, 0.0)); //1000.0
         }
-        else if(!bDrift && this.drifting) {
+        else if(this.drifting && (!bDrift || Math.abs(speed) < 1)) {
             this.drifting = false;
             this.driftDir = 0;
             this.wheels[2].wheelInfo.set_m_frictionSlip(this.wheels[2].friction);
@@ -333,19 +333,30 @@ class Kart {
             this.steeringClampR = steeringClamp;
             this.vehicleSteering = Math.min(this.vehicleSteering, this.steeringClampL);
             this.vehicleSteering = Math.max(this.vehicleSteering, -this.steeringClampR);
-            this.sparks_L.setEmissionRate(0.0);
-            this.sparks_R.setEmissionRate(0.0);
+            //this.sparks_L.setEmissionRate(0.0);
+            //this.sparks_R.setEmissionRate(0.0);
             this.sparks_L.setDriftTime(0.0);
             this.sparks_R.setDriftTime(0.0);
 
             //speed boost based on drift time
-            
+            var driftMultiplier = 10.0;
+            if(this.driftTime > 3.0)
+                driftMultiplier *= 2.0;
+            else if(this.driftTime > 1.5)
+                driftMultiplier *= 1.5;
+            else if (this.driftTime > 0.5)
+                driftMultiplier *= 1.0;
+            else
+                driftMultiplier = 0.0;
+
+            if(driftMultiplier > 0.0)
+                this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x * driftMultiplier, 100.0, forward.z * driftMultiplier));
         }
 
         //sidways drift movement
         if(this.drifting)
         {
-            right.multiplyScalar(-1 * this.driftDir * speed);
+            right.multiplyScalar(-1 * this.driftDir * speed * 8.0);
             this.gameObject.rigidBody.applyCentralImpulse(pvec(right));
 
             this.sparks_L.setDriftTime(this.driftTime);

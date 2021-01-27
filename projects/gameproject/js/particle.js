@@ -3,8 +3,8 @@
 
 class sparkParticleSystem {
     constructor() {
-        this.driftColor_1 = new THREE.Color( 1, 0.5, 0 );
-        this.driftColor_2 = new THREE.Color( 0.25, 0.25, 1.0 );
+        this.driftColor_1 = new THREE.Color( 0.25, 0.25, 1.0 );
+        this.driftColor_2 = new THREE.Color( 1.0, 0.5, 0.0 );
         this.driftColor_3 = new THREE.Color( 1.0, 0.0, 0.75 );
 
         this.particleGroup = new SPE.Group({
@@ -15,17 +15,17 @@ class sparkParticleSystem {
             });
 
         this.emitter = new SPE.Emitter({
-                particleCount: 20,
+                particleCount: 50,
                 maxAge: {
-                    value: 0.2,
+                    value: 0.1,
                 },
                 position: {
                     value: new THREE.Vector3( 0, 0, 0 ),
                     spread: new THREE.Vector3( 0.2, 0.2, 0.2 )
                 },
                 velocity: {
-                    value: new THREE.Vector3( 0, 3.0, 0 ),
-                    spread: new THREE.Vector3( 1.8, 0.8, 1.8 )
+                    value: new THREE.Vector3( 0, 4.0, 0 ),
+                    spread: new THREE.Vector3( 1.8, 3.8, 1.8 )
                 },
                 acceleration: {
                     value: new THREE.Vector3( 0, -9.8, 0 )
@@ -34,8 +34,8 @@ class sparkParticleSystem {
                     spread: 0
                 },
                 size: {
-                    value: 0.5,
-                    spread: 0.25
+                    value: 0.2,
+                    spread: 0.1
                 },
                 opacity: {
                     value: [ 1, 0 ]
@@ -80,11 +80,14 @@ class sparkParticleSystem {
     }
 
     setDriftTime(time) {
+        this.setEmissionRate(1.0);
         if(time > 3.0)
             this.emitter.color.value = this.driftColor_3;
-        else if(time > 1.0)
+        else if(time > 1.5)
             this.emitter.color.value = this.driftColor_2;
-        else
+        else if (time > 0.5)
             this.emitter.color.value = this.driftColor_1;
+        else
+            this.setEmissionRate(0.0);
     }
 }

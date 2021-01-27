@@ -55,8 +55,8 @@ class Map {
         this.mapScene = mapScene;
         this.collisionScene = collisionScene;
 
-        this.mapScene.scale.multiplyScalar(0.25); // 0.5
-        this.collisionScene.scale.multiplyScalar(0.25);
+        this.mapScene.scale.multiplyScalar(0.35); // 0.5
+        this.collisionScene.scale.multiplyScalar(0.35);
 
         var startPos = new THREE.Vector3()
         var startQuat = new THREE.Quaternion();
