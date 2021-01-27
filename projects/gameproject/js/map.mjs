@@ -170,9 +170,16 @@ class Map {
         //camera.parent = localPlayer.gameObject.mesh;
         //camera.position.x = -2;
 
-        camera.position.y = 2;
-        camera.position.z = -3;
-        camera.lookAt(0.0, 0.4, 0.0);
+        //third person
+        // camera.position.y = 2;
+        // camera.position.z = -3;
+        // camera.lookAt(0.0, 0.4, 0.0);
+
+        //first person
+        camera.position.y = 0.9;
+        camera.position.z = -0.2;
+        camera.rotation.y = Math.PI;
+        //camera.lookAt(0.0, 0.4, 0.0);
 
         const loader = new THREE.TextureLoader();
         var planeMaterial = new THREE.MeshBasicMaterial({ map: loader.load('debug/mc.png') });// { color: 0xffffff } 
