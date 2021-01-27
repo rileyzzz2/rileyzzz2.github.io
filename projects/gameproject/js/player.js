@@ -203,14 +203,6 @@ class Kart {
         objects.push(this);
     }
 
-    isOnGround() {
-        let onGround = true;
-        onGround = onGround && (this.vehicle.rayCast(this.wheels[0].wheelInfo) === -1);
-        onGround = onGround && (this.vehicle.rayCast(this.wheels[1].wheelInfo) === -1);
-        onGround = onGround && (this.vehicle.rayCast(this.wheels[2].wheelInfo) === -1);
-        onGround = onGround && (this.vehicle.rayCast(this.wheels[3].wheelInfo) === -1);
-        return onGround;
-    }
     startDrifting() {
         this.driftTime = 0.0;
         this.drifting = true;
@@ -351,8 +343,8 @@ class Kart {
             console.log("jump");
             this.startDrifting();
         }
-        else if(this.drifting && !bDrift) {
-            stopDrifting();
+        else if(this.drifting && (!bDrift || Math.abs(speed) < 1)) {
+            this.stopDrifting();
 
             //speed boost based on drift time
             var driftMultiplier = 10.0;
@@ -370,9 +362,10 @@ class Kart {
         }
 
         //cancel drift
-        if(this.drifting && (Math.abs(speed) < 1 || !this.isOnGround())) {
-            stopDrifting();
-        }
+        // if(this.drifting && !this.isOnGround()) {
+        //     this.stopDrifting();
+        // }
+        //this.isOnGround();
 
         //sidways drift movement
         if(this.drifting)
