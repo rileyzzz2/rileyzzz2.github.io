@@ -22,12 +22,24 @@
                 width: 100%;
                 height: 100%;
             }
+            .menuOverlay {
+                position: fixed;
+                display: block;
+                z-index: 2;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                backdrop-filter: blur(8px);
+                background-color: rgba(20, 20, 20, 0.9);
+            }
             .center-box {
                 margin: 100px auto;
                 /* position: absolute;
                 top: 50%;
                 left: 50%; */
                 text-align: center;
+                color: white;
             }
             #gameWindow {
                 margin: 0;
@@ -58,11 +70,11 @@
             
         </div>
 
-        <!-- <div class="menuOverlay">
+        <div class="menuOverlay">
             <div class="center-box">
-                <button id="mode_mp" type="button">Multiplayer</button> 
+                 
             </div>
-        </div> -->
+        </div>
 
         <!-- Multiplayer SDK -->
         <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
