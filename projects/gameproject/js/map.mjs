@@ -167,7 +167,7 @@ class Map {
         });
 
         localPlayer = new Kart(this.startPos);
-
+        
         //camera.parent = localPlayer.gameObject.mesh;
         //camera.position.x = -2;
 

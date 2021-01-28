@@ -49,7 +49,7 @@ $(document).ready(function() {
 //     // createRigidBox(newcube, 0.2);
 // }
 
-async function beginPlay() {
+export async function beginPlay() {
     await initResources();
     initPhysicsWorld();
     activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb');

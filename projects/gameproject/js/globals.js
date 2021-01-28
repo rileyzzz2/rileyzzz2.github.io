@@ -67,3 +67,18 @@ class GameObject {
 //helpers
 const CF_CUSTOM_MATERIAL_CALLBACK = 8;
 const TRIANGLE_SHAPE_PROXYTYPE = 1; //unsure
+
+//network stuff
+const uuid = PubNub.generateUUID();
+const pubnub = new PubNub({
+    publishKey: "pub-c-d2355256-7b44-4146-94f0-8d664c5ddf90",
+    subscribeKey: "sub-c-5745a2f8-5ba2-11eb-ae0a-86d20a59f606",
+    uuid: uuid
+});
+
+function publish(data){
+  pubnub.publish({
+    channel: activeLobby,
+    message: data
+   });
+}

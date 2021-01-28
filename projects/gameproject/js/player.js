@@ -81,6 +81,10 @@ class Kart {
         //mesh.add(camera);
         //scene.add(mesh);
 
+        publish({
+            type: "registerKart"
+        });
+
         var FrontLeftPosition   = new Ammo.btVector3(0.5, wheelAxisHeightFront, wheelAxisFrontPosition),
             FrontRightPosition  = new Ammo.btVector3(-0.5, wheelAxisHeightFront, wheelAxisFrontPosition),
             BackLeftPosition    = new Ammo.btVector3(0.5, wheelAxisHeightBack, wheelAxisBackPosition),
@@ -380,5 +384,16 @@ class Kart {
     }
 }
 
+class NPCKart {
+    constructor(publisher) {
+        this.publisher = publisher;
+        console.log("registered kart for publisher " + publisher);
+    }
+    tick(msg) {
+        console.log("received player tick!");
+    }
+}
+
+
 var localPlayer;
-var Players = [];
+var Players = {};
