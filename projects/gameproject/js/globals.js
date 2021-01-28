@@ -9,6 +9,15 @@ var activeMap;
 var mapCollisionData = {};
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+var activeLobby = "";
+const netPlayer = {
+        name: '',
+        sign: '',
+        score: 0
+};
+var isHost = false;
+
 //var cameraHelper = new THREE.CameraHelper(camera);
 //scene.add(cameraHelper);
 

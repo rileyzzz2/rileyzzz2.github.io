@@ -2,7 +2,24 @@ import {initResources} from './res.mjs';
 import {loadMap} from './map.mjs';
 import {startRenderer} from './render.mjs';
 
-Ammo().then(beginPlay);
+$(document).ready(function() {
+    let params = new URLSearchParams(location.search);
+    activeLobby = params.get('join');
+    if(activeLobby) {
+        pubnub.subscribe({
+            channels: [activeLobby],
+            withPresence: true
+        });
+    }
+    else
+    {
+        alert("No active lobby!");
+    }
+
+    //params.get('name') # => "n1";
+    //alert("params " + params.get('join'));
+    //Ammo().then(beginPlay);
+});
 
 // document.addEventListener('click', onClick);
 // function onClick() {

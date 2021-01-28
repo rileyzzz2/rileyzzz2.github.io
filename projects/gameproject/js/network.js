@@ -8,16 +8,7 @@ const pubnub = new PubNub({
     uuid: uuid
 });
 
-(function() {
-    const player = {
-        name: '',
-        sign: '',
-        score: 0
-    }
-    
-})();
 
-var lobby = "";
 listener = {
     //detect new players
     presence: function(response) {
@@ -27,16 +18,16 @@ listener = {
                 // Add hereNow() function here
 
                 // Player is the Host
-                player.name = 'Host';
-                player.sign = 'H';
+                netPlayer.name = 'Host';
+                netPlayer.sign = 'H';
                 isHost = true;
                 //guessWord.innerHTML = 'You are the Host. Waiting for opponent...';
             }
             else if(response.occupancy >= 2){
                 // Player is the Guest
                 if(!isHost){
-                    player.name = 'Guest';
-                    player.sign = 'G';
+                    netPlayer.name = 'Guest';
+                    netPlayer.sign = 'G';
                     // guessWord.innerHTML = `Guess the drawing!`;
                     // triesLeft.innerHTML = "Tries Left: 3";
                 }
@@ -44,11 +35,13 @@ listener = {
                 //score.innerHTML = `My Score: ${player.score}`;
                 //opponentScore.innerHTML = "Opponent's Score: 0";
 
-                // Unsubscribe fromm lobby channel
+                // Unsubscribe from activeLobby channel
                 pubnub.removeListener(listener); 
                 pubnub.unsubscribe({
-                    channels: [lobby]
+                    channels: [activeLobby]
                 });
+
+                alert("starting game!");
 
                 //gameStart(pubnubGuessGame, ChatEngine, GuessWordChatEngine, game, player);               
             }
@@ -56,19 +49,13 @@ listener = {
     }, 
     status: function(event) {
         if (event.category == 'PNConnectedCategory') {
+            console.log("PN connected.");
             //setUpCanvas();
         } 
     }   
 }
 
 pubnub.addListener(listener);
-pubnubGuessGame.subscribe({
-  channels: [lobby],
-  withPresence: true
-});
+
 //sessionStorage.setItem("SessionPubNub" pubnub);
 //sessionStorage.getItem("variableName");
-
-function startMultiplayerGame() {
-
-}
