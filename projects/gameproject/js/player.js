@@ -204,6 +204,7 @@ class Kart {
         physicsWorld.addConstraint(uprightConstraint);
 
         thinkers.push(this);
+        networkThinkers.push(this); //replicated
         objects.push(this);
     }
 
@@ -381,6 +382,10 @@ class Kart {
             this.sparks_R.setDriftTime(this.driftTime);
         }
         this.movementTick();
+    }
+
+    replicate() {
+        //replicate position and state to other clients
     }
 }
 

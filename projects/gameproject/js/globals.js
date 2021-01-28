@@ -1,6 +1,7 @@
 var canvas = $("#gameWindow")[0];
 var objects = [];
 var thinkers = [];
+var networkThinkers = [];
 var inMatch = false;
 //resources
 var gameModels = {};
@@ -45,6 +46,11 @@ window.setInterval(async function() {
     for(let i = 0; i < thinkers.length; i++)
         thinkers[i].tick();
 }, 1.0 / 60.0 * 1000.0);
+
+window.setInterval(async function() {
+    for(let i = 0; i < networkThinkers.length; i++)
+        networkThinkers[i].replicate();
+}, 100.0);
 
 class GameObject {
     constructor(mesh, rigidBody) {
