@@ -1,7 +1,7 @@
 var canvas = $("#gameWindow")[0];
 var objects = [];
 var thinkers = [];
-
+var inMatch = false;
 //resources
 var gameModels = {};
 var gameTextures = {};

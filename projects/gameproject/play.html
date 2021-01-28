@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Racing Game</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="js/lib/three/build/three.min.js"></script>
+        <script src="js/lib/SPE/SPE.js"></script>
+        <script src="js/lib/ammo/ammo.js"></script>
+        <style>
+            html, body {
+                margin: 0;
+                height: 100%;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                position: fixed;
+                box-sizing: border-box;
+            }
+            .gameContainer {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+            }
+            .center-box {
+                margin: 100px auto;
+                /* position: absolute;
+                top: 50%;
+                left: 50%; */
+                text-align: center;
+            }
+            #gameWindow {
+                margin: 0;
+                width: 100%;
+                height: 100%;
+                background-color: black;
+            }
+            #outputlog {
+                position: fixed;
+                width: 100%;
+                height: 10%;
+                bottom: 0;
+                left: 0;
+                background-color: rgba(0,0,0,0.5);
+                color: white;
+                z-index: 2;
+            }
+        </style>
+    </head>
+
+    <body>
+        <!-- <textarea id="debugtext"></textarea> -->
+        <textarea id="outputlog"></textarea>
+        <script src="js/logger.js"></script>
+        
+        <div class="gameContainer">
+            <canvas id="gameWindow"></canvas>
+            
+        </div>
+
+        <!-- <div class="menuOverlay">
+            <div class="center-box">
+                <button id="mode_mp" type="button">Multiplayer</button> 
+            </div>
+        </div> -->
+
+        <!-- Multiplayer SDK -->
+        <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
+        <script src="js/globals.js"></script>
+        <script type="module" src="js/res.mjs"></script>
+        <script src="js/interface.js"></script>
+        <script type="module" src="js/render.mjs"></script>
+        <script src="js/physics.js"></script>
+        <script src="js/particle.js"></script>
+        <script src="js/player.js"></script>
+        <script type="module" src="js/map.mjs"></script>
+        <script src="js/network.js"></script>
+        <script type="module" src="js/game.mjs"></script>
+        <!-- <script src="js/doom.js"></script> -->
+    </body>
+</html>

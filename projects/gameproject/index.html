@@ -1,11 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>Racing Game</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="js/lib/three/build/three.min.js"></script>
-        <script src="js/lib/SPE/SPE.js"></script>
-        <script src="js/lib/ammo/ammo.js"></script>
         <style>
             html, body {
                 margin: 0;
@@ -17,14 +13,16 @@
                 position: fixed;
                 box-sizing: border-box;
             }
-            .gameContainer {
+            .menu {
                 margin: 0;
                 width: 100%;
                 height: 100%;
+                background-image: url("menu/checkered_flag.gif");
+                background-size: cover;
             }
             .menuOverlay {
                 position: fixed;
-                display: none;
+                display: block;
                 z-index: 2;
                 top: 0;
                 left: 0;
@@ -32,6 +30,19 @@
                 bottom: 0;
                 backdrop-filter: blur(8px);
                 background-color: rgba(20, 20, 20, 0.9);
+            }
+            .center-box {
+                margin: 100px auto;
+                /* position: absolute;
+                top: 50%;
+                left: 50%; */
+                text-align: center;
+            }
+            .mainButtons {
+                display: block;
+            }
+            .lobbySetup {
+                display: none;
             }
             #gameWindow {
                 margin: 0;
@@ -51,31 +62,26 @@
             }
         </style>
     </head>
-
     <body>
-        <!-- <textarea id="debugtext"></textarea> -->
-        <textarea id="outputlog"></textarea>
-        <script src="js/logger.js"></script>
-        
-        <div class="gameContainer">
-            <canvas id="gameWindow"></canvas>
-            <div class="menuOverlay">
 
+        <div class="menu">
+            <div class="menuOverlay">
+                <div class="center-box">
+                    <div class="mainButtons">
+                        <button id="btn_host" type="button">Host</button>
+                        <button id="btn_join" type="button">Join</button>
+                    </div>
+                    <div class="lobbySetup">
+                        <label for="lobbyname">Lobby Name: </label>
+                        <input type="text" id="lobbyname" name="lobbyname">
+                        <button id="btn_hostgame" type="button">Host</button>
+                    </div>
+                </div>
             </div>
         </div>
-
         <!-- Multiplayer SDK -->
         <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
-        <script src="js/globals.js"></script>
-        <script type="module" src="js/res.mjs"></script>
-        <script src="js/network.js"></script>
-        <script src="js/interface.js"></script>
-        <script type="module" src="js/render.mjs"></script>
-        <script src="js/physics.js"></script>
-        <script src="js/particle.js"></script>
-        <script src="js/player.js"></script>
-        <script type="module" src="js/map.mjs"></script>
-        <script type="module" src="js/game.mjs"></script>
-        <!-- <script src="js/doom.js"></script> -->
+        <script src="js/menu/menu.js"></script>
+
     </body>
 </html>

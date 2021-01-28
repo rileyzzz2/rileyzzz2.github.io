@@ -40,8 +40,4 @@ async function beginPlay() {
     startRenderer();
     
     activeMap.beginPlay();
-
-    //console.log("begin load");
-    //loadModel("3d/wario.glb");
-    //console.log("load finished");
 }

@@ -49,6 +49,8 @@ $( document ).on('pointerlockchange', function() {
 });
 
 function beginCapture() {
+    if(!inMatch)
+        return;
     canvas.requestPointerLock();
 }
 document.addEventListener('click', beginCapture);
