@@ -37,11 +37,15 @@
                 top: 50%;
                 left: 50%; */
                 text-align: center;
+                color: white;
             }
             .mainButtons {
                 display: block;
             }
             .lobbySetup {
+                display: none;
+            }
+            .lobbyList {
                 display: none;
             }
             #gameWindow {
@@ -72,9 +76,14 @@
                         <button id="btn_join" type="button">Join</button>
                     </div>
                     <div class="lobbySetup">
-                        <label for="lobbyname">Lobby Name: </label>
-                        <input type="text" id="lobbyname" name="lobbyname">
-                        <button id="btn_hostgame" type="button">Host</button>
+                        <form id="hostForm" action="play.html">
+                            <label for="lobbyname">Lobby Name: </label>
+                            <input type="text" id="lobbyname" name="host">
+                            <input type="submit" value="Host Game">
+                        </form>
+                    </div>
+                    <div class="lobbyList">
+
                     </div>
                 </div>
             </div>
