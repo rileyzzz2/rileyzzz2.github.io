@@ -1,22 +1,11 @@
 import {initResources} from './res.mjs';
 import {loadMap} from './map.mjs';
 import {startRenderer} from './render.mjs';
-
+import {initP2P} from './network.mjs';
+import {connectToPeer} from './network.mjs';
 $(document).ready(function() {
-    let params = new URLSearchParams(location.search);
-    hostId = params.get('join');
-    if(hostId) {
-        // pubnub.subscribe({
-        //     channels: [activeLobby],
-        //     withPresence: true
-        // });
-        var conn = peer.connect(activeLobby);
-    }
-    else
-    {
-        isHost = true;
-
-    }
+    initP2P();
+    
 
     //params.get('name') # => "n1";
     //alert("params " + params.get('join'));

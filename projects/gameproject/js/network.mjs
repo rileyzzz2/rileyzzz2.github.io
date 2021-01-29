@@ -96,10 +96,30 @@ export function initP2P() {
     });
 
     peer.on('open', function(id) {
-        playerId = id;
+        playerID = id;
         console.log('My peer ID is: ' + id);
-        
+        $("#p2pid").text(id);
+
+        let params = new URLSearchParams(location.search);
+        hostID = params.get('join');
+        if(hostID) {
+            // pubnub.subscribe({
+            //     channels: [activeLobby],
+            //     withPresence: true
+            // });
+            connectToPeer(hostID);
+        }
+        else
+        {
+            isHost = true;
+            hostID = playerID;
+        }
     });
+}
+
+export function connectToPeer(id) {
+    console.log("connecting to peer " + id);
+    var conn = peer.connect(id);
 }
 
 

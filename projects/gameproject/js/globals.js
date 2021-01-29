@@ -19,8 +19,8 @@ const netPlayer = {
 };
 var isHost = false;
 
-var hostId = "";
-var playerId = "";
+var hostID = "";
+var playerID = "";
 var peer;
 
 //var cameraHelper = new THREE.CameraHelper(camera);
