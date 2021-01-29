@@ -409,8 +409,8 @@ class Kart {
 }
 
 class NPCKart {
-    constructor(publisher) {
-        this.publisher = publisher;
+    constructor(playerid) {
+        this.playerid = playerid;
 
         this.geometry = new THREE.BoxGeometry();
         this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
@@ -421,12 +421,12 @@ class NPCKart {
     }
     tick(msg) {
         console.log("received player tick!");
-        if(msg.type == "pt")
-            this.cube.position.set( msg.x, msg.y, msg.z );
+        //if(msg.type == "pt")
+            //this.cube.position.set( msg.x, msg.y, msg.z );
             //this.cube.position.set( parseFloat(msg.pos[0]), parseFloat(msg.pos[1]), parseFloat(msg.pos[2]) );
 
 
-        console.log("loc " + msg.pos[0] + " " + msg.pos[1] + " " + msg.pos[2]);
+        //console.log("loc " + msg.pos[0] + " " + msg.pos[1] + " " + msg.pos[2]);
 
     }
 }

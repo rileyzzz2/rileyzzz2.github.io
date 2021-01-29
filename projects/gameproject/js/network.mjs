@@ -81,12 +81,6 @@ var listener = {
 
 pubnub.addListener(listener);
 
-class RemotePlayer {
-    constructor(conn) {
-        
-    }
-}
-
 
 peer = new Peer();
 // peer = new Peer({
@@ -108,15 +102,15 @@ peer.on('open', function(id) {
         //connectToPeer(hostID);
 
         //connect to the host
-        var conn = peer.connect(id);
+        var conn = peer.connect(hostID);
         conn.on('open', function(){
-            console.log("connection open, sending message");
+            //console.log("connection open, sending message");
             // here you have conn.id
-            conn.send("hello!!!!!!");
-            // conn.send({
-            //     type: "joinClient",
-            //     id: playerID
-            // });
+            //conn.send("hello!!!!!!");
+            conn.send({
+                type: "joinClient",
+                id: playerID
+            });
         });
     }
     else
@@ -125,16 +119,50 @@ peer.on('open', function(id) {
         hostID = playerID;
     }
 });
+
+class RemotePlayer {
+    constructor(id, conn) {
+        this.id = id;
+        this.conn = conn;
+    }
+}
+
 peer.on('connection', function(conn) {
     console.log("connection msg");
     conn.on('data', function(data){
     // Will print 'hi!'
         console.log("received connection data:");
-        console.log(data);
+        console.log(data.type);
 
         //if server, broadcast client join message to all connected clients
         if(isHost) {
-
+            if(data.type === "joinClient" && data.id !== playerID) {
+                //for(let i = 0; i < remoteClients.length; i++)
+                //remoteClients.push(data.id);
+                remoteConnections[data.id] = new RemotePlayer(data.id, peer.connect(data.id));
+                for(const remote in remoteConnections) {
+                    remote.conn.send({
+                        type: "refreshConnectedPlayers",
+                        players: Object.keys(remoteConnections)
+                    });
+                }
+            }
+            else if(data.type === "leaveClient" && data.id !== playerID) {
+                // const index = remoteClients.indexOf(data.id);
+                // if(index > -1)
+                //     remoteClients.splice(index, 1);
+                remoteConnections[data.id] = null;
+            }
+        }
+        else //!isHost
+        {
+            if(data.type === "refreshConnectedPlayers") {
+                for(const player in data.players) {
+                    if(!remoteConnections[player] && player !== playerID)
+                        remoteConnections[player] = new RemotePlayer(player, peer.connect(player));
+                }
+                //remoteConnections = data.players;
+            }
         }
     });
 });
