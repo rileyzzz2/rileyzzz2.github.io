@@ -66,7 +66,7 @@ var listener = {
         var publisher = s.publisher;
         if(publisher === uuid)
             return;
-        if(msg.type === "playerTick") {
+        if(msg.type === "pt") {
             if(Players[publisher])
                 Players[publisher].tick(msg); 
             else

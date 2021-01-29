@@ -81,9 +81,9 @@ class Kart {
         //mesh.add(camera);
         //scene.add(mesh);
 
-        publish({
-            type: "registerKart"
-        });
+        // publish({
+        //     type: "registerKart"
+        // });
 
         var FrontLeftPosition   = new Ammo.btVector3(0.5, wheelAxisHeightFront, wheelAxisFrontPosition),
             FrontRightPosition  = new Ammo.btVector3(-0.5, wheelAxisHeightFront, wheelAxisFrontPosition),
@@ -386,16 +386,48 @@ class Kart {
 
     replicate() {
         //replicate position and state to other clients
+        var trans = new Ammo.btTransform();
+        let ms = this.gameObject.rigidBody.getMotionState();
+        let p = trans.getOrigin();
+        let q = trans.getRotation();
+        if ( ms ) {
+            ms.getWorldTransform( tmpTrans );
+            let p = tmpTrans.getOrigin();
+            let q = tmpTrans.getRotation();
+            console.log("sending signal " + p.x() + " " + Math.fround(p.x()).toString());
+            const precision = 2;
+            // signal({
+            //     type: "pt",
+            //     //pos: [p.x().toFixed(precision).toString(), p.y().toFixed(precision).toString(), p.z().toFixed(precision).toString()],
+            //     // rot: [Math.fround(q.x()), Math.fround(q.y()), Math.fround(q.z()), Math.fround(q.w())]
+            //     x: p.x(),
+            //     y: p.y(),
+            //     z: p.z()
+            // });
+        }
     }
 }
 
 class NPCKart {
     constructor(publisher) {
         this.publisher = publisher;
+
+        this.geometry = new THREE.BoxGeometry();
+        this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        this.cube = new THREE.Mesh( this.geometry, this.material );
+        scene.add( this.cube );
+
         console.log("registered kart for publisher " + publisher);
     }
     tick(msg) {
         console.log("received player tick!");
+        if(msg.type == "pt")
+            this.cube.position.set( msg.x, msg.y, msg.z );
+            //this.cube.position.set( parseFloat(msg.pos[0]), parseFloat(msg.pos[1]), parseFloat(msg.pos[2]) );
+
+
+        console.log("loc " + msg.pos[0] + " " + msg.pos[1] + " " + msg.pos[2]);
+
     }
 }
 
