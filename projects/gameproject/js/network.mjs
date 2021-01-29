@@ -43,6 +43,9 @@ var listener = {
     status: function(event) {
         if (event.category == 'PNConnectedCategory') {
             console.log("PN connected.");
+            
+            console.log("Starting P2P connection.");
+            
             //setUpCanvas();
         } 
     },
@@ -78,5 +81,48 @@ var listener = {
 
 pubnub.addListener(listener);
 
+class RemotePlayer {
+    constructor(conn) {
+        
+    }
+}
+
+export function initP2P() {
+    peer = new Peer({
+        config: {'iceServers': [
+        { url: 'stun:stun.l.google.com:19302' },
+        { url: 'turn:homeo@turn.bistri.com:80', credential: 'homeo' }
+        ]}
+    });
+
+    peer.on('open', function(id) {
+        playerId = id;
+        console.log('My peer ID is: ' + id);
+        
+    });
+}
+
+
 //sessionStorage.setItem("SessionPubNub" pubnub);
 //sessionStorage.getItem("variableName");
+
+//https://peerjs.com/
+//https://peerjs.com/docs.html#api
+//automatically brokered with PeerJS servers
+
+
+
+// var conn = peer.connect('another-peers-id');
+// // on open will be launch when you successfully connect to PeerServer
+// conn.on('open', function(){
+//   // here you have conn.id
+//   conn.send('hi!');
+// });
+
+// peer.on('connection', function(conn) {
+//   conn.on('data', function(data){
+//     // Will print 'hi!'
+//     console.log("received connection data!");
+//     console.log(data);
+//   });
+// });

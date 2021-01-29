@@ -19,6 +19,10 @@ const netPlayer = {
 };
 var isHost = false;
 
+var hostId = "";
+var playerId = "";
+var peer;
+
 //var cameraHelper = new THREE.CameraHelper(camera);
 //scene.add(cameraHelper);
 
@@ -112,208 +116,382 @@ const pubnub = new PubNub({
 
 //https://medium.com/bumble-tech/webrtc-making-a-peer-to-peer-game-using-javascript-f7123aed769e
 //https://github.com/gutnikov/webrtc-shooter/blob/master/lib/net/peer-connection.js
-var PeerConnection = {
-  CHANNEL_NAME: 'data',
 
-  iceServers: [{
-    url: 'stun:stun.l.google.com:19302'
-  },{
-    url: 'stun:stun.anyfirewall.com:3478'
-  },{
-    url: 'turn:turn.bistri.com:80',
-    credential: 'homeo',
-    username: 'homeo'
-  },{
-    url: 'turn:turn.anyfirewall.com:443?transport=tcp',
-    credential: 'webrtc',
-    username: 'webrtc'
-  }],
+// class PeerConnection {
+//     CHANNEL_NAME = 'data';
 
-  socket: null,
-  isInitiator: false,
-  dataChannelReady: false,
-  peerConnection: null,
-  dataChannel: null,
-  remoteDescriptionReady: false,
-  pendingCandidates: null,
-  lastMessageOrd: null,
+//     iceServers = [{
+//         url: 'stun:stun.l.google.com:19302'
+//     },{
+//         url: 'stun:stun.anyfirewall.com:3478'
+//     },{
+//         url: 'turn:turn.bistri.com:80',
+//         credential: 'homeo',
+//         username: 'homeo'
+//     },{
+//         url: 'turn:turn.anyfirewall.com:443?transport=tcp',
+//         credential: 'webrtc',
+//         username: 'webrtc'
+//     }];
 
-  init: function(socket, peerUser, isInitiator) {
-    this.parent();
-    this.socket = socket;
-    this.peerUser = peerUser;
-    this.isInitiator = isInitiator;
-    this.pendingCandidates = [];
-    this.peerHandlers = {
-      'icecandidate': this.onLocalIceCandidate,
-      'iceconnectionstatechange': this.onIceConnectionStateChanged,
-      'datachannel': this.onDataChannel
-    };
-    this.dataChannelHandlers = {
-      'open': this.onDataChannelOpen,
-      'close': this.onDataChannelClose,
-      'message': this.onDataChannelMessage
-    };
-    this.connect();
-  },
+//   socket = null;
+//   isInitiator = false;
+//   dataChannelReady = false;
+//   peerConnection = null;
+//   dataChannel = null;
+//   remoteDescriptionReady = false;
+//   pendingCandidates = null;
+//   lastMessageOrd = null;
 
-  destroy: function() {
-    this.parent();
-    this.closePeerConnection();
-  },
+//   constructor(socket, peerUser, isInitiator) {
+//     this.parent();
+//     this.socket = socket;
+//     this.peerUser = peerUser;
+//     this.isInitiator = isInitiator;
+//     this.pendingCandidates = [];
+//     this.peerHandlers = {
+//       'icecandidate': this.onLocalIceCandidate,
+//       'iceconnectionstatechange': this.onIceConnectionStateChanged,
+//       'datachannel': this.onDataChannel
+//     };
+//     this.dataChannelHandlers = {
+//       'open': this.onDataChannelOpen,
+//       'close': this.onDataChannelClose,
+//       'message': this.onDataChannelMessage
+//     };
+//     this.connect();
+//   }
 
-  connect: function() {
-    this.peerConnection = new RTCPeerConnection({
-      iceServers: this.iceServers
-    });
-    Events.listen(this.peerConnection, this.peerHandlers, this);
-    if (this.isInitiator) {
-      this.openDataChannel(
-          this.peerConnection.createDataChannel(this.CHANNEL_NAME, {
-        ordered: false
-      }));
-    }
-    if (this.isInitiator) {
-      this.setLocalDescriptionAndSend();
-    }
-  },
+//   destroy() {
+//     this.parent();
+//     this.closePeerConnection();
+//   }
 
-  closePeerConnection: function() {
-    this.closeDataChannel();
-    Events.unlisten(this.peerConnection, this.peerHandlers, this);
-    if (this.peerConnection.signalingState !== 'closed') {
-      this.peerConnection.close();
-    }
-  },
+//   connect() {
+//     this.peerConnection = new RTCPeerConnection({
+//       iceServers: this.iceServers
+//     });
+//     Events.listen(this.peerConnection, this.peerHandlers, this);
+//     if (this.isInitiator) {
+//       this.openDataChannel(
+//           this.peerConnection.createDataChannel(this.CHANNEL_NAME, {
+//         ordered: false
+//       }));
+//     }
+//     if (this.isInitiator) {
+//       this.setLocalDescriptionAndSend();
+//     }
+//   }
 
-  setSdp: function(sdp) {
-    var self = this;
-    // Create session description from sdp data
-    var rsd = new RTCSessionDescription(sdp);
-    // And set it as remote description for peer connection
-    self.peerConnection.setRemoteDescription(rsd)
-      .then(function() {
-        self.remoteDescriptionReady = true;
-        self.log('Got SDP from remote peer', 'green');
-        // Add all received remote candidates
-        while (self.pendingCandidates.length) {
-          self.addRemoteCandidate(self.pendingCandidates.pop());
-        }
-        // Got offer? send answer
-        if (!self.isInitiator) {
-          self.setLocalDescriptionAndSend();
-        }
-      });
-  },
+//   closePeerConnection() {
+//     this.closeDataChannel();
+//     Events.unlisten(this.peerConnection, this.peerHandlers, this);
+//     if (this.peerConnection.signalingState !== 'closed') {
+//       this.peerConnection.close();
+//     }
+//   }
 
-  setLocalDescriptionAndSend: function() {
-    var self = this;
-    self.getDescription()
-      .then(function(localDescription) {
-        self.peerConnection.setLocalDescription(localDescription)
-          .then(function() {
-            self.log('Sending SDP', 'green');
-            self.sendSdp(self.peerUser.userId, localDescription);
-          });
-      })
-      .catch(function(error) {
-        self.log('onSdpError: ' + error.message, 'red');
-      });
-  },
+//   setSdp(sdp) {
+//     var self = this;
+//     // Create session description from sdp data
+//     var rsd = new RTCSessionDescription(sdp);
+//     // And set it as remote description for peer connection
+//     self.peerConnection.setRemoteDescription(rsd)
+//       .then(function() {
+//         self.remoteDescriptionReady = true;
+//         self.log('Got SDP from remote peer', 'green');
+//         // Add all received remote candidates
+//         while (self.pendingCandidates.length) {
+//           self.addRemoteCandidate(self.pendingCandidates.pop());
+//         }
+//         // Got offer? send answer
+//         if (!self.isInitiator) {
+//           self.setLocalDescriptionAndSend();
+//         }
+//       });
+//   }
 
-  getDescription: function() {
-    return this.isInitiator ?
-      this.peerConnection.createOffer() :
-      this.peerConnection.createAnswer();
-  },
+//   setLocalDescriptionAndSend() {
+//     var self = this;
+//     self.getDescription()
+//       .then(function(localDescription) {
+//         self.peerConnection.setLocalDescription(localDescription)
+//           .then(function() {
+//             self.log('Sending SDP', 'green');
+//             self.sendSdp(self.peerUser.userId, localDescription);
+//           });
+//       })
+//       .catch(function(error) {
+//         self.log('onSdpError: ' + error.message, 'red');
+//       });
+//   }
 
-  addIceCandidate: function(candidate) {
-    if (this.remoteDescriptionReady) {
-      this.addRemoteCandidate(candidate);
-    } else {
-      this.pendingCandidates.push(candidate);
-    }
-  },
+//   getDescription() {
+//     return this.isInitiator ?
+//       this.peerConnection.createOffer() :
+//       this.peerConnection.createAnswer();
+//   }
 
-  addRemoteCandidate: function(candidate) {
-    try {
-      this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-      this.log('Added his ICE-candidate:' + candidate.candidate, 'gray');
-    } catch (err) {
-      this.log('Error adding remote ice candidate' + err.message, 'red');
-    }
-  },
+//   addIceCandidate(candidate) {
+//     if (this.remoteDescriptionReady) {
+//       this.addRemoteCandidate(candidate);
+//     } else {
+//       this.pendingCandidates.push(candidate);
+//     }
+//   }
 
-  // When ice framework discoveres new ice candidate, we should send it
-  // to opponent, so he knows how to reach us
-  onLocalIceCandidate: function(event) {
-    if (event.candidate) {
-      this.log('Send my ICE-candidate: ' + event.candidate.candidate, 'gray');
-      this.sendIceCandidate(this.peerUser.userId, event.candidate);
-    } else {
-      this.log('No more candidates', 'gray');
-    }
-  },
+//   addRemoteCandidate(candidate) {
+//     try {
+//       this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+//       this.log('Added his ICE-candidate:' + candidate.candidate, 'gray');
+//     } catch (err) {
+//       this.log('Error adding remote ice candidate' + err.message, 'red');
+//     }
+//   }
 
-  // Connectivity has changed? For example someone turned off wifi
-  onIceConnectionStateChanged: function(event) {
-    this.log('Connection state: ' + event.target.iceConnectionState, 'green');
-  },
+//   // When ice framework discoveres new ice candidate, we should send it
+//   // to opponent, so he knows how to reach us
+//   onLocalIceCandidate(event) {
+//     if (event.candidate) {
+//       this.log('Send my ICE-candidate: ' + event.candidate.candidate, 'gray');
+//       this.sendIceCandidate(this.peerUser.userId, event.candidate);
+//     } else {
+//       this.log('No more candidates', 'gray');
+//     }
+//   }
 
-  onDataChannel: function(event) {
-    if (!this.isInitiator) {
-      this.openDataChannel(event.channel);
-    }
-  },
+//   // Connectivity has changed? For example someone turned off wifi
+//   onIceConnectionStateChanged(event) {
+//     this.log('Connection state: ' + event.target.iceConnectionState, 'green');
+//   }
 
-  openDataChannel: function(channel) {
-    this.dataChannel = channel;
-    Events.listen(this.dataChannel, this.dataChannelHandlers, this);
-  },
+//   onDataChannel(event) {
+//     if (!this.isInitiator) {
+//       this.openDataChannel(event.channel);
+//     }
+//   }
 
-  closeDataChannel: function() {
-    Events.unlisten(this.dataChannel, this.dataChannelHandlers, this);
-    this.dataChannel.close();
-  },
+//   openDataChannel(channel) {
+//     this.dataChannel = channel;
+//     Events.listen(this.dataChannel, this.dataChannelHandlers, this);
+//   }
 
-  // Data channel
-  sendMessage: function(message) {
-    if (!this.dataChannelReady) {
-      return;
-    }
-    this.dataChannel.send(message);
-  },
+//   closeDataChannel() {
+//     Events.unlisten(this.dataChannel, this.dataChannelHandlers, this);
+//     this.dataChannel.close();
+//   }
 
-  onDataChannelOpen: function() {
-    this.dataChannelReady = true;
-    this.emit('open');
-  },
+//   // Data channel
+//   sendMessage(message) {
+//     if (!this.dataChannelReady) {
+//       return;
+//     }
+//     this.dataChannel.send(message);
+//   }
 
-  onDataChannelMessage: function(event) {
-    this.emit('message', MessageBuilder.deserialize(event.data));
-  },
+//   onDataChannelOpen() {
+//     this.dataChannelReady = true;
+//     this.emit('open');
+//   }
 
-  onDataChannelClose: function() {
-    this.dataChannelReady = false;
-    this.emit('closed');
-  },
+//   onDataChannelMessage(event) {
+//     this.emit('message', MessageBuilder.deserialize(event.data));
+//   }
 
-  sendSdp: function(userId, sdp) {
-    this.socket.emit('sdp', {
-      userId: userId,
-      sdp: sdp
-    });
-  },
+//   onDataChannelClose() {
+//     this.dataChannelReady = false;
+//     this.emit('closed');
+//   }
 
-  sendIceCandidate: function(userId, candidate) {
-    this.socket.emit('ice_candidate', {
-      userId: userId,
-      candidate: candidate
-    });
-  },
+//   sendSdp(userId, sdp) {
+//     this.socket.emit('sdp', {
+//       userId: userId,
+//       sdp: sdp
+//     });
+//   }
 
-  log: function(message, color) {
-    console.log('%c[Peer-%d, %s] %s', 'color:' + color, this.peerUser.userId,
-      this.peerConnection.signalingState, message);
-  }
-};
+//   sendIceCandidate(userId, candidate) {
+//     this.socket.emit('ice_candidate', {
+//       userId: userId,
+//       candidate: candidate
+//     });
+//   }
+
+//   log(message, color) {
+//     console.log('%c[Peer-%d, %s] %s', 'color:' + color, this.peerUser.userId,
+//       this.peerConnection.signalingState, message);
+//   }
+// }
+
+// class RoomConnection {
+//   peers = null;
+//   socket = null;
+//   roomName = null;
+//   roomInfo = null;
+//   pendingSdp = null;
+//   pendidateCandidates = null;
+
+//   constructor(roomName, socket) {
+//     this.parent();
+//     this.socket = socket;
+//     this.roomName = roomName;
+//     this.pendingSdp = {};
+//     this.pendingCandidates = {};
+
+//     this.socketHandlers = {
+//       'sdp': this.onSdp,
+//       'ice_candidate': this.onIceCandidate,
+//       'room': this.onJoinedRoom,
+//       'user_join': this.onUserJoin,
+//       'user_ready': this.onUserReady,
+//       'user_leave': this.onUserLeave,
+//       'error': this.onError
+//     };
+
+//     this.peerConnectionHandlers = {
+//       'open': this.onPeerChannelOpen,
+//       'close': this.onPeerChannelClose,
+//       'message': this.onPeerMessage
+//     };
+
+//     Events.on(this.socket, this.socketHandlers, this);
+//   }
+
+//   destroy() {
+//     this.parent();
+//     Events.off(this.socket, this.socketHandlers, this);
+//   }
+
+//   connect() {
+//     this.sendJoin(this.roomName);
+//   }
+
+//   initPeerConnection(user, isInitiator) {
+//     // Create connection
+//     var cnt = new PeerConnection(this.socket, user, isInitiator);
+//     Events.on(cnt, this.peerConnectionHandlers, this, cnt, user);
+
+//     // Sometimes sdp|candidates may arrive before we initialized
+//     // peer connection, so not to loose the, we save them as pending
+//     var userId = user.userId;
+//     var pendingSdp = this.pendingSdp[userId];
+//     if (pendingSdp) {
+//       cnt.setSdp(pendingSdp);
+//       delete this.pendingSdp[userId];
+//     }
+//     var pendingCandidates = this.pendingCandidates[userId];
+//     if (pendingCandidates) {
+//       pendingCandidates.forEach(cnt.addIceCandidate, cnt);
+//       delete this.pendingCandidates[userId];
+//     }
+//     return cnt;
+//   }
+
+//   onSdp(message) {
+//     var userId = message.userId;
+//     if (!this.peers[userId]) {
+//       this.log('Adding pending sdp from another player. id = ' + userId, 'gray');
+//       this.pendingSdp[userId] = message.sdp;
+//       return;
+//     }
+//     this.peers[userId].setSdp(message.sdp);
+//   }
+
+//   onIceCandidate(message) {
+//     var userId = message.userId;
+//     if (!this.peers[userId]) {
+//       this.log('Adding pending candidate from another player. id =' + userId, 'gray');
+//       if (!this.pendingCandidates[userId]) {
+//         this.pendingCandidates[userId] = [];
+//       }
+//       this.pendingCandidates[userId].push(message.candidate);
+//       return;
+//     }
+//     this.peers[userId].addIceCandidate(message.candidate);
+//   }
+
+//   onJoinedRoom(roomInfo) {
+//     this.emit('joined', roomInfo);
+//     this.roomInfo = roomInfo;
+//     this.peers = {};
+//     for (var k in this.roomInfo.users) {
+//       var user = this.roomInfo.users[k];
+//       if (user.userId !== this.roomInfo.userId) {
+//         this.peers[user.userId] = this.initPeerConnection(this.roomInfo.users[k], true);
+//       }
+//     }
+//   }
+
+//   onError(error) {
+//     this.log('Error connecting to room' + error.message, 'red');
+//   }
+
+//   onUserJoin(user) {
+//     this.log('Another player joined. id = ' + user.userId, 'orange');
+//     var peerConnection = this.initPeerConnection(user, false);
+//     this.roomInfo.users.push(user);
+//     this.peers[user.userId] = peerConnection;
+//   }
+
+//   onUserReady(user) {
+//     this.log('Another player ready. id = ' + user.userId, 'orange');
+//     this.emit('user_ready', user);
+//   }
+
+//   onPeerChannelOpen(peer, user) {
+//     this.emit('peer_open', user, peer);
+//   }
+
+//   onPeerChannelClose(peer, user) {
+//     this.emit('peer_close', user, peer);
+//   }
+
+//   onPeerMessage(peer, user, message) {
+//     this.emit('peer_message', message, user, peer);
+//   }
+
+//   onUserLeave(goneUser) {
+//     if (!this.peers[goneUser.userId]) {
+//       return;
+//     }
+//     var cnt = this.peers[goneUser.userId];
+//     Events.off(cnt, this.peerConnectionHandlers, this);
+//     cnt.destroy();
+//     delete this.peers[goneUser.userId];
+//     delete this.roomInfo.users[goneUser.userId];
+//     this.emit('user_leave', goneUser);
+//   }
+
+//   sendJoin(roomName) {
+//     this.socket.emit('join', {
+//       roomName: roomName
+//     });
+//   }
+
+//   sendLeave() {
+//     this.socket.emit(MessageType.LEAVE);
+//   }
+
+//   broadcastMessage(message) {
+//     this.broadcast(MessageBuilder.serialize(message));
+//   }
+
+//   sendMessageTo(userId, message) {
+//     var peer = this.peers[userId];
+//     this.peerSend(peer, MessageBuilder.serialize(message));
+//   }
+
+//   broadcast(arrayBuffer) {
+//     for (var p in this.peers) {
+//       this.peerSend(this.peers[p], arrayBuffer);
+//     }
+//   }
+
+//   peerSend(peer, data) {
+//     peer.sendMessage(data);
+//   }
+
+//   log(message, color) {
+//     console.log('%c%s', 'color:' + color, message);
+//   }
+// };

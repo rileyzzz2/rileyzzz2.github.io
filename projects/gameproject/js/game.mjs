@@ -4,16 +4,18 @@ import {startRenderer} from './render.mjs';
 
 $(document).ready(function() {
     let params = new URLSearchParams(location.search);
-    activeLobby = params.get('join');
-    if(activeLobby) {
-        pubnub.subscribe({
-            channels: [activeLobby],
-            withPresence: true
-        });
+    hostId = params.get('join');
+    if(hostId) {
+        // pubnub.subscribe({
+        //     channels: [activeLobby],
+        //     withPresence: true
+        // });
+        var conn = peer.connect(activeLobby);
     }
     else
     {
-        alert("No active lobby!");
+        isHost = true;
+
     }
 
     //params.get('name') # => "n1";
