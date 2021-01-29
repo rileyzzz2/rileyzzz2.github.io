@@ -1,10 +1,10 @@
 import {initResources} from './res.mjs';
 import {loadMap} from './map.mjs';
 import {startRenderer} from './render.mjs';
-import {initP2P} from './network.mjs';
+//import {initP2P} from './network.mjs';
 import {connectToPeer} from './network.mjs';
 $(document).ready(function() {
-    initP2P();
+
     
 
     //params.get('name') # => "n1";

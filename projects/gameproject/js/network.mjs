@@ -87,39 +87,69 @@ class RemotePlayer {
     }
 }
 
-export function initP2P() {
-    peer = new Peer({
-        config: {'iceServers': [
-        { url: 'stun:stun.l.google.com:19302' },
-        { url: 'turn:homeo@turn.bistri.com:80', credential: 'homeo' }
-        ]}
-    });
 
-    peer.on('open', function(id) {
-        playerID = id;
-        console.log('My peer ID is: ' + id);
-        $("#p2pid").text(id);
+peer = new Peer();
+// peer = new Peer({
+//     config: {'iceServers': [{ 'urls': 'stun:stun.l.google.com:19302' }]}
+// });
 
-        let params = new URLSearchParams(location.search);
-        hostID = params.get('join');
-        if(hostID) {
-            // pubnub.subscribe({
-            //     channels: [activeLobby],
-            //     withPresence: true
+peer.on('open', function(id) {
+    playerID = id;
+    console.log('My peer ID is: ' + id);
+    $("#p2pid").text(id);
+
+    let params = new URLSearchParams(location.search);
+    hostID = params.get('join');
+    if(hostID) {
+        // pubnub.subscribe({
+        //     channels: [activeLobby],
+        //     withPresence: true
+        // });
+        //connectToPeer(hostID);
+
+        //connect to the host
+        var conn = peer.connect(id);
+        conn.on('open', function(){
+            console.log("connection open, sending message");
+            // here you have conn.id
+            conn.send("hello!!!!!!");
+            // conn.send({
+            //     type: "joinClient",
+            //     id: playerID
             // });
-            connectToPeer(hostID);
-        }
-        else
-        {
-            isHost = true;
-            hostID = playerID;
+        });
+    }
+    else
+    {
+        isHost = true;
+        hostID = playerID;
+    }
+});
+peer.on('connection', function(conn) {
+    console.log("connection msg");
+    conn.on('data', function(data){
+    // Will print 'hi!'
+        console.log("received connection data:");
+        console.log(data);
+
+        //if server, broadcast client join message to all connected clients
+        if(isHost) {
+
         }
     });
-}
+});
+
 
 export function connectToPeer(id) {
     console.log("connecting to peer " + id);
     var conn = peer.connect(id);
+    conn.on('open', function(){
+        // here you have conn.id
+        // conn.send({
+        //     type: "connect",
+        //     id: playerID
+        // });
+    });
 }
 
 
@@ -137,12 +167,4 @@ export function connectToPeer(id) {
 // conn.on('open', function(){
 //   // here you have conn.id
 //   conn.send('hi!');
-// });
-
-// peer.on('connection', function(conn) {
-//   conn.on('data', function(data){
-//     // Will print 'hi!'
-//     console.log("received connection data!");
-//     console.log(data);
-//   });
 // });

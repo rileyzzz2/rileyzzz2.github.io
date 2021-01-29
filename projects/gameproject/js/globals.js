@@ -22,6 +22,7 @@ var isHost = false;
 var hostID = "";
 var playerID = "";
 var peer;
+var remoteClients = []; //server only
 
 //var cameraHelper = new THREE.CameraHelper(camera);
 //scene.add(cameraHelper);
