@@ -479,7 +479,7 @@ class NPCKart {
     }
     update(dt) {
         if(this.hasReceivedData) {
-            const interpSpeed = 0.2;
+            const interpSpeed = 0.4;
             this.mesh.position.lerp(this.targetPos, interpSpeed);
             this.mesh.quaternion.slerp(this.targetRot, interpSpeed);
         }
