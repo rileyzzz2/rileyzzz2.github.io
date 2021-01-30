@@ -42,6 +42,9 @@
             .mainButtons {
                 display: block;
             }
+            .singleplayerSetup {
+                display: none;
+            }
             .lobbySetup {
                 display: none;
             }
@@ -72,8 +75,16 @@
             <div class="menuOverlay">
                 <div class="center-box">
                     <div class="mainButtons">
+                        <button id="btn_singleplayer" type="button">Singleplayer</button>
                         <button id="btn_host" type="button">Host</button>
                         <button id="btn_join" type="button">Join</button>
+                    </div>
+                    <div class="singleplayerSetup">
+                        <!-- course selection etc -->
+                        <form id="singleplayerForm" action="play.html">
+                            <input type="hidden" name="singleplayer" value="true">
+                            <input type="submit" value="Start Game">
+                        </form>
                     </div>
                     <div class="lobbySetup">
                         <form id="hostForm" action="play.html">

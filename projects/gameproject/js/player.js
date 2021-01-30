@@ -65,7 +65,7 @@ class Kart {
         var chassisWidth = 1.0; //1.8
         var chassisHeight = .2; //.6
         var chassisLength = 2.2; //2
-        var massVehicle = 400; //800
+        //var massVehicle = 400; //800
 
         var wheelAxisBackPosition = -1;
         var wheelAxisHeightBack = .3;
@@ -157,7 +157,7 @@ class Kart {
         //start.y = 100.0;
         //start.y += 4.0;
         start.y += 4.0;
-        transform.setOrigin(pvec(start));
+        //transform.setOrigin(pvec(start));
         transform.setRotation(pquat(startQuat));
 
         let motionState = new Ammo.btDefaultMotionState( transform );
@@ -333,6 +333,17 @@ class Kart {
         
         this.vehicle.setSteeringValue(this.vehicleSteering, FRONT_LEFT);
         this.vehicle.setSteeringValue(this.vehicleSteering, FRONT_RIGHT);
+
+        //give a quick speed boost if we're stuck
+        if(Math.abs(speed) < 1 && (bMoveForward || bMoveBackward)) {
+            this.gameObject.rigidBody.forceActivationState(1);
+
+            var forward = new THREE.Vector3();
+            this.gameObject.mesh.getWorldDirection(forward);
+            forward.normalize();
+            forward.multiplyScalar(this.engineForce);
+            this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 100.0, forward.z));
+        }
     }
     tick() {
         var speed = this.vehicle.getCurrentSpeedKmHour();

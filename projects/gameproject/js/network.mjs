@@ -93,6 +93,13 @@ peer.on('open', function(id) {
     console.log('My peer ID is: ' + id);
 
     let params = new URLSearchParams(location.search);
+
+    var singleplayer = params.get('singleplayer');
+    if(singleplayer) {
+        startGame();
+        return;
+    }
+
     hostID = params.get('join');
     if(hostID) {
         // pubnub.subscribe({
