@@ -422,10 +422,11 @@ class NPCKart {
     constructor(conn) {
         this.conn = conn;
 
-        this.geometry = new THREE.BoxGeometry();
-        this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-        this.cube = new THREE.Mesh( this.geometry, this.material );
-        scene.add( this.cube );
+        // this.geometry = new THREE.BoxGeometry();
+        // this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        // this.cube = new THREE.Mesh( this.geometry, this.material );
+        this.mesh = gameModels.standardKart.scene.clone();
+        scene.add( this.mesh );
 
         //that is necessary to prevent callback scope problems
         var that = this;
@@ -435,12 +436,12 @@ class NPCKart {
     }
     handleData(data) {
         if(data.type === "playerTick") {
-            console.log("received player tick!");
-            this.cube.position.set( msg.pos.x, msg.pos.y, msg.pos.z );
-            this.cube.quaternion.x = msg.rot.x;
-            this.cube.quaternion.y = msg.rot.y;
-            this.cube.quaternion.z = msg.rot.z;
-            this.cube.quaternion.w = msg.rot.w;
+            //console.log("received player tick!");
+            this.mesh.position.set( data.pos[0], data.pos[1], data.pos[2] );
+            this.mesh.quaternion.x = data.rot[0];
+            this.mesh.quaternion.y = data.rot[1];
+            this.mesh.quaternion.z = data.rot[2];
+            this.mesh.quaternion.w = data.rot[3];
         }
     }
 }

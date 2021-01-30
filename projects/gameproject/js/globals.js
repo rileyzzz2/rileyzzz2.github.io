@@ -63,7 +63,7 @@ window.setInterval(async function() {
 window.setInterval(async function() {
     for(let i = 0; i < networkThinkers.length; i++)
         networkThinkers[i].replicate();
-}, 500.0);
+}, 50.0);
 
 class GameObject {
     constructor(mesh, rigidBody) {
