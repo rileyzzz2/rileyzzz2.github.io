@@ -46,12 +46,17 @@
                 color: white;
             }
             .playerList {
-                text-align: left;
+                width: 400px;
+                margin: auto;
             }
             .playerListElement {
                 height: 20px;
             }
             .playerListElement:nth-child(even) {background-color: #3a3c60;}
+            .startGame {
+                display: none;
+                width: 400px;
+            }
             #gameWindow {
                 margin: 0;
                 width: 100%;
@@ -84,7 +89,9 @@
         <div class="menuOverlay">
             <div class="center-box">
                 <p id="p2pid"></p>
+                <p>Player List:</p>
                 <table class="playerList"></table>
+                 <button type="button" class="startGame">Start Game</button> 
             </div>
         </div>
 
@@ -96,8 +103,8 @@
         <script src="js/particle.js"></script>
         <script src="js/player.js"></script>
         <script type="module" src="js/map.mjs"></script>
-        <script type="module" src="js/network.mjs"></script>
         <script type="module" src="js/game.mjs"></script>
+        <script type="module" src="js/network.mjs"></script>
         <!-- <script src="js/doom.js"></script> -->
     </body>
 </html>

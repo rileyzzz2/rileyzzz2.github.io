@@ -1,8 +1,6 @@
 import {initResources} from './res.mjs';
 import {loadMap} from './map.mjs';
 import {startRenderer} from './render.mjs';
-//import {initP2P} from './network.mjs';
-import {connectToPeer} from './network.mjs';
 $(document).ready(function() {
 
     
@@ -39,6 +37,11 @@ $(document).ready(function() {
 //     // newcube.scale.set(1.0, 1.0, 1.0);
 //     // createRigidBox(newcube, 0.2);
 // }
+export function startGame() {
+    console.log("starting game");
+    $(".menuOverlay").hide();
+    Ammo().then(beginPlay);
+}
 
 export async function beginPlay() {
     await initResources();

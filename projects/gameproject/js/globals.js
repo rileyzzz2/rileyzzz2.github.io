@@ -24,7 +24,13 @@ var hostConn;
 var playerID = "";
 var peer;
 //var remoteClients = []; //server only
-var remoteConnections = {}; //every other player
+//list of active remote connections! this includes players not currently in the match, waiting to join
+var remoteConnections = {};
+
+//Players currently within the map. these are refreshed on map load, and will not correspond with remoteConnections
+var localPlayer;
+var Players = [];
+
 
 //var cameraHelper = new THREE.CameraHelper(camera);
 //scene.add(cameraHelper);

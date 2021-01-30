@@ -91,82 +91,18 @@ class Map {
                 if(materialGroup === "wall" ||materialGroup === "road" || materialGroup === "offroad" || materialGroup === "fast") {
                     let geom = new THREE.Geometry().fromBufferGeometry(child.geometry); //confirmed
                     let faces = geom.faces;
-                    //createFaceCollision(child, geom, face)
-                    //console.log("Creating collision for " + child.material.name);
-                    // let chunk = 2000;
-                    // for(let i = 0; i < faces.length; i += chunk) {
-                    //     let tempFaces = faces.slice(i, i + chunk);
-                    //     createFaceCollision(child, geom, tempFaces);
-                    // }
                     createFaceCollision(child, geom, faces);
-
-                    // for(let i = 0; i < faces.length; i++)
-                    //     createFaceCollision(child, geom, [faces[i]]);
-                    //console.log("Done.");
-                    // let collideMesh = new Ammo.btTriangleMesh(true, true);
-                    // //let collideMesh = new Ammo.btConvexHullShape();
-                    // let childPos = new THREE.Vector3();
-                    // let childQuat = new THREE.Quaternion();
-                    // let childScale = new THREE.Vector3();
-                    // child.getWorldPosition(childPos);
-                    // child.getWorldQuaternion(childQuat);
-                    // child.getWorldScale(childScale);
-                    // collideMesh.setScaling(pvec(childScale));
-                    // //collideMesh.setLocalScaling(pvec(childScale));
-
-                    // const mapTransform = new Ammo.btTransform();
-                    // mapTransform.setIdentity();
-                    // mapTransform.setOrigin(pvec(childPos));
-                    // mapTransform.setRotation(pquat(childQuat));
-
-                    // //let mapTransform = createTransform(child);
-                    // let mapMotionState = new Ammo.btDefaultMotionState(mapTransform);
-
-                    // let geom = new THREE.Geometry().fromBufferGeometry(child.geometry); //confirmed
-                    // let vertices = geom.vertices;
-                    // let faces = geom.faces;
-                    // //console.log("mesh has " + faces.length + " faces");
-                    // //console.log("face " + vertices[faces[0].a].x + " " + vertices[faces[0].a].y + " " + vertices[faces[0].a].z);
-                    // //mesh.setScaling(new Ammo.btVector3(scale[0], scale[1], scale[2]));
-                    // // for(let i = 0; i < faces.length; i++) {
-                    // //     let face = faces[i];
-                    // //     collideMesh.addTriangle(
-                    // //         pvec(vertices[face.a]),
-                    // //         pvec(vertices[face.b]),
-                    // //         pvec(vertices[face.c]),
-                    // //         true //remove doubles
-                    // //     );
-                    // //     // collideMesh.addPoint(pvec(vertices[face.a]), true);
-                    // //     // collideMesh.addPoint(pvec(vertices[face.b]), true);
-                    // //     // collideMesh.addPoint(pvec(vertices[face.c]), true);
-                    // // }
-
-                    // for(let i = 0; i < vertices.length; i++)
-                    //     collideMesh.findOrAddVertex(pvec(vertices[i]), true);
-
-                    // for(let i = 0; i < faces.length; i++)
-                    // {
-                    //     collideMesh.addIndex(faces[i].a);
-                    //     collideMesh.addIndex(faces[i].b);
-                    //     collideMesh.addIndex(faces[i].c);
-                    // }
-                    // let collideShape = new Ammo.btBvhTriangleMeshShape(collideMesh, true, true);
-                    // //let collideShape = new Ammo.btConvexTriangleMeshShape(collideMesh, true);
-                    // //let collideShape = collideMesh;
-                    // collideShape.setMargin( 0.1 );
-                    // let localInertia = new Ammo.btVector3(0, 0, 0);
-                    // collideShape.calculateLocalInertia( 0.0, localInertia );
-                    // let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0.0, mapMotionState, collideShape, localInertia));
-                    
-                    // object.setCollisionFlags(object.collisionFlags | CF_CUSTOM_MATERIAL_CALLBACK);
-
-                    // physicsWorld.addRigidBody(object);
                 }
             
             }
         });
 
+        //create karts
         localPlayer = new Kart(this.startPos);
+
+        for(const client in remoteConnections)
+            Players.push(new NPCKart(remoteConnections[client].conn));
+        
         
         //camera.parent = localPlayer.gameObject.mesh;
         //camera.position.x = -2;

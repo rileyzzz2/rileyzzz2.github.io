@@ -1,4 +1,5 @@
 import {beginPlay} from './game.mjs';
+import {startGame} from './game.mjs';
 //https://itnext.io/how-to-build-a-realtime-multiplayer-game-in-javascript-using-pubnub-5f410fd62f33
 
 var listener = {
@@ -107,13 +108,6 @@ peer.on('open', function(id) {
             //create a remote player for the host
             remoteConnections[hostID] = new RemotePlayer(hostConn);
             refreshPlayerList();
-            //console.log("connection open, sending message");
-            // here you have conn.id
-            //conn.send("hello!!!!!!");
-            // conn.send({
-            //     type: "joinClient",
-            //     id: playerID
-            // });
         });
     }
     else
@@ -123,6 +117,8 @@ peer.on('open', function(id) {
 
         $("#p2pid").text("Your P2P ID is:\n" + hostID);
     }
+
+    refreshPlayerList();
 });
 
 class RemotePlayer {
@@ -151,11 +147,6 @@ peer.on('connection', function(conn) {
                 players: Object.keys(remoteConnections)
             });
         }
-
-        if(Object.keys(remoteConnections).length > 0) {
-            console.log("starting game");
-            //send a message to all clients to start a game
-        }
     }
     
 });
@@ -176,40 +167,54 @@ function processConnectionData(data) {
             }
             //remoteConnections = data.players;
         }
+        else if(data.type === "startGame") {
+            startGame();
+        }
     }
-}
-
-
-export function connectToPeer(id) {
-    console.log("connecting to peer " + id);
-    var conn = peer.connect(id);
-    conn.on('open', function(){
-        // here you have conn.id
-        // conn.send({
-        //     type: "connect",
-        //     id: playerID
-        // });
-    });
 }
 
 function refreshPlayerList() {
     $(".playerList").empty();
     //let item = "<tr class='playerListElement'></tr>";
-
+    var clientCount = 0;
     function addClient(client) {
         var row = $("<tr class='playerListElement'></tr>");
 
         var nameCol = $("<td>" + client + "</td>");
         row.append(nameCol);
 
+        var infoCol = $("<td></td>");
+        if(client === playerID)
+            infoCol.append("(client)");
+        if(client === hostID)
+            infoCol.append("(host)");
+        
+        row.append(infoCol);
+
         $(".playerList").append(row);
+        clientCount++;
     }
     //local player
     addClient(playerID);
 
     for(const client in remoteConnections)
         addClient(client);
+
+    if(isHost && clientCount > 1)
+        $(".startGame").show();
+    else
+        $(".startGame").hide();
 }
+
+$(".startGame").click(function() {
+    startGame();
+    for(const client in remoteConnections) {
+        remoteConnections[client].conn.send({
+            type: "startGame"
+            //eventually add specific parameters like map, etc
+        });
+    }
+});
 
 
 //sessionStorage.setItem("SessionPubNub" pubnub);

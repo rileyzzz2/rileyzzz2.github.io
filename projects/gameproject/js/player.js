@@ -394,8 +394,8 @@ class Kart {
             ms.getWorldTransform( tmpTrans );
             let p = tmpTrans.getOrigin();
             let q = tmpTrans.getRotation();
-            console.log("sending signal " + p.x() + " " + Math.fround(p.x()).toString());
-            const precision = 2;
+            //console.log("sending signal " + p.x() + " " + Math.fround(p.x()).toString());
+            //const precision = 2;
             // signal({
             //     type: "pt",
             //     //pos: [p.x().toFixed(precision).toString(), p.y().toFixed(precision).toString(), p.z().toFixed(precision).toString()],
@@ -404,33 +404,43 @@ class Kart {
             //     y: p.y(),
             //     z: p.z()
             // });
+
+            var data = {
+                type: "playerTick",
+                pos: [p.x(), p.y(), p.z()],
+                rot: [q.x(), q.y(), q.z(), q.w()]
+            };
+
+            for(const client in remoteConnections)
+                remoteConnections[client].conn.send(data);
+
         }
     }
 }
 
 class NPCKart {
-    constructor(playerid) {
-        this.playerid = playerid;
+    constructor(conn) {
+        this.conn = conn;
 
         this.geometry = new THREE.BoxGeometry();
         this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         this.cube = new THREE.Mesh( this.geometry, this.material );
         scene.add( this.cube );
 
-        console.log("registered kart for publisher " + publisher);
+        //that is necessary to prevent callback scope problems
+        var that = this;
+        this.conn.on('data', function(data) {
+            that.handleData(data);
+        });
     }
-    tick(msg) {
-        console.log("received player tick!");
-        //if(msg.type == "pt")
-            //this.cube.position.set( msg.x, msg.y, msg.z );
-            //this.cube.position.set( parseFloat(msg.pos[0]), parseFloat(msg.pos[1]), parseFloat(msg.pos[2]) );
-
-
-        //console.log("loc " + msg.pos[0] + " " + msg.pos[1] + " " + msg.pos[2]);
-
+    handleData(data) {
+        if(data.type === "playerTick") {
+            console.log("received player tick!");
+            this.cube.position.set( msg.pos.x, msg.pos.y, msg.pos.z );
+            this.cube.quaternion.x = msg.rot.x;
+            this.cube.quaternion.y = msg.rot.y;
+            this.cube.quaternion.z = msg.rot.z;
+            this.cube.quaternion.w = msg.rot.w;
+        }
     }
 }
-
-
-var localPlayer;
-var Players = {};
