@@ -433,7 +433,10 @@ class Kart {
 class NPCKart {
     constructor(conn) {
         this.conn = conn;
-
+        this.targetPos = new THREE.Vector3();
+        this.targetRot = new THREE.Quaternion();
+        this.hasReceivedData = false;
+        
         // this.geometry = new THREE.BoxGeometry();
         // this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         // this.cube = new THREE.Mesh( this.geometry, this.material );
@@ -445,15 +448,30 @@ class NPCKart {
         this.conn.on('data', function(data) {
             that.handleData(data);
         });
+
+        objects.push(this);
     }
     handleData(data) {
         if(data.type === "playerTick") {
             //console.log("received player tick!");
-            this.mesh.position.set( data.pos[0], data.pos[1], data.pos[2] );
-            this.mesh.quaternion.x = data.rot[0];
-            this.mesh.quaternion.y = data.rot[1];
-            this.mesh.quaternion.z = data.rot[2];
-            this.mesh.quaternion.w = data.rot[3];
+            // this.mesh.position.set( data.pos[0], data.pos[1], data.pos[2] );
+            // this.mesh.quaternion.x = data.rot[0];
+            // this.mesh.quaternion.y = data.rot[1];
+            // this.mesh.quaternion.z = data.rot[2];
+            // this.mesh.quaternion.w = data.rot[3];
+            this.targetPos.set(data.pos[0], data.pos[1], data.pos[2]);
+            this.targetRot.x = data.rot[0];
+            this.targetRot.y = data.rot[1];
+            this.targetRot.z = data.rot[2];
+            this.targetRot.w = data.rot[3];
+            this.hasReceivedData = true;
+        }
+    }
+    update(dt) {
+        if(this.hasReceivedData) {
+            const interpSpeed = 0.2;
+            this.mesh.position.lerp(this.targetPos, interpSpeed);
+            this.mesh.quaternion.slerp(this.targetRot, interpSpeed);
         }
     }
 }
