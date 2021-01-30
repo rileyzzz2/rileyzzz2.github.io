@@ -464,7 +464,17 @@ class NPCKart {
             this.targetRot.y = data.rot[1];
             this.targetRot.z = data.rot[2];
             this.targetRot.w = data.rot[3];
-            this.hasReceivedData = true;
+
+            //set initial position
+            if(!this.hasReceivedData) {
+                this.mesh.position.set( data.pos[0], data.pos[1], data.pos[2] );
+                this.mesh.quaternion.x = data.rot[0];
+                this.mesh.quaternion.y = data.rot[1];
+                this.mesh.quaternion.z = data.rot[2];
+                this.mesh.quaternion.w = data.rot[3];
+                this.hasReceivedData = true;
+            }
+            
         }
     }
     update(dt) {
