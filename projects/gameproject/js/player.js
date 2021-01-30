@@ -157,7 +157,7 @@ class Kart {
         //start.y = 100.0;
         //start.y += 4.0;
         start.y += 4.0;
-        //transform.setOrigin(pvec(start));
+        transform.setOrigin(pvec(start));
         transform.setRotation(pquat(startQuat));
 
         let motionState = new Ammo.btDefaultMotionState( transform );
