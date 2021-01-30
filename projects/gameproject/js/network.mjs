@@ -90,7 +90,6 @@ peer = new Peer();
 peer.on('open', function(id) {
     playerID = id;
     console.log('My peer ID is: ' + id);
-    $("#p2pid").text(id);
 
     let params = new URLSearchParams(location.search);
     hostID = params.get('join');
@@ -102,70 +101,83 @@ peer.on('open', function(id) {
         //connectToPeer(hostID);
 
         //connect to the host
-        var conn = peer.connect(hostID);
-        conn.on('open', function(){
+        hostConn = peer.connect(hostID);
+        hostConn.on('open', function(){
+
+            //create a remote player for the host
+            remoteConnections[hostID] = new RemotePlayer(hostConn);
+            refreshPlayerList();
             //console.log("connection open, sending message");
             // here you have conn.id
             //conn.send("hello!!!!!!");
-            conn.send({
-                type: "joinClient",
-                id: playerID
-            });
+            // conn.send({
+            //     type: "joinClient",
+            //     id: playerID
+            // });
         });
     }
     else
     {
         isHost = true;
         hostID = playerID;
+
+        $("#p2pid").text("Your P2P ID is:\n" + hostID);
     }
 });
 
 class RemotePlayer {
-    constructor(id, conn) {
-        this.id = id;
+    constructor(conn) {
         this.conn = conn;
+        this.conn.on('data', processConnectionData);
+        console.log("Connected to remote player " + conn.peer);
     }
 }
 
 peer.on('connection', function(conn) {
-    console.log("connection msg");
-    conn.on('data', function(data){
-    // Will print 'hi!'
-        console.log("received connection data:");
-        console.log(data.type);
+    console.log("Connection established with client " + conn.peer);
+    
+    if(!remoteConnections[conn.peer]) {
+        remoteConnections[conn.peer] = new RemotePlayer(conn);
+        refreshPlayerList();
+    }
 
-        //if server, broadcast client join message to all connected clients
-        if(isHost) {
-            if(data.type === "joinClient" && data.id !== playerID) {
-                //for(let i = 0; i < remoteClients.length; i++)
-                //remoteClients.push(data.id);
-                remoteConnections[data.id] = new RemotePlayer(data.id, peer.connect(data.id));
-                for(const remote in remoteConnections) {
-                    remote.conn.send({
-                        type: "refreshConnectedPlayers",
-                        players: Object.keys(remoteConnections)
-                    });
-                }
-            }
-            else if(data.type === "leaveClient" && data.id !== playerID) {
-                // const index = remoteClients.indexOf(data.id);
-                // if(index > -1)
-                //     remoteClients.splice(index, 1);
-                remoteConnections[data.id] = null;
-            }
+    console.log("connection list " + Object.keys(remoteConnections));
+
+    //send an update player list message to all connected clients when a client joins
+    if(isHost) {
+        for(const client in remoteConnections) {
+            remoteConnections[client].conn.send({
+                type: "refreshConnectedPlayers",
+                players: Object.keys(remoteConnections)
+            });
         }
-        else //!isHost
-        {
-            if(data.type === "refreshConnectedPlayers") {
-                for(const player in data.players) {
-                    if(!remoteConnections[player] && player !== playerID)
-                        remoteConnections[player] = new RemotePlayer(player, peer.connect(player));
-                }
-                //remoteConnections = data.players;
-            }
+
+        if(Object.keys(remoteConnections).length > 0) {
+            console.log("starting game");
+            //send a message to all clients to start a game
         }
-    });
+    }
+    
 });
+
+function processConnectionData(data) {
+    console.log("received connection data:");
+    console.log(data.type);
+
+    if(!isHost)
+    {
+        if(data.type === "refreshConnectedPlayers") {
+            for(let i = 0; i < data.players.length; i++) {
+                let player = data.players[i];
+                if(!remoteConnections[player] && player !== playerID) {
+                    remoteConnections[player] = new RemotePlayer(peer.connect(player));
+                    refreshPlayerList();
+                }
+            }
+            //remoteConnections = data.players;
+        }
+    }
+}
 
 
 export function connectToPeer(id) {
@@ -178,6 +190,25 @@ export function connectToPeer(id) {
         //     id: playerID
         // });
     });
+}
+
+function refreshPlayerList() {
+    $(".playerList").empty();
+    //let item = "<tr class='playerListElement'></tr>";
+
+    function addClient(client) {
+        var row = $("<tr class='playerListElement'></tr>");
+
+        var nameCol = $("<td>" + client + "</td>");
+        row.append(nameCol);
+
+        $(".playerList").append(row);
+    }
+    //local player
+    addClient(playerID);
+
+    for(const client in remoteConnections)
+        addClient(client);
 }
 
 

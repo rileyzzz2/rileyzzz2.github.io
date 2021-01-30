@@ -20,6 +20,7 @@ const netPlayer = {
 var isHost = false;
 
 var hostID = "";
+var hostConn;
 var playerID = "";
 var peer;
 //var remoteClients = []; //server only

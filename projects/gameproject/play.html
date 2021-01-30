@@ -45,6 +45,13 @@
                 text-align: center;
                 color: white;
             }
+            .playerList {
+                text-align: left;
+            }
+            .playerListElement {
+                height: 20px;
+            }
+            .playerListElement:nth-child(even) {background-color: #3a3c60;}
             #gameWindow {
                 margin: 0;
                 width: 100%;
@@ -76,8 +83,8 @@
 
         <div class="menuOverlay">
             <div class="center-box">
-                <p>Your P2P ID is:</p>
                 <p id="p2pid"></p>
+                <table class="playerList"></table>
             </div>
         </div>
 
