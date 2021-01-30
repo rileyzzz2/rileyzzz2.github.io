@@ -56,7 +56,7 @@ class Wheel {
 
 const steeringClamp = .25;
 class Kart {
-    constructor(startPos) {
+    constructor(startPos, startQuat) {
         this.drifting = false;
         this.driftTime = 0.0;
         this.steeringClampL = steeringClamp;
@@ -158,6 +158,7 @@ class Kart {
         //start.y += 4.0;
         start.y += 4.0;
         transform.setOrigin(pvec(start));
+        transform.setRotation(pquat(startQuat));
 
         let motionState = new Ammo.btDefaultMotionState( transform );
         var localInertia = new Ammo.btVector3( 0, 0, 0 );

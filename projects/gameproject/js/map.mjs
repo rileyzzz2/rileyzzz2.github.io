@@ -98,7 +98,7 @@ class Map {
         });
 
         //create karts
-        localPlayer = new Kart(this.startPos);
+        localPlayer = new Kart(this.startPos, this.startQuat);
 
         for(const client in remoteConnections)
             Players.push(new NPCKart(remoteConnections[client].conn));
