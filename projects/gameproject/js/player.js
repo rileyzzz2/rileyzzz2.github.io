@@ -200,8 +200,9 @@ class Kart {
         uprightConstraint.setLinearLowerLimit(new Ammo.btVector3(1.0, 1.0, 1.0));
         uprightConstraint.setLinearUpperLimit(new Ammo.btVector3(0.0, 0.0, 0.0));
 
-        uprightConstraint.setAngularLowerLimit(new Ammo.btVector3(1.0, 0.0, 1.0));
-        uprightConstraint.setAngularUpperLimit(new Ammo.btVector3(0.0, 0.0, 0.0));
+        //uprightConstraint.setAngularLowerLimit(new Ammo.btVector3(0.01, 0.0, 1.0));
+        uprightConstraint.setAngularLowerLimit(new Ammo.btVector3(-0.8, 0.0, 1.0));
+        uprightConstraint.setAngularUpperLimit(new Ammo.btVector3(0.8, 0.0, 0.0));
         physicsWorld.addConstraint(uprightConstraint);
 
         thinkers.push(this);
