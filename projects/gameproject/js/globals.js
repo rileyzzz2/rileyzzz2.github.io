@@ -67,7 +67,7 @@ window.setInterval(async function() {
 window.setInterval(async function() {
     for(let i = 0; i < networkThinkers.length; i++)
         networkThinkers[i].replicate();
-}, (1.0 / 64.0) * 1000.0); //64 Hz tickrate
+}, 200.0); //64 Hz tickrate (1.0 / 64.0) * 1000.0
 
 class GameObject {
     constructor(mesh, rigidBody) {
