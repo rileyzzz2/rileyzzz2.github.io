@@ -63,6 +63,49 @@
             .waitingPlayers {
                 display: none;
             }
+            .countdown {
+                position: fixed;
+                display: none;
+                z-index: 2;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                /* position: fixed;
+                z-index: 2;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                text-align: center; */
+                /* position: absolute;
+                left: 50%;
+                right: 50%; */
+            }
+            @keyframes countdownAnim {
+                from {transform: translate(-50%, -50%) scale(1);}
+                to {transform: translate(-50%, -50%) scale(2);}
+            }
+            #countdownimg {
+                margin: auto;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 256px;
+                height: 256px;
+            }
+            .countdownAnim {
+                animation-name: countdownAnim;
+                animation-duration: 1s;
+                /* animation-iteration-count: infinite; */
+            }
+            /* .countdownContainer {
+                position: absolute;
+                left: 50%;
+                right: 50%;
+                transform:translate(-50%, -50%);
+            } */
             #gameWindow {
                 margin: 0;
                 width: 100%;
@@ -103,7 +146,15 @@
                 <div class="waitingPlayers">
                     <p>Waiting for players...</p>
                 </div>
+                
             </div>
+        </div>
+
+        <div class="countdown">
+            <img id="countdownimg" src="img/countdown_3.png">
+            <!-- <div class="countdownContainer">
+                
+            </div> -->
         </div>
 
         <script src="js/globals.js"></script>

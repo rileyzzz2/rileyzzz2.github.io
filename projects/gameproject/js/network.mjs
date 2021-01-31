@@ -98,6 +98,7 @@ peer.on('open', function(id) {
     var singleplayer = params.get('singleplayer');
     if(singleplayer) {
         startGame(0);
+        beginMatch();
         return;
     }
 

@@ -51,8 +51,8 @@ export function startGame(playerIndex) {
 export async function beginPlay() {
     await initResources();
     initPhysicsWorld();
-    activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb');
-    //activeMap = await loadMap('3d/maps/mall.glb', '3d/maps/mall_collision.glb');
+    //activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb');
+    activeMap = await loadMap('3d/maps/mall.glb', '3d/maps/mall_collision.glb');
     startRenderer();
     activeMap.beginPlay();
 
@@ -68,4 +68,30 @@ export async function beginPlay() {
 export function beginMatch() {
     console.log("beginning match");
     $(".menuOverlay").hide();
+    countdown(3);
+    $(".countdown").show();
+
+    
+    window.setTimeout(() => {countdown(2);}, 1000);
+    window.setTimeout(() => {countdown(1);}, 2000);
+    window.setTimeout(() => {countdown(0);}, 3000);
+}
+
+function refreshAnim() {
+    $("#countdownimg").removeClass("countdownAnim");
+    setTimeout(function() {
+        $("#countdownimg").addClass("countdownAnim");
+    }, 10);
+}
+function countdown(number) {
+    //console.log(number);
+    refreshAnim();
+
+    //animationend
+    $("#countdownimg").attr("src", "img/countdown_" + number + ".png");
+    if(number === 0) {
+        //$("#countdownimg").removeClass("countdownAnim");
+        $(".countdown").hide();
+        allowInput = true;
+    }
 }

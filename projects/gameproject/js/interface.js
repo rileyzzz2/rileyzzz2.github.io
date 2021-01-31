@@ -1,3 +1,5 @@
+
+var allowInput = false;
 var bMoveForward = false;
 var bMoveBackward = false;
 var bMoveRight = false;
@@ -5,17 +7,24 @@ var bMoveLeft = false;
 var bDrift = false;
 
 function ProcessInput (key, state) {
+    if(!allowInput)
+        return;
+
     switch(event.key)
     {
+    case "w":
     case "ArrowUp":
         bMoveForward = state;
         break;
+    case "s":
     case "ArrowDown":
         bMoveBackward = state;
         break;
+    case "d":
     case "ArrowRight":
         bMoveRight = state;
         break;
+    case "a":
     case "ArrowLeft":
         bMoveLeft = state;
         break;
