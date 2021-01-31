@@ -6,6 +6,7 @@ var inMatch = false;
 //resources
 var gameModels = {};
 var gameTextures = {};
+var kartData = {};
 var activeMap;
 var mapCollisionData = {};
 var scene = new THREE.Scene();

@@ -67,14 +67,9 @@ class Kart {
         var chassisLength = 2.2; //2
         //var massVehicle = 400; //800
 
-        var wheelAxisBackPosition = -1;
-        var wheelAxisHeightBack = .3;
 
-        var wheelAxisFrontPosition = 1.7;
-        var wheelAxisHeightFront = .3;
 
-        const frontWheelWidth = 0.3;
-        const backWheelWidth = 0.4;
+
         const mass = 800;
         //const box = new THREE.BoxGeometry(chassisWidth, chassisHeight, chassisLength, 1, 1, 1);
         //let mesh = new THREE.Mesh( box, new THREE.MeshStandardMaterial( { color: 0x0000ff } ) );
@@ -85,37 +80,8 @@ class Kart {
         //     type: "registerKart"
         // });
 
-        var FrontLeftPosition   = new Ammo.btVector3(0.5, wheelAxisHeightFront, wheelAxisFrontPosition),
-            FrontRightPosition  = new Ammo.btVector3(-0.5, wheelAxisHeightFront, wheelAxisFrontPosition),
-            BackLeftPosition    = new Ammo.btVector3(0.5, wheelAxisHeightBack, wheelAxisBackPosition),
-            BackRightPosition   = new Ammo.btVector3(-0.5, wheelAxisHeightBack, wheelAxisBackPosition);
-        
-        console.log(Object.keys(gameModels).length + "LOADED MODELS");
         var mesh = gameModels.standardKart.scene.clone();//.clone();
 
-        mesh.traverse(function (child) {
-            if(child.name === "wheel_bl") {
-                child.position.x += backWheelWidth / 2;
-                BackLeftPosition = pvec(child.position);
-            }
-            else if(child.name === "wheel_br") {
-                child.position.x -= backWheelWidth / 2;
-                BackRightPosition = pvec(child.position);
-            }
-            else if(child.name === "wheel_fl") {
-                child.position.x += frontWheelWidth / 2;
-                FrontLeftPosition = pvec(child.position);
-            }
-            else if(child.name === "wheel_fr") {
-                child.position.x -= frontWheelWidth / 2;
-                FrontRightPosition = pvec(child.position);
-            }
-
-                // if (child.isMesh) {
-                    
-                //     //child.material = material;
-                // }
-        });
 
         this.cameraTarget = new THREE.Object3D();
         this.cameraTarget.position.y = 2;
@@ -185,11 +151,15 @@ class Kart {
         this.vehicle.setCoordinateSystem(0, 1, 2);
         physicsWorld.addAction(this.vehicle);
         
+        //move somewhere later
+        const frontWheelWidth = 0.3;
+        const backWheelWidth = 0.4;
+
         this.wheels = [
-            new Wheel(true, this.vehicle, FrontLeftPosition, .18, frontWheelWidth, tuning),
-            new Wheel(true, this.vehicle, FrontRightPosition, .18, frontWheelWidth, tuning),
-            new Wheel(false, this.vehicle, BackLeftPosition, .22, backWheelWidth, tuning),
-            new Wheel(false, this.vehicle, BackRightPosition, .22, backWheelWidth, tuning)
+            new Wheel(true, this.vehicle, kartData.standardKart.FrontLeftPosition, .18, frontWheelWidth, tuning),
+            new Wheel(true, this.vehicle, kartData.standardKart.FrontRightPosition, .18, frontWheelWidth, tuning),
+            new Wheel(false, this.vehicle, kartData.standardKart.BackLeftPosition, .22, backWheelWidth, tuning),
+            new Wheel(false, this.vehicle, kartData.standardKart.BackRightPosition, .22, backWheelWidth, tuning)
         ];
 
         //keep upright physics
@@ -401,12 +371,10 @@ class Kart {
         //replicate position and state to other clients
         var trans = new Ammo.btTransform();
         let ms = this.gameObject.rigidBody.getMotionState();
-        let p = trans.getOrigin();
-        let q = trans.getRotation();
         if ( ms ) {
-            ms.getWorldTransform( tmpTrans );
-            let p = tmpTrans.getOrigin();
-            let q = tmpTrans.getRotation();
+            ms.getWorldTransform( trans );
+            let p = trans.getOrigin();
+            let q = trans.getRotation();
             //console.log("sending signal " + p.x() + " " + Math.fround(p.x()).toString());
             //const precision = 2;
             // signal({
@@ -421,7 +389,8 @@ class Kart {
             var data = {
                 type: "playerTick",
                 pos: [p.x(), p.y(), p.z()],
-                rot: [q.x(), q.y(), q.z(), q.w()]
+                rot: [q.x(), q.y(), q.z(), q.w()],
+                wheelSpeed: this.wheels[2].wheelInfo.m_deltaRotation
             };
 
             for(const client in remoteConnections)
@@ -437,12 +406,51 @@ class NPCKart {
         this.targetPos = new THREE.Vector3();
         this.targetRot = new THREE.Quaternion();
         this.hasReceivedData = false;
-        
+        this.wheelSpeed = 0.0;
         // this.geometry = new THREE.BoxGeometry();
         // this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         // this.cube = new THREE.Mesh( this.geometry, this.material );
         this.mesh = gameModels.standardKart.scene.clone();
+
+        
+
+        this.wheels = [];
+        var that = this;
+        function addWheelMesh(pos, isFront) {
+            var wheelgroup = new THREE.Group();
+            var wheelMesh = gameModels.slickWheel.scene.clone();
+            wheelgroup.add(wheelMesh);
+            if(pos.x() > 0.0)
+                wheelMesh.rotation.set(0.0, 0.0, Math.PI);
+            if(!isFront)
+                wheelMesh.scale.set(1.2, 1.2, 1.2);
+            
+            that.mesh.add(wheelgroup);
+            let wheelpos = tvec(pos);
+            wheelpos.y -= 0.05;
+            wheelgroup.position.copy(wheelpos);
+
+            that.wheels.push(wheelgroup);
+        }
+
+        addWheelMesh(kartData.standardKart.FrontLeftPosition, true);
+        addWheelMesh(kartData.standardKart.FrontRightPosition, true);
+        addWheelMesh(kartData.standardKart.BackLeftPosition, false);
+        addWheelMesh(kartData.standardKart.BackRightPosition, false);
+
         scene.add( this.mesh );
+
+        const mass = 0.0;
+        let transform = createTransform(this.mesh);
+        let motionState = new Ammo.btDefaultMotionState( transform );
+        var localInertia = new Ammo.btVector3( 0, 0, 0 );
+        var shape = new Ammo.btSphereShape(1.25);
+        shape.setMargin( 0.05 );
+
+        shape.calculateLocalInertia( mass, localInertia );
+        var rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, shape, localInertia );
+        this.rigidBody = new Ammo.btRigidBody( rbInfo );
+        physicsWorld.addRigidBody(this.rigidBody);
 
         //that is necessary to prevent callback scope problems
         var that = this;
@@ -465,6 +473,7 @@ class NPCKart {
             this.targetRot.y = data.rot[1];
             this.targetRot.z = data.rot[2];
             this.targetRot.w = data.rot[3];
+            this.wheelSpeed = data.wheelSpeed;
 
             //set initial position
             if(!this.hasReceivedData) {
@@ -473,6 +482,13 @@ class NPCKart {
                 this.mesh.quaternion.y = data.rot[1];
                 this.mesh.quaternion.z = data.rot[2];
                 this.mesh.quaternion.w = data.rot[3];
+                var trans = new Ammo.btTransform();
+                let ms = this.rigidBody.getMotionState();
+                //ms.getWorldTransform(trans);
+                trans.setOrigin(pvec(this.targetPos));
+                trans.setRotation(pquat(this.targetRot));
+                ms.setWorldTransform(trans);
+                this.rigidBody.setMotionState(ms);
                 this.hasReceivedData = true;
             }
             
@@ -483,6 +499,17 @@ class NPCKart {
             const interpSpeed = 0.05;
             this.mesh.position.lerp(this.targetPos, interpSpeed);
             this.mesh.quaternion.slerp(this.targetRot, interpSpeed);
+
+            var trans = new Ammo.btTransform();
+            let ms = this.rigidBody.getMotionState();
+            //ms.getWorldTransform(trans);
+            trans.setOrigin(pvec(this.targetPos));
+            trans.setRotation(pquat(this.targetRot));
+            ms.setWorldTransform(trans);
+            this.rigidBody.setMotionState(ms);
+
+            for(let i = 0; i < this.wheels.length; i++)
+                this.wheels[i].rotation.x += this.wheelSpeed;
         }
     }
 }
