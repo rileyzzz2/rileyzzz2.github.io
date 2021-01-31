@@ -58,28 +58,42 @@ class Map {
         this.mapScene.scale.multiplyScalar(0.35); // 0.5
         this.collisionScene.scale.multiplyScalar(0.35);
 
-        var startPos = new THREE.Vector3()
+        var startEmpty;
+        //var startPos = new THREE.Vector3()
         var startQuat = new THREE.Quaternion();
         this.mapScene.traverse((child) => {
             if(child.name === "course_start") {
-                child.getWorldPosition(startPos);
+                startEmpty = child;
+                //child.getWorldPosition(startPos);
                 child.getWorldQuaternion(startQuat);
             }
             if(child.isMesh) {
                 child.material.roughness = 0.9;
             }
         });
-        this.startPos = startPos;
+        //this.startPos = startPos;
         this.startQuat = startQuat;
         scene.add(this.mapScene);
+
+
+        this.startPositions = [];
+        for(let i = 0; i < 3; i++) {
+            for(let j = 0; j < 4; j++) {
+                let start = new THREE.Object3D();
+                start.add(gameModels.stopper.scene.clone());
+                start.position.x = ((j / 4.0) - 0.5) * -35.0;
+                start.position.z = i * -20.0 - (j / 4.0 * 5.0);
+                startEmpty.add(start);
+                this.startPositions.push(start);
+            }
+        }
+
         //scene.add(this.collisionScene);
     }
 
     beginPlay() {
         //create map physics
         //const mapCollision = new Ammo.btTriangleMesh(true, true);
-
-        
 
         this.collisionScene.traverse(function (child) {
             //let isRelevant = (child.name === "polygon147" || child.name === "polygon145");
@@ -98,7 +112,10 @@ class Map {
         });
 
         //create karts
-        localPlayer = new Kart(this.startPos, this.startQuat);
+        var startPos = new THREE.Vector3();
+        //use player index from the server
+        this.startPositions[localPlayerIndex].getWorldPosition(startPos);
+        localPlayer = new Kart(startPos, this.startQuat);
 
         for(const client in remoteConnections)
             Players.push(new NPCKart(remoteConnections[client].conn));

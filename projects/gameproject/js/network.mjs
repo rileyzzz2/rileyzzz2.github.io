@@ -1,5 +1,6 @@
 import {beginPlay} from './game.mjs';
 import {startGame} from './game.mjs';
+import {beginMatch} from './game.mjs';
 //https://itnext.io/how-to-build-a-realtime-multiplayer-game-in-javascript-using-pubnub-5f410fd62f33
 
 var listener = {
@@ -96,7 +97,7 @@ peer.on('open', function(id) {
 
     var singleplayer = params.get('singleplayer');
     if(singleplayer) {
-        startGame();
+        startGame(0);
         return;
     }
 
@@ -159,8 +160,8 @@ peer.on('connection', function(conn) {
 });
 
 function processConnectionData(data) {
-    console.log("received connection data:");
-    console.log(data.type);
+    //console.log("received connection data:");
+    //console.log(data.type);
 
     if(!isHost)
     {
@@ -175,8 +176,27 @@ function processConnectionData(data) {
             //remoteConnections = data.players;
         }
         else if(data.type === "startGame") {
-            startGame();
+            startGame(data.playerIndex);
         }
+        else if(data.type === "beginMatch") {
+            beginMatch();
+        }
+    }
+
+    if(isHost) {
+        if(data.type === "playerLoaded") {
+            readyState[data.index] = true;
+            console.log("player " + data.index + " is ready.");
+            let checker = arr => arr.every(Boolean);
+            if(checker(readyState))
+                beginMatch();
+            for(const client in remoteConnections) {
+                remoteConnections[client].conn.send({
+                    type: "beginMatch"
+                });
+            }
+        }
+        
     }
 }
 
@@ -214,10 +234,16 @@ function refreshPlayerList() {
 }
 
 $(".startGame").click(function() {
-    startGame();
+    readyState = [];
+    startGame(0);
+    readyState[0] = true;
+
+    var index = 1; //offset for host
     for(const client in remoteConnections) {
+        readyState[index] = false;
         remoteConnections[client].conn.send({
-            type: "startGame"
+            type: "startGame",
+            playerIndex: index++
             //eventually add specific parameters like map, etc
         });
     }

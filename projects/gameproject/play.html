@@ -45,6 +45,9 @@
                 text-align: center;
                 color: white;
             }
+            .lobbyInfo {
+                display: block;
+            }
             .playerList {
                 width: 400px;
                 margin: auto;
@@ -56,6 +59,9 @@
             .startGame {
                 display: none;
                 width: 400px;
+            }
+            .waitingPlayers {
+                display: none;
             }
             #gameWindow {
                 margin: 0;
@@ -88,10 +94,15 @@
 
         <div class="menuOverlay">
             <div class="center-box">
-                <p id="p2pid"></p>
-                <p>Player List:</p>
-                <table class="playerList"></table>
-                 <button type="button" class="startGame">Start Game</button> 
+                <div class="lobbyInfo">
+                    <p id="p2pid"></p>
+                    <p>Player List:</p>
+                    <table class="playerList"></table>
+                    <button type="button" class="startGame">Start Game</button>
+                </div>
+                <div class="waitingPlayers">
+                    <p>Waiting for players...</p>
+                </div>
             </div>
         </div>
 

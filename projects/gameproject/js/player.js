@@ -156,7 +156,7 @@ class Kart {
         //start.z = 0;
         //start.y = 100.0;
         //start.y += 4.0;
-        start.y += 4.0;
+        start.y += 1.0;
         transform.setOrigin(pvec(start));
         transform.setRotation(pquat(startQuat));
 
@@ -479,7 +479,7 @@ class NPCKart {
     }
     update(dt) {
         if(this.hasReceivedData) {
-            const interpSpeed = 0.4;
+            const interpSpeed = 0.5;
             this.mesh.position.lerp(this.targetPos, interpSpeed);
             this.mesh.quaternion.slerp(this.targetRot, interpSpeed);
         }

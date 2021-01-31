@@ -37,9 +37,14 @@ $(document).ready(function() {
 //     // newcube.scale.set(1.0, 1.0, 1.0);
 //     // createRigidBox(newcube, 0.2);
 // }
-export function startGame() {
+export function startGame(playerIndex) {
     console.log("starting game");
-    $(".menuOverlay").hide();
+    //$(".menuOverlay").hide();
+
+    $(".lobbyInfo").hide();
+    $(".waitingPlayers").show();
+
+    localPlayerIndex = playerIndex;
     Ammo().then(beginPlay);
 }
 
@@ -49,6 +54,18 @@ export async function beginPlay() {
     activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb');
     //activeMap = await loadMap('3d/maps/mall.glb', '3d/maps/mall_collision.glb');
     startRenderer();
-    
     activeMap.beginPlay();
+
+    //tell the server that we're ready to start the match
+    if(!isHost) {
+        hostConn.send({
+            type: "playerLoaded",
+            index: localPlayerIndex
+        });
+    }
+}
+
+export function beginMatch() {
+    console.log("beginning match");
+    $(".menuOverlay").hide();
 }

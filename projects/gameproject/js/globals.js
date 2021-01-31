@@ -17,7 +17,10 @@ const netPlayer = {
         sign: '',
         score: 0
 };
+
+//server variables
 var isHost = false;
+var readyState = [];
 
 var hostID = "";
 var hostConn;
@@ -29,6 +32,7 @@ var remoteConnections = {};
 
 //Players currently within the map. these are refreshed on map load, and will not correspond with remoteConnections
 var localPlayer;
+var localPlayerIndex = 0; //player index according to the server
 var Players = [];
 
 
