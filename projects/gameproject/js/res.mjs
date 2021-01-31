@@ -8,6 +8,8 @@ export async function initResources() {
     kartData.standardKart = loadKartData(gameModels.standardKart.scene);
     gameModels.slickWheel = await loadModel("3d/wheels/slick.glb");
 
+    playerModels.mario = await loadModel("3d/racers/mariostatic.glb");
+
     gameModels.stopper = await loadModel("3d/objects/stopper.glb");
     gameTextures.p_spark = await loadTexture("particles/flare_01.png");
 

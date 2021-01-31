@@ -5,6 +5,7 @@ var networkThinkers = [];
 var inMatch = false;
 //resources
 var gameModels = {};
+var playerModels = {};
 var gameTextures = {};
 var kartData = {};
 var activeMap;

@@ -82,6 +82,19 @@ class Kart {
 
         var mesh = gameModels.standardKart.scene.clone();//.clone();
 
+        this.playerModel = playerModels.mario.scene.clone();
+        //this.playerModel.scale.multiplyScalar(10.0);
+
+        // this.playerMixer = new THREE.AnimationMixer( this.playerModel );
+        // var that = this;
+        // let clips = playerModels.mario.animations;
+		// clips.forEach(function (clip) {
+		// 	that.playerMixer.clipAction(clip).play();
+		// });
+        //this.playerMixer.clipAction( playerModels.mario.animations[ 0 ] ).play();
+
+        mesh.add(this.playerModel);
+        //scene.add(this.playerModel);
 
         this.cameraTarget = new THREE.Object3D();
         this.cameraTarget.position.y = 2;
@@ -109,7 +122,7 @@ class Kart {
         this.sparks_R = new sparkParticleSystem();
         this.sparks_R.setEmissionRate(0.0);
         //mesh.add(this.spark.particleGroup.mesh);
-
+        
         scene.add(mesh);
 
 
@@ -123,7 +136,7 @@ class Kart {
         //start.y = 100.0;
         //start.y += 4.0;
         start.y += 1.0;
-        transform.setOrigin(pvec(start));
+        //transform.setOrigin(pvec(start));
         transform.setRotation(pquat(startQuat));
 
         let motionState = new Ammo.btDefaultMotionState( transform );
@@ -222,6 +235,7 @@ class Kart {
         this.sparks_R.setDriftTime(0.0);
     }
     update(dt) {
+        //this.playerMixer.update(dt);
 
         var targetPos_L = new THREE.Vector3(0.0, 0.0, 0.0);
         var targetPos_R = new THREE.Vector3(0.0, 0.0, 0.0);
