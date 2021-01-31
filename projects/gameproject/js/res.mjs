@@ -1,4 +1,6 @@
 import { GLTFLoader } from './lib/three/examples/jsm/loaders/GLTFLoader.js';
+import { SkeletonUtils } from './lib/three/examples/jsm/utils/SkeletonUtils.js';
+SkelUtils = SkeletonUtils;
 //loads necessary resources
 const loader = new GLTFLoader();
 const texLoader = new THREE.TextureLoader();
@@ -8,7 +10,7 @@ export async function initResources() {
     kartData.standardKart = loadKartData(gameModels.standardKart.scene);
     gameModels.slickWheel = await loadModel("3d/wheels/slick.glb");
 
-    playerModels.mario = await loadModel("3d/racers/mariostatic.glb");
+    playerModels.mario = await loadModel("3d/racers/mario.glb");
 
     gameModels.stopper = await loadModel("3d/objects/stopper.glb");
     gameTextures.p_spark = await loadTexture("particles/flare_01.png");

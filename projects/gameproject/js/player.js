@@ -82,19 +82,18 @@ class Kart {
 
         var mesh = gameModels.standardKart.scene.clone();//.clone();
 
-        this.playerModel = playerModels.mario.scene.clone();
+        this.playerModel = SkelUtils.clone(playerModels.mario.scene);
         //this.playerModel.scale.multiplyScalar(10.0);
 
-        // this.playerMixer = new THREE.AnimationMixer( this.playerModel );
-        // var that = this;
-        // let clips = playerModels.mario.animations;
-		// clips.forEach(function (clip) {
-		// 	that.playerMixer.clipAction(clip).play();
-		// });
-        //this.playerMixer.clipAction( playerModels.mario.animations[ 0 ] ).play();
-
+        this.playerMixer = new THREE.AnimationMixer( this.playerModel );
+        var that = this;
+        let clips = playerModels.mario.animations;
+		clips.forEach(function (clip) {
+			that.playerMixer.clipAction(clip).play();
+        });
+        this.playerMixer.setTime(0.5);
         mesh.add(this.playerModel);
-        //scene.add(this.playerModel);
+
 
         this.cameraTarget = new THREE.Object3D();
         this.cameraTarget.position.y = 2;
@@ -136,7 +135,7 @@ class Kart {
         //start.y = 100.0;
         //start.y += 4.0;
         start.y += 1.0;
-        //transform.setOrigin(pvec(start));
+        transform.setOrigin(pvec(start));
         transform.setRotation(pquat(startQuat));
 
         let motionState = new Ammo.btDefaultMotionState( transform );
@@ -193,6 +192,14 @@ class Kart {
         objects.push(this);
     }
 
+    // setAnimationFrame(frame) {
+    //     console.log("setting frame to " + frame);
+    //     this.playerMixer.time = 0;
+    //     for(var i = 0; i < this.playerMixer._actions.length; i++)
+    //         this.playerMixer._actions[i].time = 0;
+        
+    //     this.playerMixer.update(frame);
+    // }
     startDrifting() {
         this.driftTime = 0.0;
         this.drifting = true;
@@ -319,6 +326,8 @@ class Kart {
         this.vehicle.setSteeringValue(this.vehicleSteering, FRONT_LEFT);
         this.vehicle.setSteeringValue(this.vehicleSteering, FRONT_RIGHT);
 
+        this.playerMixer.setTime(this.vehicleSteering * 1.2 + 0.5);
+
         //give a quick speed boost if we're stuck
         if(Math.abs(speed) < 1 && (bMoveForward || bMoveBackward)) {
             this.gameObject.rigidBody.forceActivationState(1);
@@ -404,6 +413,7 @@ class Kart {
                 type: "playerTick",
                 pos: [p.x(), p.y(), p.z()],
                 rot: [q.x(), q.y(), q.z(), q.w()],
+                steering: this.vehicleSteering,
                 wheelSpeed: this.wheels[2].wheelInfo.m_deltaRotation
             };
 
@@ -412,6 +422,11 @@ class Kart {
 
         }
     }
+}
+
+function lerp(a, b, f)
+{
+    return a + f * (b - a);
 }
 
 class NPCKart {
@@ -426,7 +441,17 @@ class NPCKart {
         // this.cube = new THREE.Mesh( this.geometry, this.material );
         this.mesh = gameModels.standardKart.scene.clone();
 
-        
+        this.playerModel = SkelUtils.clone(playerModels.mario.scene);
+        //this.playerModel.scale.multiplyScalar(10.0);
+
+        this.playerMixer = new THREE.AnimationMixer( this.playerModel );
+        var that = this;
+        let clips = playerModels.mario.animations;
+		clips.forEach(function (clip) {
+			that.playerMixer.clipAction(clip).play();
+        });
+        this.playerMixer.setTime(0.5);
+        this.mesh.add(this.playerModel);
 
         this.wheels = [];
         var that = this;
@@ -488,6 +513,7 @@ class NPCKart {
             this.targetRot.z = data.rot[2];
             this.targetRot.w = data.rot[3];
             this.wheelSpeed = data.wheelSpeed;
+            this.targetSteering = data.steering;
 
             //set initial position
             if(!this.hasReceivedData) {
@@ -513,6 +539,9 @@ class NPCKart {
             const interpSpeed = 0.05;
             this.mesh.position.lerp(this.targetPos, interpSpeed);
             this.mesh.quaternion.slerp(this.targetRot, interpSpeed);
+
+            var newTime = lerp(this.playerMixer.time, this.targetSteering * 1.2 + 0.5, 0.2);
+            this.playerMixer.setTime(newTime);
 
             var trans = new Ammo.btTransform();
             let ms = this.rigidBody.getMotionState();
