@@ -20,11 +20,19 @@ class Coin {
         shape.calculateLocalInertia( mass, localInertia );
         var rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, shape, localInertia );
         this.rigidBody = new Ammo.btRigidBody( rbInfo );
+        //this.rigidBody.setCollisionFlags(this.rigidBody.getCollisionFlags() | CF_CUSTOM_MATERIAL_CALLBACK | CF_NO_CONTACT_RESPONSE); //CF_NO_CONTACT_RESPONSE
         this.rigidBody.setCollisionFlags(this.rigidBody.getCollisionFlags() | CF_NO_CONTACT_RESPONSE);
         physicsWorld.addRigidBody(this.rigidBody);
     }
     update(dt) {
         //add collection counter
         this.mesh.rotation.y += dt * 4.0;
+    }
+    beginContact() {
+        this.collected = true;
+        this.mesh.visible = false;
+        if(localPlayer.collectedCoins <= 10)
+            localPlayer.collectedCoins++;
+        console.log(localPlayer.collectedCoins + " coins collected");
     }
 }

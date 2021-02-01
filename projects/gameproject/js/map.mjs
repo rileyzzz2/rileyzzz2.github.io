@@ -44,7 +44,7 @@ function createFaceCollision(child, geom, faces) {
     collideShape.calculateLocalInertia( 0.0, localInertia );
     let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0.0, mapMotionState, collideShape, localInertia));
     
-    object.setCollisionFlags(object.collisionFlags | CF_CUSTOM_MATERIAL_CALLBACK);
+    //object.setCollisionFlags(object.collisionFlags | CF_CUSTOM_MATERIAL_CALLBACK);
     object.setContactProcessingThreshold(0.0);
     
     physicsWorld.addRigidBody(object);

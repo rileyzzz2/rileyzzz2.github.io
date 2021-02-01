@@ -160,6 +160,20 @@ function contact_obj(cp, colObj, partId, index) {
 
 }
 
+
+function contact_obj2(cp, colObj, partId, index) {
+    for(var i = 0; i < activeMap.coins.length; i++) {
+        let coin = activeMap.coins[i];
+        if(coin.collected)
+            continue;
+        
+        if(Ammo.compare(colObj.getCollisionObject(), coin.rigidBody)) {
+            coin.beginContact();
+            return;
+        }
+    }
+}
+
 let physicsWorld;
 var rigidBodies = [], tmpTrans;
 function initPhysicsWorld() {
@@ -175,24 +189,24 @@ function initPhysicsWorld() {
     //https://github.com/kripken/ammo.js/blob/a4bec933859e452acd2c18e4152ac2a6a95e806f/tests/add-function.js
     console.log("adding callback");
     //world.set_gContactAddedCallback
-//     let callback = Ammo.addFunction((cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => { //cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1
-//         if(cp === undefined)
-//             return;
+    let callback = Ammo.addFunction((cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1) => { //cp, colObj0Wrap, partId0, index0, colObj1Wrap, partId1, index1
+        if(cp === undefined)
+            return;
 
-//         let testcp = Ammo.wrapPointer(cp, Ammo.btManifoldPoint);
-//         let colObj0 = Ammo.wrapPointer(colObj0Wrap, Ammo.btCollisionObjectWrapper);
-//         //let colObj0 = colObj0Wrap.getCollisionObject();
+        let testcp = Ammo.wrapPointer(cp, Ammo.btManifoldPoint);
+        let colObj0 = Ammo.wrapPointer(colObj0Wrap, Ammo.btCollisionObjectWrapper);
+        //let colObj0 = colObj0Wrap.getCollisionObject();
 
-//         let colObj1 = Ammo.wrapPointer(colObj1Wrap, Ammo.btCollisionObjectWrapper);
-//         //let colObj1 = colObj1Wrap.getCollisionObject();
+        let colObj1 = Ammo.wrapPointer(colObj1Wrap, Ammo.btCollisionObjectWrapper);
+        //let colObj1 = colObj1Wrap.getCollisionObject();
 
-//         contact_obj(testcp, colObj0, partId0, index0);
-//         contact_obj(testcp, colObj1, partId1, index1);
-// //         contact_added_callback_obj(cp, colObj0, partId0, index0);
-// //         contact_added_callback_obj(cp, colObj1, partId1, index1);
-//         //return true;
-//     }, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
-//     physicsWorld.setContactAddedCallback(callback);
+        contact_obj2(testcp, colObj0, partId0, index0);
+        contact_obj2(testcp, colObj1, partId1, index1);
+//         contact_added_callback_obj(cp, colObj0, partId0, index0);
+//         contact_added_callback_obj(cp, colObj1, partId1, index1);
+        //return true;
+    }, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
+    physicsWorld.setContactAddedCallback(callback);
     console.log("added callback");
 }
 

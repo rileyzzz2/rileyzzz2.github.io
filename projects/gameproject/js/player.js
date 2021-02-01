@@ -57,6 +57,7 @@ class Wheel {
 const steeringClamp = .25;
 class Kart {
     constructor(startPos, startQuat) {
+        this.collectedCoins = 0;
         this.drifting = false;
         this.driftTime = 0.0;
         this.steeringClampL = steeringClamp;

@@ -37,7 +37,6 @@ var localPlayer;
 var localPlayerIndex = 0; //player index according to the server
 var Players = [];
 
-
 //var cameraHelper = new THREE.CameraHelper(camera);
 //scene.add(cameraHelper);
 
