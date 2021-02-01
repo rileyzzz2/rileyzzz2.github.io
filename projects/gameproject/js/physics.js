@@ -162,13 +162,13 @@ function contact_obj(cp, colObj, partId, index) {
 
 
 function contact_obj2(cp, colObj, partId, index) {
-    for(var i = 0; i < activeMap.coins.length; i++) {
-        let coin = activeMap.coins[i];
-        if(coin.collected)
+    for(var i = 0; i < activeMap.items.length; i++) {
+        let item = activeMap.items[i];
+        if(item.collected)
             continue;
         
-        if(Ammo.compare(colObj.getCollisionObject(), coin.rigidBody)) {
-            coin.beginContact();
+        if(Ammo.compare(colObj.getCollisionObject(), item.rigidBody)) {
+            item.beginContact();
             return;
         }
     }

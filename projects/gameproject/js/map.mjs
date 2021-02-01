@@ -90,9 +90,12 @@ class Map {
         }
 
         //create items
-        this.coins = [];
-        for(let i = 0; i < objectData.coins.length; i++)
-            this.coins.push(new Coin(objectData.coins[i].position));
+        this.items = [];
+        for(let i = 0; i < objectData.items.length; i++) {
+            let item = objectData.items[i];
+            if(item.type === "coin")
+                this.items.push(new Coin(objectData.items[i].position, i));
+        }
         //scene.add(this.collisionScene);
     }
 

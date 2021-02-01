@@ -189,16 +189,20 @@ function processConnectionData(data) {
             readyState[data.index] = true;
             console.log("player " + data.index + " is ready.");
             let checker = arr => arr.every(Boolean);
-            if(checker(readyState))
+            if(checker(readyState)) {
                 beginMatch();
-            for(const client in remoteConnections) {
-                remoteConnections[client].conn.send({
-                    type: "beginMatch"
-                });
+                for(const client in remoteConnections) {
+                    remoteConnections[client].conn.send({
+                        type: "beginMatch"
+                    });
+                }
             }
         }
         
     }
+
+    if(data.type === "itemCollected")
+        activeMap.items[data.index].collect();
 }
 
 function refreshPlayerList() {

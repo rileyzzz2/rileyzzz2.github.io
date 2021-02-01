@@ -1,6 +1,7 @@
 
 var debugObjects = {
-    coins: []
+    items: [],
+    objects: []
 };
 
 function saveJSON(content, fileName, contentType) {
@@ -24,7 +25,8 @@ $( document ).on('keydown', function (event) {
         if ( ms ) {
             ms.getWorldTransform( tmpTrans );
             var pos = tmpTrans.getOrigin();
-            debugObjects.coins.push({
+            debugObjects.items.push({
+                type: "coin",
                 position: [pos.x(), pos.y(), pos.z()]
             });
         }
