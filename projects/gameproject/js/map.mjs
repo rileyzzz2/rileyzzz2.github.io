@@ -51,7 +51,7 @@ function createFaceCollision(child, geom, faces) {
 }
 
 class Map {
-    constructor(mapScene, collisionScene) {
+    constructor(mapScene, collisionScene, objectData) {
         this.mapScene = mapScene;
         this.collisionScene = collisionScene;
 
@@ -76,6 +76,7 @@ class Map {
         scene.add(this.mapScene);
 
 
+        //create start positions
         this.startPositions = [];
         for(let i = 0; i < 3; i++) {
             for(let j = 0; j < 4; j++) {
@@ -88,6 +89,10 @@ class Map {
             }
         }
 
+        //create items
+        this.coins = [];
+        for(let i = 0; i < objectData.coins.length; i++)
+            this.coins.push(new Coin(objectData.coins[i].position));
         //scene.add(this.collisionScene);
     }
 
@@ -159,8 +164,10 @@ class Map {
         objects.push(new GameObject(plane, body));
     }
 }
-export async function loadMap(file, collisionFile) {
+export async function loadMap(file, collisionFile, JSONfile) {
     var mapModel = await loadModel(file);
     var collisionModel = await loadModel(collisionFile);
-    return new Map(mapModel.scene, collisionModel.scene);
+    var JSONdata;
+    await $.getJSON(JSONfile, function( data ) {JSONdata = data;});
+    return new Map(mapModel.scene, collisionModel.scene, JSONdata);
 }

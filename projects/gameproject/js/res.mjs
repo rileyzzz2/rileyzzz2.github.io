@@ -13,6 +13,7 @@ export async function initResources() {
     playerModels.mario = await loadModel("3d/racers/mario.glb");
 
     gameModels.stopper = await loadModel("3d/objects/stopper.glb");
+    gameModels.coin = await loadModel("3d/objects/coin.glb");
     gameTextures.p_spark = await loadTexture("particles/flare_01.png");
 
 }
