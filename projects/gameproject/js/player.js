@@ -248,9 +248,9 @@ class Kart {
         var targetPos_L = new THREE.Vector3(0.0, 0.0, 0.0);
         var targetPos_R = new THREE.Vector3(0.0, 0.0, 0.0);
         this.sparkTarget_L.getWorldPosition(targetPos_L);
-        this.sparks_L.emitter.position.value = targetPos_L;
+        this.sparks_L.setPosition(targetPos_L);
         this.sparkTarget_R.getWorldPosition(targetPos_R);
-        this.sparks_R.emitter.position.value = targetPos_R;
+        this.sparks_R.setPosition(targetPos_R);
 
         var tm, p, q;
         for(let i = 0; i < this.wheels.length; i++) {

@@ -13,19 +13,24 @@ class sparkParticleSystem {
                 },
                 blending: THREE.AdditiveBlending //NormalBlending
             });
-
+        this.smokeGroup = new SPE.Group({
+                texture: {
+                    value: gameTextures.p_smoke
+                },
+                blending: THREE.NormalBlending //NormalBlending
+            });
         this.emitter = new SPE.Emitter({
                 particleCount: 50,
                 maxAge: {
-                    value: 0.1,
+                    value: 0.2,
                 },
                 position: {
                     value: new THREE.Vector3( 0, 0, 0 ),
                     spread: new THREE.Vector3( 0.2, 0.2, 0.2 )
                 },
                 velocity: {
-                    value: new THREE.Vector3( 0, 4.0, 0 ),
-                    spread: new THREE.Vector3( 1.8, 3.8, 1.8 )
+                    value: new THREE.Vector3( 0, 8.0, 0 ),
+                    spread: new THREE.Vector3( 1.8, 4.0, 1.8 )
                 },
                 acceleration: {
                     value: new THREE.Vector3( 0, -9.8, 0 )
@@ -49,14 +54,55 @@ class sparkParticleSystem {
                 }
             });
 
+        this.smokeEmitter = new SPE.Emitter({
+                particleCount: 50,
+                maxAge: {
+                    value: 0.1,
+                },
+                position: {
+                    value: new THREE.Vector3( 0, 0, 0 ),
+                    spread: new THREE.Vector3( 0.2, 0.2, 0.2 )
+                },
+                velocity: {
+                    value: new THREE.Vector3( 0, 4.0, 0 ),
+                    spread: new THREE.Vector3( 1.8, 3.8, 1.8 )
+                },
+                acceleration: {
+                    value: new THREE.Vector3( 0, -9.8, 0 )
+                },
+                wiggle: {
+                    spread: 0
+                },
+                size: {
+                    value: 0.8,
+                    spread: 0.1
+                },
+                opacity: {
+                    value: [ 0, 0.2, 0 ]
+                },
+                color: {
+                    value: new THREE.Color(0.7, 0.7, 0.7),
+                    spread: new THREE.Color( 0.1, 0.1, 0.1 )
+                },
+                angle: {
+                    value: [ 0, Math.PI * 0.125 ]
+                }
+            });
+
         this.particleGroup.addEmitter(this.emitter);
         this.particleGroup.mesh.frustumCulled = false;
+
+        this.smokeGroup.addEmitter(this.smokeEmitter);
+        this.smokeGroup.mesh.frustumCulled = false;
+
         scene.add(this.particleGroup.mesh);
+        scene.add(this.smokeGroup.mesh);
         objects.push(this);
     }
 
     update(deltaTime) {
         this.particleGroup.tick(deltaTime);
+        this.smokeGroup.tick(deltaTime);
         // this.particleSystem.rotation.y += 0.01;
         // var pCount = this.particleCount;
         // while (pCount--) {
@@ -77,6 +123,7 @@ class sparkParticleSystem {
 
     setEmissionRate(rate) {
         this.emitter.activeMultiplier = rate;
+        this.smokeEmitter.activeMultiplier = rate;
     }
 
     setDriftTime(time) {
@@ -89,5 +136,10 @@ class sparkParticleSystem {
             this.emitter.color.value = this.driftColor_1;
         else
             this.setEmissionRate(0.0);
+    }
+
+    setPosition(pos) {
+        this.emitter.position.value = pos;
+        this.smokeEmitter.position.value = pos;
     }
 }

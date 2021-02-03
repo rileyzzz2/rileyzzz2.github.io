@@ -15,7 +15,7 @@ export async function initResources() {
     gameModels.stopper = await loadModel("3d/objects/stopper.glb");
     gameModels.coin = await loadModel("3d/objects/coin.glb");
     gameTextures.p_spark = await loadTexture("particles/flare_01.png");
-
+    gameTextures.p_smoke = await loadTexture("particles/smoke.png");
 }
 
 export function loadModel(file) {
