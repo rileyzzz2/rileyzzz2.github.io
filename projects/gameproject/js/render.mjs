@@ -25,17 +25,18 @@ export function startRenderer() {
     renderer.toneMappingExposure = 1;
     renderer.outputEncoding = THREE.sRGBEncoding;
 
-    new RGBELoader()
-    .setDataType(THREE.UnsignedByteType)
-    .setPath('3d/')
-    .load('env.hdr', async function (texture) {
-        let pmremGenerator = new THREE.PMREMGenerator(renderer);
-        pmremGenerator.compileEquirectangularShader();
-        let envMap = pmremGenerator.fromEquirectangular(texture).texture;
-        scene.environment = envMap;
-        scene.background = envMap;
-        pmremGenerator.dispose();
-    });
+    // new RGBELoader()
+    // .setDataType(THREE.UnsignedByteType)
+    // .setPath('3d/')
+    // .load('env.hdr', async function (texture) {
+    //     let pmremGenerator = new THREE.PMREMGenerator(renderer);
+    //     pmremGenerator.compileEquirectangularShader();
+    //     let envMap = pmremGenerator.fromEquirectangular(texture).texture;
+    //     scene.environment = envMap;
+    //     scene.background = envMap;
+    //     pmremGenerator.dispose();
+    // });
+    //gameTextures.env
 
     // let pointlight = new THREE.PointLight(0xffffff, 0.8, 100);
     // pointlight.position.set(2, 2, 4);
@@ -54,6 +55,13 @@ export function startRenderer() {
     scene.add(sunlight);
 
 
+    let pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+    let envMap = pmremGenerator.fromEquirectangular(gameTextures.env).texture;
+    scene.environment = envMap;
+    scene.background = envMap;
+    pmremGenerator.dispose(); 
+    
     // camera.rotation.order = 'ZYX';
     // canvas.addEventListener("mousemove", mousemove);
     // function mousemove(event) {

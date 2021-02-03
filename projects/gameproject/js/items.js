@@ -4,6 +4,7 @@ class Item {
         this.collected = false;
         this.mesh = mesh;
         this.index = index;
+        this.collectedTime = 0.0;
 
         const mass = 0.0;
         let transform = createTransform(this.mesh);
@@ -36,10 +37,21 @@ class Coin extends Item {
     }
     collect() {
         this.collected = true;
+        this.collectedTime = 0.0;
         this.mesh.visible = false;
     }
+    uncollect() {
+        this.collected = false;
+        this.mesh.visible = true;
+    }
     update(dt) {
-        //add collection counter
+        //add to collection counter
+        if(this.collected) {
+            this.collectedTime += dt;
+            if(this.collectedTime > 30.0)
+                this.uncollect();
+        }
+        
         this.mesh.rotation.y += dt * 4.0;
     }
     beginContact() {
