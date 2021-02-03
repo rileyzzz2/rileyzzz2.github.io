@@ -94,6 +94,15 @@ const CF_CUSTOM_MATERIAL_CALLBACK = 8;
 const TRIANGLE_SHAPE_PROXYTYPE = 1; //unsure
 var SkelUtils;
 
+function setCoinCount(count) {
+    localPlayer.collectedCoins = count;
+    //console.log(localPlayer.collectedCoins + " coins collected");
+    $("#coinCount").text(localPlayer.collectedCoins);
+    if(localPlayer.collectedCoins !== 10)
+        $(".coinCounter").css("color", "white");
+    else
+        $(".coinCounter").css("color", "gold");
+}
 //network stuff
 const uuid = PubNub.generateUUID();
 const pubnub = new PubNub({

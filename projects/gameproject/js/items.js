@@ -45,9 +45,8 @@ class Coin extends Item {
     beginContact() {
         this.collect();
         if(localPlayer.collectedCoins < 10)
-            localPlayer.collectedCoins++;
-        console.log(localPlayer.collectedCoins + " coins collected");
-
+            setCoinCount(localPlayer.collectedCoins + 1);
+        
         var data = {
             type: "itemCollected",
             index: this.index
