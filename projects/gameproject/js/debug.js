@@ -4,6 +4,8 @@ var debugObjects = {
     objects: []
 };
 
+$.getJSON('3d/maps/delfino_objects.json', (data) => {debugObjects = data;});
+
 function saveJSON(content, fileName, contentType) {
     var a = document.createElement("a");
     var file = new Blob([content], {type: contentType});
@@ -15,6 +17,7 @@ function saveJSON(content, fileName, contentType) {
 $( document ).on('keydown', function (event) {
     if (event.defaultPrevented)
         return;
+    debugObjects.trackpaths = debugObjects.trackpaths || []
 
     if(event.key === 'c') {
         saveJSON(JSON.stringify(debugObjects), 'objects.json', 'text/plain');
@@ -27,6 +30,17 @@ $( document ).on('keydown', function (event) {
             var pos = tmpTrans.getOrigin();
             debugObjects.items.push({
                 type: "coin",
+                position: [pos.x(), pos.y(), pos.z()]
+            });
+        }
+    }
+    else if (event.key === 't') {
+        //https://threejs.org/docs/#api/en/extras/curves/SplineCurve
+        let ms = localPlayer.gameObject.rigidBody.getMotionState();
+        if ( ms ) {
+            ms.getWorldTransform( tmpTrans );
+            var pos = tmpTrans.getOrigin();
+            debugObjects.trackpaths.push({
                 position: [pos.x(), pos.y(), pos.z()]
             });
         }
