@@ -27,7 +27,7 @@ class Coin extends Item {
     constructor(pos, index) {
         //console.log("creating coin " + pos[0] + " " + pos[1] + " " + pos[2]);
 
-        var mesh = gameModels.coin.scene.clone();
+        var mesh = gameModels.itembox.scene.clone();
         mesh.scale.multiplyScalar(0.08);
         mesh.position.set(pos[0], pos[1] + 0.5, pos[2]);
         scene.add(mesh);

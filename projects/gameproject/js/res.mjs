@@ -9,16 +9,27 @@ const texLoader = new THREE.TextureLoader();
 RGBE.setDataType(THREE.UnsignedByteType).setPath('3d/');
 
 export async function initResources() {
-    gameModels.standardKart = await loadModel("3d/karts/standard.glb");
-    kartData.standardKart = loadKartData(gameModels.standardKart.scene);
-    gameModels.slickWheel = await loadModel("3d/wheels/slick.glb");
+    gameModels.standardKart =       await loadModel("3d/karts/standard.glb");
+    kartData.standardKart =         loadKartData(gameModels.standardKart.scene);
+    gameModels.slickWheel =         await loadModel("3d/wheels/slick.glb");
 
-    playerModels.mario = await loadModel("3d/racers/mario.glb");
+    playerModels.mario =            await loadModel("3d/racers/mario.glb");
 
-    gameModels.stopper = await loadModel("3d/objects/stopper.glb");
-    gameModels.coin = await loadModel("3d/objects/coin.glb");
-    gameTextures.p_spark = await loadTexture("particles/flare_01.png");
-    gameTextures.p_smoke = await loadTexture("particles/smoke.png");
+    gameModels.stopper =            await loadModel("3d/objects/stopper.glb");
+    gameModels.coin =               await loadModel("3d/objects/coin.glb");
+    gameModels.itembox =            await loadModel("3d/objects/itembox.glb");
+    gameModels.itembox_font =       await loadModel("3d/objects/itembox_font.glb");
+    gameTextures.p_spark =          await loadTexture("particles/flare_01.png");
+    gameTextures.p_smoke =          await loadTexture("particles/smoke.png");
+
+    gameModels.item_shell_green =   await loadModel("3d/objects/greenshell.glb");
+    gameModels.item_shell_red =     await loadModel("3d/objects/redshell.glb");
+    gameModels.item_shell_blue =    await loadModel("3d/objects/blueshell.glb");
+    gameModels.item_banana =        await loadModel("3d/objects/banana.glb");
+    gameModels.item_mushroom =      await loadModel("3d/objects/mushroom.glb");
+    gameModels.item_mushroom_gold = await loadModel("3d/objects/goldmushroom.glb");
+    gameModels.item_lightning =     await loadModel("3d/objects/lightning.glb");
+    gameModels.item_star =          await loadModel("3d/objects/star.glb");
 
     gameTextures.env = await loadRGBE('env.hdr');
 }
