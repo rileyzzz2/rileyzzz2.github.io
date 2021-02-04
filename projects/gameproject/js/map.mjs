@@ -93,8 +93,11 @@ class Map {
         this.items = [];
         for(let i = 0; i < objectData.items.length; i++) {
             let item = objectData.items[i];
+            let itempos = item.position;
             if(item.type === "coin")
-                this.items.push(new Coin(objectData.items[i].position, i));
+                this.items.push(new Coin(itempos, i));
+            else if(item.type === "itembox")
+                this.items.push(new ItemBox(itempos, i));
         }
         //scene.add(this.collisionScene);
     }

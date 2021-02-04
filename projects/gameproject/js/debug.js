@@ -29,7 +29,7 @@ $( document ).on('keydown', function (event) {
             ms.getWorldTransform( tmpTrans );
             var pos = tmpTrans.getOrigin();
             debugObjects.items.push({
-                type: "coin",
+                type: "itembox",
                 position: [pos.x(), pos.y(), pos.z()]
             });
         }

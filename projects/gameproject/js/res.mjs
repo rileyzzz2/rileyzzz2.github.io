@@ -19,6 +19,13 @@ export async function initResources() {
     gameModels.coin =               await loadModel("3d/objects/coin.glb");
     gameModels.itembox =            await loadModel("3d/objects/itembox.glb");
     gameModels.itembox_font =       await loadModel("3d/objects/itembox_font.glb");
+    
+    gameModels.itembox.scene.traverse(function(child) {
+        if(child.name === "ItemBoxRef__M_ItemBoxRef") {
+            child.material.opacity = 0.5;
+        }
+    });
+
     gameTextures.p_spark =          await loadTexture("particles/flare_01.png");
     gameTextures.p_smoke =          await loadTexture("particles/smoke.png");
 

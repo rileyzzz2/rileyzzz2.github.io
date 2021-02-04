@@ -27,7 +27,7 @@ class Coin extends Item {
     constructor(pos, index) {
         //console.log("creating coin " + pos[0] + " " + pos[1] + " " + pos[2]);
 
-        var mesh = gameModels.itembox.scene.clone();
+        var mesh = gameModels.coin.scene.clone();
         mesh.scale.multiplyScalar(0.08);
         mesh.position.set(pos[0], pos[1] + 0.5, pos[2]);
         scene.add(mesh);
@@ -58,6 +58,51 @@ class Coin extends Item {
         this.collect();
         if(localPlayer.collectedCoins < 10)
             setCoinCount(localPlayer.collectedCoins + 1);
+        
+        var data = {
+            type: "itemCollected",
+            index: this.index
+        };
+
+        for(const client in remoteConnections)
+            remoteConnections[client].conn.send(data);
+    }
+}
+
+class ItemBox extends Item {
+    constructor(pos, index) {
+        var mesh = gameModels.itembox.scene.clone();
+        mesh.scale.multiplyScalar(0.08);
+        mesh.position.set(pos[0], pos[1] + 0.5, pos[2]);
+        scene.add(mesh);
+        
+        super(mesh, index);
+        
+    }
+    collect() {
+        this.collected = true;
+        this.collectedTime = 0.0;
+        this.mesh.visible = false;
+    }
+    uncollect() {
+        this.collected = false;
+        this.mesh.visible = true;
+    }
+    update(dt) {
+        //add to collection counter
+        if(this.collected) {
+            this.collectedTime += dt;
+            if(this.collectedTime > 30.0)
+                this.uncollect();
+        }
+        
+        this.mesh.rotation.x += dt * 2.0;
+        this.mesh.rotation.y += dt * 4.0;
+    }
+    beginContact() {
+        this.collect();
+
+        //give item to player
         
         var data = {
             type: "itemCollected",
