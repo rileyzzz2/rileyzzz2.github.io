@@ -19,12 +19,7 @@ export async function initResources() {
     gameModels.coin =               await loadModel("3d/objects/coin.glb");
     gameModels.itembox =            await loadModel("3d/objects/itembox.glb");
     gameModels.itembox_font =       await loadModel("3d/objects/itembox_font.glb");
-    
-    gameModels.itembox.scene.traverse(function(child) {
-        if(child.name === "ItemBoxRef__M_ItemBoxRef") {
-            child.material.opacity = 0.5;
-        }
-    });
+    gameTextures.itembox_refract =  await loadTexture("3d/objects/itembox_refract.png");
 
     gameTextures.p_spark =          await loadTexture("particles/flare_01.png");
     gameTextures.p_smoke =          await loadTexture("particles/smoke.png");
@@ -39,6 +34,25 @@ export async function initResources() {
     gameModels.item_star =          await loadModel("3d/objects/star.glb");
 
     gameTextures.env = await loadRGBE('env.hdr');
+}
+
+//initialize resources after the creation of the map, renderer, etc
+export async function PostInitResources()
+{
+    let pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+    let refractMap = pmremGenerator.fromCubemap(gameTextures.itembox_refract).texture;
+
+    gameModels.itembox.scene.traverse(function(child) {
+        if(child.name === "ItemBoxRef__M_ItemBoxRef") {
+            child.material.opacity = 0.8;
+        }
+        if(child.isMesh) {
+            child.material.envMap = refractMap;
+        }
+    });
+
+    pmremGenerator.dispose();
 }
 
 export function loadModel(file) {

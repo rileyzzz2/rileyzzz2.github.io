@@ -1,4 +1,5 @@
 var canvas = $("#gameWindow")[0];
+var renderer;
 var objects = [];
 var thinkers = [];
 var networkThinkers = [];

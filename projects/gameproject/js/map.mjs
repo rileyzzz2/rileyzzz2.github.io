@@ -54,6 +54,7 @@ class Map {
     constructor(mapScene, collisionScene, objectData) {
         this.mapScene = mapScene;
         this.collisionScene = collisionScene;
+        this.objectData = objectData;
 
         this.mapScene.scale.multiplyScalar(0.35); // 0.5
         this.collisionScene.scale.multiplyScalar(0.35);
@@ -89,22 +90,23 @@ class Map {
             }
         }
 
-        //create items
-        this.items = [];
-        for(let i = 0; i < objectData.items.length; i++) {
-            let item = objectData.items[i];
-            let itempos = item.position;
-            if(item.type === "coin")
-                this.items.push(new Coin(itempos, i));
-            else if(item.type === "itembox")
-                this.items.push(new ItemBox(itempos, i));
-        }
         //scene.add(this.collisionScene);
     }
 
     beginPlay() {
         //create map physics
         //const mapCollision = new Ammo.btTriangleMesh(true, true);
+
+        //create items
+        this.items = [];
+        for(let i = 0; i < this.objectData.items.length; i++) {
+            let item = this.objectData.items[i];
+            let itempos = item.position;
+            if(item.type === "coin")
+                this.items.push(new Coin(itempos, i));
+            else if(item.type === "itembox")
+                this.items.push(new ItemBox(itempos, i));
+        }
 
         this.collisionScene.traverse(function (child) {
             //let isRelevant = (child.name === "polygon147" || child.name === "polygon145");

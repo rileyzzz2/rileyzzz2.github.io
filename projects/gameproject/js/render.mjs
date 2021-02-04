@@ -15,7 +15,7 @@ export function startRenderer() {
         bloomRadius: 0.4
     };
 
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     var renderScene = new RenderPass(scene, camera);
     var composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
@@ -60,7 +60,7 @@ export function startRenderer() {
     let envMap = pmremGenerator.fromEquirectangular(gameTextures.env).texture;
     scene.environment = envMap;
     scene.background = envMap;
-    pmremGenerator.dispose(); 
+    pmremGenerator.dispose();
     
     // camera.rotation.order = 'ZYX';
     // canvas.addEventListener("mousemove", mousemove);

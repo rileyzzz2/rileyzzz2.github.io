@@ -1,6 +1,7 @@
-import {initResources} from './res.mjs';
+import {initResources, PostInitResources} from './res.mjs';
 import {loadMap} from './map.mjs';
 import {startRenderer} from './render.mjs';
+
 $(document).ready(function() {
 
     
@@ -54,6 +55,7 @@ export async function beginPlay() {
     activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb', '3d/maps/delfino_objects.json');
     //activeMap = await loadMap('3d/maps/mall.glb', '3d/maps/mall_collision.glb');
     startRenderer();
+    await PostInitResources();
     activeMap.beginPlay();
 
     //tell the server that we're ready to start the match

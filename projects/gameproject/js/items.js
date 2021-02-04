@@ -72,21 +72,27 @@ class Coin extends Item {
 class ItemBox extends Item {
     constructor(pos, index) {
         var mesh = gameModels.itembox.scene.clone();
-        mesh.scale.multiplyScalar(0.08);
-        mesh.position.set(pos[0], pos[1] + 0.5, pos[2]);
+        mesh.scale.multiplyScalar(0.06);
+        mesh.position.set(pos[0], pos[1] + 0.6, pos[2]);
         scene.add(mesh);
         
         super(mesh, index);
         
+        this.fontMesh = gameModels.itembox_font.scene.clone();
+        this.fontMesh.scale.multiplyScalar(0.06);
+        this.fontMesh.position.copy(mesh.position);
+        scene.add(this.fontMesh);
     }
     collect() {
         this.collected = true;
         this.collectedTime = 0.0;
         this.mesh.visible = false;
+        this.fontMesh.visible = false;
     }
     uncollect() {
         this.collected = false;
         this.mesh.visible = true;
+        this.fontMesh.visible = true;
     }
     update(dt) {
         //add to collection counter
@@ -96,6 +102,8 @@ class ItemBox extends Item {
                 this.uncollect();
         }
         
+        this.fontMesh.rotation.setFromRotationMatrix( camera.matrixWorld );
+        //this.fontMesh.lookAt(camera.position);
         this.mesh.rotation.x += dt * 2.0;
         this.mesh.rotation.y += dt * 4.0;
     }
