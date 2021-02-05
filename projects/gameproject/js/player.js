@@ -58,6 +58,10 @@ const steeringClamp = .25;
 class Kart {
     constructor(startPos, startQuat) {
         this.collectedCoins = 0;
+        this.heldItem = ITEM_NONE;
+        this.itemAnimating = false;
+        this.itemAnim = 0.0;
+
         this.drifting = false;
         this.driftTime = 0.0;
         this.steeringClampL = steeringClamp;
@@ -193,6 +197,10 @@ class Kart {
         objects.push(this);
     }
 
+    playItemAnimation() {
+        this.itemAnimating = true;
+        this.itemAnim = 0.0;
+    }
     // setAnimationFrame(frame) {
     //     console.log("setting frame to " + frame);
     //     this.playerMixer.time = 0;
@@ -244,6 +252,17 @@ class Kart {
     }
     update(dt) {
         //this.playerMixer.update(dt);
+        if(this.itemAnimating) {
+            this.itemAnim += dt;
+
+            if(this.itemAnim > 4.0) {
+                this.itemAnimating = false;
+                setItemIcon(this.heldItem);
+            } else {
+                //console.log("item anim " + Math.floor((this.itemAnim * 4.0) % ITEM_MAX));
+                setItemIcon(Math.floor((this.itemAnim * 8.0) % ITEM_MAX));
+            }
+        }
 
         var targetPos_L = new THREE.Vector3(0.0, 0.0, 0.0);
         var targetPos_R = new THREE.Vector3(0.0, 0.0, 0.0);

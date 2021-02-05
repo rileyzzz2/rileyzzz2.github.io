@@ -104,6 +104,61 @@ function setCoinCount(count) {
     else
         $(".coinCounter").css("color", "gold");
 }
+
+const ITEM_NONE             = -1;
+const ITEM_BANANA           = 0;
+const ITEM_LIGHTNING        = 1;
+const ITEM_MUSHROOM         = 2;
+const ITEM_MUSHROOM_GOLD    = 3;
+const ITEM_SHELL_GREEN      = 4;
+const ITEM_SHELL_RED        = 5;
+const ITEM_SHELL_BLUE       = 6;
+const ITEM_STAR             = 7;
+const ITEM_COIN             = 8;
+const ITEM_MAX = ITEM_COIN + 1;
+
+var itemIcon = ITEM_NONE;
+function setItemIcon(item) {
+    if(item === itemIcon)
+        return;
+    
+    itemIcon = item;
+    var img = $(".itemIcon");
+    switch(item) {
+    default:
+    case ITEM_NONE:
+        img.attr("src", "img/ui/item/none.png");
+        break;
+    case ITEM_BANANA:
+        img.attr("src", "img/ui/item/banana.png");
+        break;
+    case ITEM_LIGHTNING:
+        img.attr("src", "img/ui/item/lightning.png");
+        break;
+    case ITEM_MUSHROOM:
+        img.attr("src", "img/ui/item/mushroom.png");
+        break;
+    case ITEM_MUSHROOM_GOLD:
+        img.attr("src", "img/ui/item/mushroom_gold.png");
+        break;
+    case ITEM_SHELL_GREEN:
+        img.attr("src", "img/ui/item/shell_green.png");
+        break;
+    case ITEM_SHELL_RED:
+        img.attr("src", "img/ui/item/shell_red.png");
+        break;
+    case ITEM_SHELL_BLUE:
+        img.attr("src", "img/ui/item/shell_blue.png");
+        break;
+    case ITEM_STAR:
+        img.attr("src", "img/ui/item/star.png");
+        break;
+    case ITEM_COIN:
+        img.attr("src", "img/ui/item/coin.png");
+        break;
+    }
+}
+
 //network stuff
 const uuid = PubNub.generateUUID();
 const pubnub = new PubNub({

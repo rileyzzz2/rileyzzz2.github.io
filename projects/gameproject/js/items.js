@@ -111,7 +111,12 @@ class ItemBox extends Item {
         this.collect();
 
         //give item to player
-        
+        if(localPlayer.heldItem === ITEM_NONE) {
+            localPlayer.playItemAnimation();
+            var newItem = Math.floor(Math.random() * ITEM_MAX);
+            localPlayer.heldItem = newItem;
+        }
+
         var data = {
             type: "itemCollected",
             index: this.index
