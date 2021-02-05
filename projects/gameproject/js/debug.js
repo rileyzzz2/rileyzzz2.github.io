@@ -41,8 +41,40 @@ $( document ).on('keydown', function (event) {
             ms.getWorldTransform( tmpTrans );
             var pos = tmpTrans.getOrigin();
             debugObjects.trackpaths.push({
-                position: [pos.x(), pos.y(), pos.z()]
+                position: [pos.x(), pos.y(), pos.z()],
+                last: debugObjects.trackpaths.length - 1
             });
         }
     }
 })
+
+var tracklines = [];
+function buildTrackPaths() {
+    const material = new THREE.LineBasicMaterial({
+        color: 0x0000ff
+    });
+    for(var i = 0; i < tracklines.length; i++)
+        scene.remove(tracklines[i]);
+    tracklines = [];
+    
+    for(var i = 0; i < debugObjects.trackpaths.length; i++) {
+        let segment = debugObjects.trackpaths[i];
+        
+        const points = [];
+        if(segment.last === -1)
+            points.push( mapStart );
+        else {
+            let lastSegment = debugObjects.trackpaths[segment.last];
+            points.push( new THREE.Vector3( lastSegment.position[0], lastSegment.position[1], lastSegment.position[2] ) );
+        }
+
+        points.push( new THREE.Vector3( segment.position[0], segment.position[1], segment.position[2] ) );
+
+        const geometry = new THREE.BufferGeometry().setFromPoints( points );
+        const line = new THREE.Line( geometry, material );
+        scene.add( line );
+
+        tracklines.push(line);
+    }
+
+}
