@@ -10,7 +10,7 @@ var playerModels = {};
 var gameTextures = {};
 var kartData = {};
 var activeMap;
-var mapStart;
+var mapStart = new THREE.Vector3();
 var mapCollisionData = {};
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);

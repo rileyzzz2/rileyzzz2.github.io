@@ -57,6 +57,8 @@ export async function beginPlay() {
     startRenderer();
     await PostInitResources();
     activeMap.beginPlay();
+    if(startDebug)
+        startDebug();
 
     //tell the server that we're ready to start the match
     if(!isHost) {
