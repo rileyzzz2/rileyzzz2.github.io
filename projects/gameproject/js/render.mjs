@@ -3,22 +3,29 @@ import { RenderPass } from './lib/three/examples/jsm/postprocessing/RenderPass.j
 import { GLTFLoader } from './lib/three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from './lib/three/examples/jsm/loaders/RGBELoader.js';
 
+import { UnrealBloomPass } from './lib/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 export function startRenderer() {
     tmpTrans = new Ammo.btTransform();
     var clock = new THREE.Clock();
 
-    var params = {
+    var bloomParams = {
         exposure:   1.0,
-        bloomStrength: 0.4,
-        bloomThreshold: 0.0,
-        bloomRadius: 0.4
+        bloomStrength: 0.1,
+        bloomThreshold: 0.9,
+        bloomRadius: 0.2
     };
 
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
     var renderScene = new RenderPass(scene, camera);
     var composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
+
+    var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    bloomPass.threshold = bloomParams.bloomThreshold;
+    bloomPass.strength = bloomParams.bloomStrength;
+    bloomPass.radius = bloomParams.bloomRadius;
+    composer.addPass(bloomPass);
 
     //PBR STUFF
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -54,6 +61,8 @@ export function startRenderer() {
 
     scene.add(sunlight);
 
+    //const lensflare = new Lensflare();
+    //sunlight.add(lensflare);
 
     let pmremGenerator = new THREE.PMREMGenerator(renderer);
     pmremGenerator.compileEquirectangularShader();
