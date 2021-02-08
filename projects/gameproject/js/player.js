@@ -205,7 +205,7 @@ class Kart {
 
     setPlacement(place) {
         this.placement = place;
-        
+        setUIPlacement(place);
     }
     // setAnimationFrame(frame) {
     //     console.log("setting frame to " + frame);
@@ -526,6 +526,16 @@ class NPCKart {
 
         objects.push(this);
     }
+
+    setPlacement(place) {
+        this.placement = place;
+
+        //network placement
+        this.conn.send({
+            type: "updatePlacement",
+            place: place
+        });
+    }
     handleData(data) {
         if(data.type === "playerTick") {
             //console.log("received player tick!");
@@ -559,6 +569,10 @@ class NPCKart {
                 this.hasReceivedData = true;
             }
             
+        }
+        else if(data.type === "updatePlacement") {
+            this.placement = data.place;
+            setUIPlacement(data.place);
         }
     }
     update(dt) {
