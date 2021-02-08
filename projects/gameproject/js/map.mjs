@@ -110,6 +110,54 @@ class Map {
                 this.items.push(new ItemBox(itempos, i));
         }
 
+        //process path data
+        this.tracksegments = [];
+        for(let i = 0; i < this.objectData.trackpaths.length; i++) {
+            let segment = this.objectData.trackpaths[i];
+            for(var j = 0; j < segment.last.length; j++) {
+                let last = segment.last[j];
+                const points = [];
+
+                if(last === -1)
+                    points.push( mapStart );
+                else {
+                    let lastSegment = this.objectData.trackpaths[last];
+                    points.push( new THREE.Vector3( lastSegment.position[0], lastSegment.position[1], lastSegment.position[2] ) );
+                }
+
+                points.push( new THREE.Vector3( segment.position[0], segment.position[1], segment.position[2] ) );
+
+                var that = this;
+                function recursiveGetDistance(index, dist) {
+                    let curSegment = that.objectData.trackpaths[index];
+                    let endSegment = new THREE.Vector3( curSegment.position[0], curSegment.position[1], curSegment.position[2] );
+                    let distances = [];
+                    for(let k = 0; k < endSegment.last.length; k++) {
+                        let startIndex = endSegment.last[k];
+                        let startSegment;
+                        if(startIndex === -1)
+                            startSegment = mapStart;
+                        else {
+                            let lastSegment = that.objectData.trackpaths[startIndex];
+                            startSegment = new THREE.Vector3( lastSegment.position[0], lastSegment.position[1], lastSegment.position[2] );
+                        }
+
+                        let segDist = startSegment.distanceTo(endSegment);
+                        recursiveGetDistance(startIndex, segDist);
+
+                        distances.push(dist);
+                    }
+                    
+                }
+
+                this.tracksegments.push({
+                    line: new THREE.Line3(points[0], points[1]),
+                    globalDist: recursiveGetDistance(last, 0.0)
+                    //dist: points[0].distanceTo(pos)
+                });
+            }
+        }
+
         this.collisionScene.traverse(function (child) {
             //let isRelevant = (child.name === "polygon147" || child.name === "polygon145");
             //isRelevant = false;
@@ -177,52 +225,30 @@ class Map {
     }
 
     findClosestTrackPoint(pos, dir) {
-        var segments = [];
-        for(let i = 0; i < mapObjects.trackpaths.length; i++) {
-            let segment = mapObjects.trackpaths[i];
-            for(var j = 0; j < segment.last.length; j++) {
-                let last = segment.last[j];
-                const points = [];
-
-                if(last === -1)
-                    points.push( mapStart );
-                else {
-                    let lastSegment = mapObjects.trackpaths[last];
-                    points.push( new THREE.Vector3( lastSegment.position[0], lastSegment.position[1], lastSegment.position[2] ) );
-                }
-
-                points.push( new THREE.Vector3( segment.position[0], segment.position[1], segment.position[2] ) );
-
-                segments.push({
-                    line: points,
-                    dist: points[0].distanceTo(pos)
-                });
-            }
-        }
+        var segments = [...this.tracksegments];
+        for(let i = 0; i < segments.length; i++)
+            segments[i].dist = segments[i].line.start.distanceTo(pos);
 
         segments.sort((a, b) => { return a.dist - b.dist; });
 
         var closest = segments.slice(0, 3);
 
+        var closestDist = 1000.0;
+        var closestLine;
+        var closestKey = 0.0;
         for(let i = 0; i < closest.length; i++) {
-            
+            let line = closest[i].line;
+            let closest = new THREE.Vector3();
+            let key = line.closestPointToPointParameter(pos, true);
+            line.at(key, closest);
+
+            let dist = pos.distanceTo(closest);
+            closest = Math.min(closest, dist);
+            if(closest === dist) {
+                closestLine = line;
+                closestKey = key;
+            }
         }
-        let lineDir = points[1].clone();
-        lineDir.sub(points[0]);
-
-        let Nv = dir.clone().cross(lineDir);
-
-        let Na = dir.clone().cross(Nv).normalize();
-        let Nb = dir.clone().cross(Nv).normalize();
-
-        let Da = dir.clone().normalize();
-        let Db = lineDir.clone().normalize();
-
-        let da = points[0].clone().sub(pos).dot(Nb) / Da.dot(Nb);
-        let db = pos.clone().sub(points[0]).dot(Na) / Db.dot(Na);
-
-        let ptA = pos.clone().add(Da.multiplyScalar(da));
-        let ptB = points[0].clone().add(Db.multiplyScalar(db));
     }
     tick() {
         if(isHost) {
