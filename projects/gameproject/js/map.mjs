@@ -172,6 +172,70 @@ class Map {
         var body = new Ammo.btRigidBody( rbInfo );
         physicsWorld.addRigidBody(body);
         objects.push(new GameObject(plane, body));
+
+        thinkers.push(this);
+    }
+
+    findClosestTrackPoint(pos, dir) {
+        var segments = [];
+        for(let i = 0; i < mapObjects.trackpaths.length; i++) {
+            let segment = mapObjects.trackpaths[i];
+            for(var j = 0; j < segment.last.length; j++) {
+                let last = segment.last[j];
+                const points = [];
+
+                if(last === -1)
+                    points.push( mapStart );
+                else {
+                    let lastSegment = mapObjects.trackpaths[last];
+                    points.push( new THREE.Vector3( lastSegment.position[0], lastSegment.position[1], lastSegment.position[2] ) );
+                }
+
+                points.push( new THREE.Vector3( segment.position[0], segment.position[1], segment.position[2] ) );
+
+                segments.push({
+                    line: points,
+                    dist: points[0].distanceTo(pos)
+                });
+            }
+        }
+
+        segments.sort((a, b) => { return a.dist - b.dist; });
+
+        var closest = segments.slice(0, 3);
+
+        for(let i = 0; i < closest.length; i++) {
+            
+        }
+        let lineDir = points[1].clone();
+        lineDir.sub(points[0]);
+
+        let Nv = dir.clone().cross(lineDir);
+
+        let Na = dir.clone().cross(Nv).normalize();
+        let Nb = dir.clone().cross(Nv).normalize();
+
+        let Da = dir.clone().normalize();
+        let Db = lineDir.clone().normalize();
+
+        let da = points[0].clone().sub(pos).dot(Nb) / Da.dot(Nb);
+        let db = pos.clone().sub(points[0]).dot(Na) / Db.dot(Na);
+
+        let ptA = pos.clone().add(Da.multiplyScalar(da));
+        let ptB = points[0].clone().add(Db.multiplyScalar(db));
+    }
+    tick() {
+        if(isHost) {
+            var trackPlayers = [...Players];
+            //trackPlayers.push(localPlayer);
+
+            for(let i = 0; i < trackPlayers.length; i++) {
+                let p = trackPlayers[i];
+                let dir = new THREE.Vector3();
+                p.mesh.getWorldDirection(dir);
+                let pos = p.mesh.position;
+            }
+        }
     }
 }
 export async function loadMap(file, collisionFile, JSONfile) {

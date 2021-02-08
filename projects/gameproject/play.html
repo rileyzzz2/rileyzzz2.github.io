@@ -4,7 +4,7 @@
         <title>Racing Game</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="js/lib/three/build/three.min.js"></script>
-        <script src="js/lib/three/examples/jsm/objects/Lensflare.js"></script>
+        <script type="module" src="js/lib/three/examples/jsm/objects/Lensflare.js"></script>
         <script src="js/lib/SPE/SPE.js"></script>
         <script src="js/lib/ammo/ammo.js"></script>
         <!-- Multiplayer SDK -->
@@ -179,6 +179,17 @@
                 width: 128px;
                 height: 128px;
             }
+
+            .placementIcon {
+                position: absolute;
+                margin-bottom: 8%;
+                margin-right: 40px;
+                bottom: 0;
+                right: 0;
+                /* width: 100px; */
+                width: 128px;
+                height: 128px;
+            }
         </style>
     </head>
 
@@ -201,6 +212,8 @@
             <div class="itemBox">
                 <img class="itemIcon" src="img/ui/item/none.png">
             </div>
+
+            <img class="placementIcon" src="img/ui/positions/1.png">
         </div>
 
         <div class="menuOverlay">

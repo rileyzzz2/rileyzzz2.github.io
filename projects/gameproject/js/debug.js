@@ -1,10 +1,6 @@
 
-var debugObjects = {
-    items: [],
-    objects: []
-};
 
-$.getJSON('3d/maps/delfino_objects.json', (data) => {debugObjects = data; buildTrackPaths();});
+$.getJSON('3d/maps/delfino_objects.json', (data) => {mapObjects = data; buildTrackPaths();});
 
 function saveJSON(content, fileName, contentType) {
     var a = document.createElement("a");
@@ -19,10 +15,10 @@ var closest = -1;
 $( document ).on('keydown', function (event) {
     if (event.defaultPrevented)
         return;
-    debugObjects.trackpaths = debugObjects.trackpaths || []
+    mapObjects.trackpaths = mapObjects.trackpaths || []
 
     if(event.key === 'c') {
-        saveJSON(JSON.stringify(debugObjects), 'objects.json', 'text/plain');
+        saveJSON(JSON.stringify(mapObjects), 'objects.json', 'text/plain');
     }
     else if(event.key === 'p') {
         var tmpTrans = new Ammo.btTransform();
@@ -30,7 +26,7 @@ $( document ).on('keydown', function (event) {
         if ( ms ) {
             ms.getWorldTransform( tmpTrans );
             var pos = tmpTrans.getOrigin();
-            debugObjects.items.push({
+            mapObjects.items.push({
                 type: "itembox",
                 position: [pos.x(), pos.y(), pos.z()]
             });
@@ -43,18 +39,18 @@ $( document ).on('keydown', function (event) {
         if ( ms ) {
             ms.getWorldTransform( tmpTrans );
             var pos = tmpTrans.getOrigin();
-            debugObjects.trackpaths.push({
+            mapObjects.trackpaths.push({
                 position: [pos.x(), pos.y(), pos.z()],
-                // last: [debugObjects.trackpaths.length - 1]
+                // last: [mapObjects.trackpaths.length - 1]
                 last: [closest]
             });
-            console.log("last " + (debugObjects.trackpaths.length - 1));
+            console.log("last " + (mapObjects.trackpaths.length - 1));
             buildTrackPaths();
         }
     }
     else if (event.key === 'j') {
         //join closest to last places
-        debugObjects.trackpaths[closest].last.push(debugObjects.trackpaths.length - 1);
+        mapObjects.trackpaths[closest].last.push(mapObjects.trackpaths.length - 1);
         buildTrackPaths();
     }
 })
@@ -69,8 +65,8 @@ function buildTrackPaths() {
         scene.remove(tracklines[i]);
     tracklines = [];
     
-    for(var i = 0; i < debugObjects.trackpaths.length; i++) {
-        let segment = debugObjects.trackpaths[i];
+    for(var i = 0; i < mapObjects.trackpaths.length; i++) {
+        let segment = mapObjects.trackpaths[i];
         for(var j = 0; j < segment.last.length; j++) {
             let last = segment.last[j];
             const points = [];
@@ -78,7 +74,7 @@ function buildTrackPaths() {
             if(last === -1)
                 points.push( mapStart );
             else {
-                let lastSegment = debugObjects.trackpaths[last];
+                let lastSegment = mapObjects.trackpaths[last];
                 points.push( new THREE.Vector3( lastSegment.position[0], lastSegment.position[1], lastSegment.position[2] ) );
             }
 
@@ -110,8 +106,8 @@ function startDebug() {
         }
 
         var minDist = 100.0;
-        for(var i = 0; i < debugObjects.trackpaths.length; i++) {
-            let segment = debugObjects.trackpaths[i];
+        for(var i = 0; i < mapObjects.trackpaths.length; i++) {
+            let segment = mapObjects.trackpaths[i];
             var segPos = new THREE.Vector3(segment.position[0], segment.position[1], segment.position[2]);
             var dist = playerPos.distanceTo(segPos);
             minDist = Math.min(minDist, dist);
@@ -120,7 +116,7 @@ function startDebug() {
         }
 
         if(closest !== -1) {
-            var closestpos = debugObjects.trackpaths[closest].position;
+            var closestpos = mapObjects.trackpaths[closest].position;
             markersphere.position.set(closestpos[0], closestpos[1], closestpos[2]);
         }
     }, 100.0);

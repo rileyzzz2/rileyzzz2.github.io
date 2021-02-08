@@ -22,6 +22,11 @@ const netPlayer = {
         score: 0
 };
 
+var mapObjects = {
+    items: [],
+    objects: []
+};
+
 //server variables
 var isHost = false;
 var readyState = [];
