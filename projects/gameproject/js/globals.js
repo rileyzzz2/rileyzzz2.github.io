@@ -165,6 +165,10 @@ function setItemIcon(item) {
     }
 }
 
+function setUIPlacement(place) {
+    $(".itemIcon");
+}
+
 //network stuff
 const uuid = PubNub.generateUUID();
 const pubnub = new PubNub({

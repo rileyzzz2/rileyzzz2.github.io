@@ -202,6 +202,11 @@ class Kart {
         this.itemAnimating = true;
         this.itemAnim = 0.0;
     }
+
+    setPlacement(place) {
+        this.placement = place;
+        
+    }
     // setAnimationFrame(frame) {
     //     console.log("setting frame to " + frame);
     //     this.playerMixer.time = 0;
