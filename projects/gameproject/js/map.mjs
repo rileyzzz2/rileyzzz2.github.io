@@ -129,11 +129,14 @@ class Map {
 
                 var that = this;
                 function recursiveGetDistance(index, dist) {
+                    if(index === -1)
+                        return 0.0;
+                    
                     let curSegment = that.objectData.trackpaths[index];
                     let endSegment = new THREE.Vector3( curSegment.position[0], curSegment.position[1], curSegment.position[2] );
                     let distances = [];
-                    for(let k = 0; k < endSegment.last.length; k++) {
-                        let startIndex = endSegment.last[k];
+                    for(let k = 0; k < curSegment.last.length; k++) {
+                        let startIndex = curSegment.last[k];
                         let startSegment;
                         if(startIndex === -1)
                             startSegment = mapStart;
@@ -142,17 +145,24 @@ class Map {
                             startSegment = new THREE.Vector3( lastSegment.position[0], lastSegment.position[1], lastSegment.position[2] );
                         }
 
-                        let segDist = startSegment.distanceTo(endSegment);
-                        recursiveGetDistance(startIndex, segDist);
-
-                        distances.push(dist);
+                        let segDist = dist + startSegment.distanceTo(endSegment);
+                        segDist += recursiveGetDistance(startIndex, segDist);
+                        distances.push(segDist);
                     }
-                    
+                    let minDist = 0.0;
+                    if(distances.length > 0) {
+                        minDist = distances[0];
+                        for(let k = 0; k < distances.length; k++)
+                            minDist = Math.min(minDist, distances[k]);
+                    }
+
+                    return minDist;
                 }
 
                 this.tracksegments.push({
                     line: new THREE.Line3(points[0], points[1]),
-                    globalDist: recursiveGetDistance(last, 0.0)
+                    globalDist: recursiveGetDistance(last, 0.0),
+                    length: points[0].distanceTo(points[1])
                     //dist: points[0].distanceTo(pos)
                 });
             }
@@ -224,7 +234,7 @@ class Map {
         thinkers.push(this);
     }
 
-    findClosestTrackPoint(pos, dir) {
+    findClosestTrackPoint(pos) {
         var segments = [...this.tracksegments];
         for(let i = 0; i < segments.length; i++)
             segments[i].dist = segments[i].line.start.distanceTo(pos);
@@ -234,33 +244,53 @@ class Map {
         var closest = segments.slice(0, 3);
 
         var closestDist = 1000.0;
-        var closestLine;
+        var closestSegment;
         var closestKey = 0.0;
         for(let i = 0; i < closest.length; i++) {
             let line = closest[i].line;
-            let closest = new THREE.Vector3();
+            let closestPoint = new THREE.Vector3();
             let key = line.closestPointToPointParameter(pos, true);
-            line.at(key, closest);
+            line.at(key, closestPoint);
 
-            let dist = pos.distanceTo(closest);
-            closest = Math.min(closest, dist);
-            if(closest === dist) {
-                closestLine = line;
+            let dist = pos.distanceTo(closestPoint);
+            closestDist = Math.min(closestDist, dist);
+            if(closestDist === dist) {
+                closestSegment = closest[i];
                 closestKey = key;
             }
         }
+
+        if(closestSegment) {
+            //console.log("closest global distance " + closestSegment.globalDist);
+            return {
+                segment: closestSegment,
+                key: closestKey
+            };
+        }
+    }
+
+    getTrackDistance(pos) {
+        var obj = this.findClosestTrackPoint(pos);
+        var segment = obj.segment;
+        var key = obj.key;
+        //console.log("key " + key + " length " + segment.line.distance());
+        //$("#coinCount").text(segment.globalDist.toString());
+        return segment.globalDist + segment.line.distance() * key;
     }
     tick() {
-        if(isHost) {
+        if(isHost || true) {
             var trackPlayers = [...Players];
             //trackPlayers.push(localPlayer);
 
             for(let i = 0; i < trackPlayers.length; i++) {
                 let p = trackPlayers[i];
-                let dir = new THREE.Vector3();
-                p.mesh.getWorldDirection(dir);
                 let pos = p.mesh.position;
+
+                this.findClosestTrackPoint(pos);
             }
+            this.getTrackDistance(localPlayer.gameObject.mesh.position);
+            //console.log("track dist " + this.getTrackDistance(localPlayer.gameObject.mesh.position));
+            //this.findClosestTrackPoint(localPlayer.gameObject.mesh.position);
         }
     }
 }
