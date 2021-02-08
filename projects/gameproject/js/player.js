@@ -57,6 +57,7 @@ class Wheel {
 const steeringClamp = .25;
 class Kart {
     constructor(startPos, startQuat) {
+        this.placement = 0;
         this.collectedCoins = 0;
         this.heldItem = ITEM_NONE;
         this.itemAnimating = false;
@@ -456,6 +457,7 @@ class NPCKart {
         this.targetRot = new THREE.Quaternion();
         this.hasReceivedData = false;
         this.wheelSpeed = 0.0;
+        this.placement = 0;
         // this.geometry = new THREE.BoxGeometry();
         // this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         // this.cube = new THREE.Mesh( this.geometry, this.material );

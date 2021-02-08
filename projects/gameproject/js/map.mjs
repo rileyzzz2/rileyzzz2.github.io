@@ -274,21 +274,30 @@ class Map {
         var segment = obj.segment;
         var key = obj.key;
         //console.log("key " + key + " length " + segment.line.distance());
-        //$("#coinCount").text(segment.globalDist.toString());
+        $("#coinCount").text(segment.globalDist + segment.line.distance() * key);
         return segment.globalDist + segment.line.distance() * key;
     }
     tick() {
         if(isHost || true) {
             var trackPlayers = [...Players];
             //trackPlayers.push(localPlayer);
-
+            var placement = [];
             for(let i = 0; i < trackPlayers.length; i++) {
                 let p = trackPlayers[i];
                 let pos = p.mesh.position;
 
-                this.findClosestTrackPoint(pos);
+                placement.push[this.findClosestTrackPoint(pos), p];
             }
-            this.getTrackDistance(localPlayer.gameObject.mesh.position);
+            placement.push[this.getTrackDistance(localPlayer.gameObject.mesh.position), localPlayer];
+
+            placement.sort((a, b) => { return a[0] - b[0]; });
+
+            for(let i = 0; i < placement.length; i++) {
+                let p = placement[i][1];
+                var place = i + 1;
+                if(p.placement !== place)
+                    p.setPlacement(place);
+            }
             //console.log("track dist " + this.getTrackDistance(localPlayer.gameObject.mesh.position));
             //this.findClosestTrackPoint(localPlayer.gameObject.mesh.position);
         }
