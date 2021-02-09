@@ -170,7 +170,7 @@ function setUIPlacement(place) {
     $(".placementIcon").attr("src", "img/ui/positions/" + place.toString() + ".png");
 }
 
-function spawnItem(pos, type) {
+function spawnItem(pos, vel, type) {
     var item;
     switch(type) {
         default:
@@ -178,14 +178,19 @@ function spawnItem(pos, type) {
         case ITEM_BANANA:
             item = new itemBanana(pos);
             break;
+        case ITEM_SHELL_GREEN:
+            item = new itemGreenShell(pos, vel);
+            break;
     }
     if(item) activeMap.items.push(item);
 }
-function placeNetItem(pos, type) {
-    spawnItem(pos, type);
+function placeNetItem(pos, forward, type) {
+    //var vel = tvec(localPlayer.gameObject.rigidBody.getLinearVelocity());
+    spawnItem(pos, forward, type);
     var data = {
         type: "placeItem",
         pos: pos.toArray(),
+        vel: forward.toArray(),
         itemType: type
     };
 

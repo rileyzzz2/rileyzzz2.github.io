@@ -128,11 +128,11 @@ class ItemBox extends Item {
 }
 
 class mapItem {
-    constructor(mesh) {
+    constructor(mesh, mass) {
         this.index = activeMap.items.length;
         this.collected = false;
 
-        const mass = 0.0;
+        //const mass = 0.0;
         let transform = createTransform(mesh);
         let motionState = new Ammo.btDefaultMotionState( transform );
         var localInertia = new Ammo.btVector3( 0, 0, 0 );
@@ -161,11 +161,64 @@ class itemBanana extends mapItem {
         mesh.position.set(pos.x, pos.y, pos.z);
         scene.add(mesh);
         
-        super(mesh);
+        super(mesh, 0.0);
         this.mesh = mesh;
     }
     beginContact() {
         console.log("banana contact");
+        this.collect();
+
+        //slow down local player
+        localPlayer.stopHit();
+        
+        var data = {
+            type: "itemCollected",
+            index: this.index
+        };
+
+        for(const client in remoteConnections)
+            remoteConnections[client].conn.send(data);
+    }
+}
+
+class itemGreenShell extends mapItem {
+    constructor(pos, vel) {
+        var mesh = gameModels.item_shell_green.scene.clone();
+        mesh.scale.multiplyScalar(0.1);
+        mesh.position.set(pos.x, pos.y, pos.z);
+        scene.add(mesh);
+        
+        super(mesh, 1000.0);
+        this.mesh = mesh;
+        vel.y = 0.0;
+        this.vel = vel;
+        this.vel.multiplyScalar(40.0);
+
+        objects.push(this);
+        this.rigidBody.setCollisionFlags(this.rigidBody.getCollisionFlags() & ~CF_NO_CONTACT_RESPONSE);
+        this.rigidBody.setRestitution(1.0);
+        this.rigidBody.setDamping(0.1, 0.0);
+        this.gameObject = new GameObject(this.mesh, this.rigidBody);
+        objects.push(this.gameObject);
+
+        this.rigidBody.setLinearVelocity(pvec(this.vel));
+    }
+    update(dt) {
+        
+        // var ms = this.rigidBody.getMotionState();
+        // var c = new Ammo.btTransform();
+        // ms.getWorldTransform(c);
+        // var origin = tvec(c.getOrigin());
+
+        // var frameVel = this.vel.clone();
+        // frameVel.multiplyScalar(dt);
+        // origin.add(frameVel);
+
+        // c.setOrigin(pvec(origin));
+        // ms.setWorldTransform(c);
+    }
+    beginContact() {
+        console.log("shell contact");
         this.collect();
 
         //slow down local player

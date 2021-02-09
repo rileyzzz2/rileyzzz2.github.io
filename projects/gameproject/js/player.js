@@ -121,10 +121,15 @@ class Kart {
         this.sparkTarget_R.position.z = -0.7;
         mesh.add(this.sparkTarget_R);
 
-        this.dropTarget = new THREE.Object3D();
-        this.dropTarget.position.y = -0.1;
-        this.dropTarget.position.z = -1.6;
-        mesh.add(this.dropTarget);
+        this.dropTargetA = new THREE.Object3D();
+        this.dropTargetA.position.y = -0.1;
+        this.dropTargetA.position.z = 1.6;
+        mesh.add(this.dropTargetA);
+
+        this.dropTargetB = new THREE.Object3D();
+        this.dropTargetB.position.y = -0.1;
+        this.dropTargetB.position.z = -1.6;
+        mesh.add(this.dropTargetB);
 
         mesh.add(camera);
 
@@ -225,22 +230,27 @@ class Kart {
 
     useItem() {
         var dropPos = new THREE.Vector3();
-        this.dropTarget.getWorldPosition(dropPos);
+        if(this.heldItem === ITEM_SHELL_GREEN || true)
+            this.dropTargetA.getWorldPosition(dropPos);
+        else
+            this.dropTargetB.getWorldPosition(dropPos);
 
         var forward = new THREE.Vector3();
         this.gameObject.mesh.getWorldDirection(forward);
         const mushroomSpeed = 2000.0;
-        forward.multiplyScalar(mushroomSpeed);
 
         switch(this.heldItem) {
             case ITEM_BANANA:
-            placeNetItem(dropPos, ITEM_BANANA);
-            break;
+                placeNetItem(dropPos, forward, ITEM_BANANA);
+                break;
             case ITEM_MUSHROOM:
-            this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 100.0, forward.z));
-            break;
+                forward.multiplyScalar(mushroomSpeed);
+                this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 100.0, forward.z));
+                break;
             default:
-            placeNetItem(dropPos, ITEM_BANANA);
+                case ITEM_SHELL_GREEN:
+                placeNetItem(dropPos, forward, ITEM_SHELL_GREEN);
+                break;
             case ITEM_NONE:
                 break;
         }

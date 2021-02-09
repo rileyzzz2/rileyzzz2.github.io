@@ -208,8 +208,10 @@ function processConnectionData(data) {
         activeMap.items[data.index].collect();
     else if(data.type === "placeItem") {
         var pos = new THREE.Vector3();
+        var vel = new THREE.Vector3();
         pos.fromArray(data.pos);
-        spawnItem(pos, data.itemType);
+        vel.fromArray(data.vel);
+        spawnItem(pos, vel, data.itemType);
     }
 }
 
