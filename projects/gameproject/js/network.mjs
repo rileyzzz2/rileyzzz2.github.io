@@ -206,8 +206,11 @@ function processConnectionData(data) {
 
     if(data.type === "itemCollected")
         activeMap.items[data.index].collect();
-    else if(data.type === "placeItem")
-        spawnItem(data.pos, data.itemType);
+    else if(data.type === "placeItem") {
+        var pos = new THREE.Vector3();
+        pos.fromArray(data.pos);
+        spawnItem(pos, data.itemType);
+    }
 }
 
 function refreshPlayerList() {

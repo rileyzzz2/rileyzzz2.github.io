@@ -185,7 +185,7 @@ function placeNetItem(pos, type) {
     spawnItem(pos, type);
     var data = {
         type: "placeItem",
-        pos: pos,
+        pos: pos.toArray(),
         itemType: type
     };
 
