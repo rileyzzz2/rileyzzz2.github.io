@@ -62,6 +62,7 @@ class Kart {
         this.heldItem = ITEM_NONE;
         this.itemAnimating = false;
         this.hitAnimating = false;
+        this.hitAnim = 0.0;
         this.itemAnim = 0.0;
 
         this.drifting = false;
@@ -212,6 +213,14 @@ class Kart {
     //hit effects
     async stopHit() {
         this.hitAnimating = true;
+        this.hitAnim = 0.0;
+        allowInput = false;
+
+        const slipFriction = 0;
+        this.wheels[0].wheelInfo.set_m_frictionSlip(slipFriction);
+        this.wheels[1].wheelInfo.set_m_frictionSlip(slipFriction);
+        this.wheels[2].wheelInfo.set_m_frictionSlip(slipFriction);
+        this.wheels[3].wheelInfo.set_m_frictionSlip(slipFriction);
     }
 
     useItem() {
@@ -286,6 +295,15 @@ class Kart {
     }
     update(dt) {
         //this.playerMixer.update(dt);
+        if(this.hitAnimating) {
+            this.hitAnim += dt;
+
+            if(this.hitAnim > 3.0) {
+                this.hitAnimating = false;
+                allowInput = true;
+                
+            }
+        }
         if(this.itemAnimating) {
             this.itemAnim += dt;
 
