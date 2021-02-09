@@ -205,6 +205,7 @@ class Kart {
 
     setPlacement(place) {
         this.placement = place;
+        //console.log("setting local placement to " + place);
         setUIPlacement(place);
     }
     // setAnimationFrame(frame) {
@@ -529,7 +530,7 @@ class NPCKart {
 
     setPlacement(place) {
         this.placement = place;
-
+        //console.log("setting npc placement to " + place);
         //network placement
         this.conn.send({
             type: "updatePlacement",
@@ -569,10 +570,6 @@ class NPCKart {
                 this.hasReceivedData = true;
             }
             
-        }
-        else if(data.type === "updatePlacement") {
-            this.placement = data.place;
-            setUIPlacement(data.place);
         }
     }
     update(dt) {

@@ -182,6 +182,9 @@ function processConnectionData(data) {
         else if(data.type === "beginMatch") {
             beginMatch();
         }
+        else if(data.type === "updatePlacement") {
+            localPlayer.setPlacement(data.place);
+        }
     }
 
     if(isHost) {

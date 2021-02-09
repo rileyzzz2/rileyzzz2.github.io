@@ -166,7 +166,8 @@ function setItemIcon(item) {
 }
 
 function setUIPlacement(place) {
-    $(".itemIcon").attr("src", "img/ui/positions/" + place.toString() + ".png");
+    console.log("setting local placement to " + place);
+    $(".placementIcon").attr("src", "img/ui/positions/" + place.toString() + ".png");
 }
 
 //network stuff
