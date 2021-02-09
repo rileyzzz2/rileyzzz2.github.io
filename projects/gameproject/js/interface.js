@@ -63,3 +63,11 @@ function beginCapture() {
     canvas.requestPointerLock();
 }
 document.addEventListener('click', beginCapture);
+
+function clickInput() {
+    console.log("click");
+    if(localPlayer)
+        localPlayer.useItem();
+}
+
+document.addEventListener('click', clickInput);

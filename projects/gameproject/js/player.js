@@ -61,6 +61,7 @@ class Kart {
         this.collectedCoins = 0;
         this.heldItem = ITEM_NONE;
         this.itemAnimating = false;
+        this.hitAnimating = false;
         this.itemAnim = 0.0;
 
         this.drifting = false;
@@ -118,6 +119,11 @@ class Kart {
         this.sparkTarget_R.position.y = 0;
         this.sparkTarget_R.position.z = -0.7;
         mesh.add(this.sparkTarget_R);
+
+        this.dropTarget = new THREE.Object3D();
+        this.dropTarget.position.y = -0.1;
+        this.dropTarget.position.z = -1.6;
+        mesh.add(this.dropTarget);
 
         mesh.add(camera);
 
@@ -201,6 +207,27 @@ class Kart {
     playItemAnimation() {
         this.itemAnimating = true;
         this.itemAnim = 0.0;
+    }
+
+    //hit effects
+    async stopHit() {
+        this.hitAnimating = true;
+    }
+
+    useItem() {
+        var dropPos = new THREE.Vector3();
+        this.dropTarget.getWorldPosition(dropPos);
+
+        activeMap.items.push(new itemBanana(dropPos));
+        // switch(this.heldItem) {
+        //     case ITEM_BANANA:
+        //     new itemBanana(dropPos);
+        //     break;
+        //     default:
+        //         new itemBanana(dropPos);
+        //     case ITEM_NONE:
+        //         break;
+        // }
     }
 
     setPlacement(place) {

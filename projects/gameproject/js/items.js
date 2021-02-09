@@ -126,3 +126,56 @@ class ItemBox extends Item {
             remoteConnections[client].conn.send(data);
     }
 }
+
+class mapItem {
+    constructor(mesh) {
+        this.index = activeMap.items.length;
+        this.collected = false;
+
+        const mass = 0.0;
+        let transform = createTransform(mesh);
+        let motionState = new Ammo.btDefaultMotionState( transform );
+        var localInertia = new Ammo.btVector3( 0, 0, 0 );
+        var shape = new Ammo.btSphereShape(0.3);
+        shape.setMargin( 0.05 );
+
+        shape.calculateLocalInertia( mass, localInertia );
+        var rbInfo = new Ammo.btRigidBodyConstructionInfo( mass, motionState, shape, localInertia );
+        this.rigidBody = new Ammo.btRigidBody( rbInfo );
+        this.rigidBody.setCollisionFlags(this.rigidBody.getCollisionFlags() | CF_NO_CONTACT_RESPONSE);
+        physicsWorld.addRigidBody(this.rigidBody);
+
+    }
+
+    collect() {
+        activeMap.items.splice(this.index, 1);
+        physicsWorld.removeRigidBody(this.rigidBody);
+        scene.remove(this.mesh);
+    }
+}
+
+class itemBanana extends mapItem {
+    constructor(pos) {
+        var mesh = gameModels.item_banana.scene.clone();
+        mesh.scale.multiplyScalar(0.1);
+        mesh.position.set(pos.x, pos.y, pos.z);
+        scene.add(mesh);
+        
+        super(mesh);
+        this.mesh = mesh;
+    }
+    beginContact() {
+        console.log("banana contact");
+        this.collect();
+
+        //slow down local player
+
+        var data = {
+            type: "itemCollected",
+            index: this.index
+        };
+
+        for(const client in remoteConnections)
+            remoteConnections[client].conn.send(data);
+    }
+}
