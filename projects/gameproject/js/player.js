@@ -214,7 +214,7 @@ class Kart {
     async stopHit() {
         this.hitAnimating = true;
         this.hitAnim = 0.0;
-        allowInput = false;
+        //allowInput = false;
 
         const slipFriction = 0;
         this.wheels[0].wheelInfo.set_m_frictionSlip(slipFriction);
@@ -227,16 +227,26 @@ class Kart {
         var dropPos = new THREE.Vector3();
         this.dropTarget.getWorldPosition(dropPos);
 
-        activeMap.items.push(new itemBanana(dropPos));
-        // switch(this.heldItem) {
-        //     case ITEM_BANANA:
-        //     new itemBanana(dropPos);
-        //     break;
-        //     default:
-        //         new itemBanana(dropPos);
-        //     case ITEM_NONE:
-        //         break;
-        // }
+        var forward = new THREE.Vector3();
+        this.gameObject.mesh.getWorldDirection(forward);
+        const mushroomSpeed = 2000.0;
+        forward.multiplyScalar(mushroomSpeed);
+
+        switch(this.heldItem) {
+            case ITEM_BANANA:
+            placeNetItem(dropPos, ITEM_BANANA);
+            break;
+            case ITEM_MUSHROOM:
+            this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 100.0, forward.z));
+            break;
+            default:
+            placeNetItem(dropPos, ITEM_BANANA);
+            case ITEM_NONE:
+                break;
+        }
+
+        this.heldItem = ITEM_NONE;
+        setItemIcon(this.heldItem);
     }
 
     setPlacement(place) {
@@ -298,10 +308,13 @@ class Kart {
         if(this.hitAnimating) {
             this.hitAnim += dt;
 
-            if(this.hitAnim > 3.0) {
+            if(this.hitAnim > 1.5) {
                 this.hitAnimating = false;
-                allowInput = true;
-                
+                //allowInput = true;
+                this.wheels[0].wheelInfo.set_m_frictionSlip(this.wheels[0].friction);
+                this.wheels[1].wheelInfo.set_m_frictionSlip(this.wheels[1].friction);
+                this.wheels[2].wheelInfo.set_m_frictionSlip(this.wheels[2].friction);
+                this.wheels[3].wheelInfo.set_m_frictionSlip(this.wheels[3].friction);
             }
         }
         if(this.itemAnimating) {

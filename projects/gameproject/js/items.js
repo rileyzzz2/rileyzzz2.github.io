@@ -169,7 +169,8 @@ class itemBanana extends mapItem {
         this.collect();
 
         //slow down local player
-
+        localPlayer.stopHit();
+        
         var data = {
             type: "itemCollected",
             index: this.index

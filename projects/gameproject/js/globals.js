@@ -170,6 +170,29 @@ function setUIPlacement(place) {
     $(".placementIcon").attr("src", "img/ui/positions/" + place.toString() + ".png");
 }
 
+function spawnItem(pos, type) {
+    var item;
+    switch(type) {
+        default:
+            return;
+        case ITEM_BANANA:
+            item = new itemBanana(pos);
+            break;
+    }
+    if(item) activeMap.items.push(item);
+}
+function placeNetItem(pos, type) {
+    spawnItem(pos, type);
+    var data = {
+        type: "placeItem",
+        pos: pos,
+        itemType: type
+    };
+
+    for(const client in remoteConnections)
+        remoteConnections[client].conn.send(data);
+}
+
 //network stuff
 const uuid = PubNub.generateUUID();
 const pubnub = new PubNub({
