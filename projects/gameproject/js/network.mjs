@@ -212,7 +212,7 @@ function processConnectionData(data) {
         var vel = new THREE.Vector3();
         pos.fromArray(data.pos);
         vel.fromArray(data.vel);
-        spawnItem(pos, vel, data.itemType);
+        spawnItem(pos, vel, data.itemType, data.target);
     }
 }
 

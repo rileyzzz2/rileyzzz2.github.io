@@ -202,7 +202,6 @@ class itemGreenShell extends mapItem {
         objects.push(this.gameObject);
 
         this.rigidBody.setLinearVelocity(pvec(this.vel));
-        //this.rigidBody.applyCentralForce(pvec(this.vel));
 
         //keep upright
         var c = new Ammo.btTransform();
@@ -231,20 +230,123 @@ class itemGreenShell extends mapItem {
             //remove object
             this.shellCollect();
         }
-        // var ms = this.rigidBody.getMotionState();
-        // var c = new Ammo.btTransform();
-        // ms.getWorldTransform(c);
-        // var origin = tvec(c.getOrigin());
-
-        // var frameVel = this.vel.clone();
-        // frameVel.multiplyScalar(dt);
-        // origin.add(frameVel);
-
-        // c.setOrigin(pvec(origin));
-        // ms.setWorldTransform(c);
     }
     beginContact() {
-        console.log("shell contact");
+        this.shellCollect();
+
+        //slow down local player
+        localPlayer.stopHit();
+        
+        var data = {
+            type: "itemCollected",
+            index: this.index
+        };
+
+        for(const client in remoteConnections)
+            remoteConnections[client].conn.send(data);
+    }
+}
+
+class itemRedShell extends mapItem {
+    constructor(pos, vel, target) {
+        var mesh = gameModels.item_shell_red.scene.clone();
+        mesh.scale.multiplyScalar(0.14);
+        mesh.position.set(pos.x, pos.y, pos.z);
+        scene.add(mesh);
+        
+        super(mesh, 100000.0);
+        this.mesh = mesh;
+        vel.y = 0.0;
+        this.vel = vel;
+        this.vel.multiplyScalar(30.0);
+        this.target = null;
+
+        for(let i = 0; i < Players.length; i++) {
+            let p = Players[i];
+            if(p.placement === target)
+                this.target = p;
+        }
+        if(localPlayer.placement === target)
+            this.target = localPlayer;
+
+        objects.push(this);
+        this.rigidBody.setCollisionFlags(this.rigidBody.getCollisionFlags() & ~CF_NO_CONTACT_RESPONSE);
+        this.gameObject = new GameObject(this.mesh, this.rigidBody);
+        objects.push(this.gameObject);
+
+        this.rigidBody.setLinearVelocity(pvec(this.vel));
+
+        //keep upright
+        var c = new Ammo.btTransform();
+        c.setIdentity();
+        c.getBasis().setEulerZYX(-Math.PI / 2, 0, 0);
+        var uprightConstraint = new Ammo.btGeneric6DofConstraint(this.rigidBody, c, false);
+        uprightConstraint.setLinearLowerLimit(new Ammo.btVector3(1.0, 1.0, 1.0));
+        uprightConstraint.setLinearUpperLimit(new Ammo.btVector3(0.0, 0.0, 0.0));
+
+        //uprightConstraint.setAngularLowerLimit(new Ammo.btVector3(0.01, 0.0, 1.0));
+        uprightConstraint.setAngularLowerLimit(new Ammo.btVector3(0.0, 0.0, 1.0));
+        uprightConstraint.setAngularUpperLimit(new Ammo.btVector3(0.0, 0.0, 0.0));
+        physicsWorld.addConstraint(uprightConstraint);
+
+        this.aliveTime = 0.0;
+    }
+    shellCollect() {
+        objects.splice(objects.indexOf(this), 1);
+        objects.splice(objects.indexOf(this.gameObject), 1);
+        this.collect();
+    }
+    update(dt) {
+        this.aliveTime += dt;
+
+        var trans = new Ammo.btTransform();
+
+        let targetPos = new THREE.Vector3();
+        if(this.target) {
+            if(this.target === localPlayer) {
+                let ms = this.target.gameObject.rigidBody.getMotionState();
+                ms.getWorldTransform(trans);
+                targetPos = tvec(trans.getOrigin());
+            }
+            else
+                this.targetPos = this.target.targetPos.clone();
+        }
+
+        let ms = this.rigidBody.getMotionState();
+        ms.getWorldTransform(trans);
+        let pos = tvec(trans.getOrigin());
+        let closest = activeMap.findClosestTrackPoint(pos);
+        if(closest) {
+            let line = closest.segment.line;
+            let closestPoint = new THREE.Vector3();
+            line.at(closest.key, closestPoint);
+
+            closestPoint.sub(pos);
+            closestPoint.multiplyScalar(0.4);
+
+            let direction = new THREE.Vector3();
+            line.delta(direction);
+            direction.normalize();
+            direction.multiplyScalar(30.0);
+
+            let vel = new THREE.Vector3();
+            vel.lerpVectors(closestPoint, direction, 0.5);
+            
+            if(this.target) {
+                if(pos.distanceTo(targetPos) < pos.distanceTo(closestPoint))
+                vel = targetPos;
+            }
+            
+            
+            this.rigidBody.setLinearVelocity(pvec(vel));
+        }
+        
+        if(this.aliveTime > 4.5) {
+            //remove object
+            //this.shellCollect();
+        }
+    }
+    beginContact() {
         this.shellCollect();
 
         //slow down local player

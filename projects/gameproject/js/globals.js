@@ -170,8 +170,7 @@ function setUIPlacement(place) {
     $(".placementIcon").attr("src", "img/ui/positions/" + place.toString() + ".png");
 }
 
-function spawnItem(pos, vel, type) {
-    console.log("spawning item " + type);
+function spawnItem(pos, vel, type, target) {
     var item;
     switch(type) {
         default:
@@ -182,17 +181,21 @@ function spawnItem(pos, vel, type) {
         case ITEM_SHELL_GREEN:
             item = new itemGreenShell(pos, vel);
             break;
+        case ITEM_SHELL_RED:
+            item = new itemRedShell(pos, vel, target);
+            break;
     }
     if(item) activeMap.items.push(item);
 }
-function placeNetItem(pos, forward, type) {
+function placeNetItem(pos, forward, type, target = 1) {
     //var vel = tvec(localPlayer.gameObject.rigidBody.getLinearVelocity());
-    spawnItem(pos, forward, type);
+    spawnItem(pos.clone(), forward.clone(), type, target);
     var data = {
         type: "placeItem",
         pos: pos.toArray(),
         vel: forward.toArray(),
-        itemType: type
+        itemType: type,
+        target: target
     };
 
     for(const client in remoteConnections)

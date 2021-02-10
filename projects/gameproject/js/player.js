@@ -232,7 +232,7 @@ class Kart {
 
     useItem() {
         var dropPos = new THREE.Vector3();
-        if(this.heldItem === ITEM_SHELL_GREEN || true)
+        if(this.heldItem === ITEM_SHELL_GREEN || this.heldItem === ITEM_SHELL_RED || true)
             this.dropTargetA.getWorldPosition(dropPos);
         else
             this.dropTargetB.getWorldPosition(dropPos);
@@ -249,10 +249,17 @@ class Kart {
                 forward.multiplyScalar(mushroomSpeed);
                 this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 100.0, forward.z));
                 break;
-            default:
             case ITEM_SHELL_GREEN:
                 placeNetItem(dropPos, forward, ITEM_SHELL_GREEN);
                 break;
+            default:
+            case ITEM_SHELL_RED:
+            {
+                let nextTarget = this.placement - 1;
+                if(nextTarget !== 0)
+                    placeNetItem(dropPos, forward, ITEM_SHELL_RED, nextTarget);
+                break;
+            }
             case ITEM_NONE:
                 break;
         }
