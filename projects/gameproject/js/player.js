@@ -91,7 +91,8 @@ class Kart {
         // });
 
         var mesh = gameModels.standardKart.scene.clone();//.clone();
-
+        mesh.castShadow = true;
+        
         this.playerModel = SkelUtils.clone(playerModels.mario.scene);
         //this.playerModel.scale.multiplyScalar(10.0);
 

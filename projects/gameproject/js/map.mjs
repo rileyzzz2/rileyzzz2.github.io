@@ -61,6 +61,8 @@ class Map {
         this.collisionScene.scale.multiplyScalar(0.35);
 
         var startEmpty;
+        this.mapScene.castShadow = true;
+        this.mapScene.receiveShadow = true;
         //var startPos = new THREE.Vector3()
         var startQuat = new THREE.Quaternion();
         this.mapScene.traverse((child) => {
@@ -70,9 +72,13 @@ class Map {
                 child.getWorldQuaternion(startQuat);
 
                 child.getWorldPosition(mapStart);
+
+                console.log("map start " + mapStart.x + " " + mapStart.y + " " + mapStart.z);
             }
             if(child.isMesh) {
                 child.material.roughness = 0.9;
+                //child.material.emissive = new THREE.Color(0xffffff);
+                //child.material = new THREE.MeshPhongMaterial({map: child.material.map, alphaMap: child.material.alphaMap});
             }
         });
         //this.startPos = startPos;

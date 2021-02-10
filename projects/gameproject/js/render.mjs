@@ -17,6 +17,7 @@ export function startRenderer() {
     };
 
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+    renderer.shadowMap.enabled = true;
     var renderScene = new RenderPass(scene, camera);
     var composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
@@ -25,7 +26,7 @@ export function startRenderer() {
     bloomPass.threshold = bloomParams.bloomThreshold;
     bloomPass.strength = bloomParams.bloomStrength;
     bloomPass.radius = bloomParams.bloomRadius;
-    composer.addPass(bloomPass);
+    //composer.addPass(bloomPass);
 
     //PBR STUFF
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -50,14 +51,27 @@ export function startRenderer() {
     // pointlight.castShadow = true;
     // scene.add(pointlight);
 
+    scene.add(new THREE.AmbientLight(0x222222));
+
     let sunlight = new THREE.DirectionalLight(0xffffff, 1, 100);
-    sunlight.position.set(100, 100, 100);
+    sunlight.position.set(-40, 50, -40);
     sunlight.castShadow = true;
 
-    sunlight.shadow.mapSize.width = 512; // default
-    sunlight.shadow.mapSize.height = 512; // default
+    sunlight.shadow.mapSize.width = 2048;
+    sunlight.shadow.mapSize.height = 2048;
     sunlight.shadow.camera.near = 0.5; // default
-    sunlight.shadow.camera.far = 500; // default
+    sunlight.shadow.camera.far = 20000; // default
+
+    let d = 4000;
+    sunlight.shadow.camera.left = -d;
+    sunlight.shadow.camera.bottom = -d;
+    sunlight.shadow.camera.right = d;
+    sunlight.shadow.camera.top = d;
+    sunlight.shadow.camera.updateProjectionMatrix();
+
+    //debug render
+    const helper = new THREE.CameraHelper(sunlight.shadow.camera);
+    scene.add(helper);
 
     scene.add(sunlight);
 
