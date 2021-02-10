@@ -249,6 +249,8 @@ class itemGreenShell extends mapItem {
 
 class itemRedShell extends mapItem {
     constructor(pos, vel, target) {
+        console.log("creating red shell with target " + target);
+
         var mesh = gameModels.item_shell_red.scene.clone();
         mesh.scale.multiplyScalar(0.14);
         mesh.position.set(pos.x, pos.y, pos.z);
@@ -309,7 +311,7 @@ class itemRedShell extends mapItem {
                 targetPos = tvec(trans.getOrigin());
             }
             else
-                this.targetPos = this.target.targetPos.clone();
+                targetPos = this.target.targetPos.clone();
         }
 
         let ms = this.rigidBody.getMotionState();
@@ -332,13 +334,13 @@ class itemRedShell extends mapItem {
             let vel = new THREE.Vector3();
             vel.lerpVectors(closestPoint, direction, 0.5);
             
-            // if(this.target) {
-            //     if(pos.distanceTo(targetPos) < 1000.0)
-                
-            // }
-            vel = targetPos.clone();
-            vel.multiplyScalar(0.1);
-
+            if(this.target) {
+                if(pos.distanceTo(targetPos) < 50.0) {
+                    targetPos.sub(pos);
+                    vel = targetPos.clone();
+                    vel.multiplyScalar(2.0);
+                }
+            }
 
             this.rigidBody.setLinearVelocity(pvec(vel));
         }
