@@ -332,12 +332,14 @@ class itemRedShell extends mapItem {
             let vel = new THREE.Vector3();
             vel.lerpVectors(closestPoint, direction, 0.5);
             
-            if(this.target) {
-                if(pos.distanceTo(targetPos) < pos.distanceTo(closestPoint))
-                vel = targetPos;
-            }
-            
-            
+            // if(this.target) {
+            //     if(pos.distanceTo(targetPos) < 1000.0)
+                
+            // }
+            vel = targetPos.clone();
+            vel.multiplyScalar(0.1);
+
+
             this.rigidBody.setLinearVelocity(pvec(vel));
         }
         
