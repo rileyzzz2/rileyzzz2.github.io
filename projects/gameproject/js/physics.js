@@ -161,14 +161,16 @@ function contact_obj(cp, colObj, partId, index) {
 }
 
 
-function contact_obj2(cp, colObj, partId, index) {
+function contact_obj2(cp, colObj, partId, index, other) {
     for(var i = 0; i < activeMap.items.length; i++) {
         let item = activeMap.items[i];
         if(item.collected)
             continue;
         
         if(Ammo.compare(colObj.getCollisionObject(), item.rigidBody)) {
-            item.beginContact();
+            if(Ammo.compare(other.getCollisionObject(), localPlayer.gameObject.rigidBody))
+                item.beginContact();
+            
             return;
         }
     }
@@ -200,8 +202,8 @@ function initPhysicsWorld() {
         let colObj1 = Ammo.wrapPointer(colObj1Wrap, Ammo.btCollisionObjectWrapper);
         //let colObj1 = colObj1Wrap.getCollisionObject();
 
-        contact_obj2(testcp, colObj0, partId0, index0);
-        contact_obj2(testcp, colObj1, partId1, index1);
+        contact_obj2(testcp, colObj0, partId0, index0, colObj1);
+        contact_obj2(testcp, colObj1, partId1, index1, colObj0);
 //         contact_added_callback_obj(cp, colObj0, partId0, index0);
 //         contact_added_callback_obj(cp, colObj1, partId1, index1);
         //return true;

@@ -184,27 +184,53 @@ class itemBanana extends mapItem {
 class itemGreenShell extends mapItem {
     constructor(pos, vel) {
         var mesh = gameModels.item_shell_green.scene.clone();
-        mesh.scale.multiplyScalar(0.1);
+        mesh.scale.multiplyScalar(0.14);
         mesh.position.set(pos.x, pos.y, pos.z);
         scene.add(mesh);
         
-        super(mesh, 1000.0);
+        super(mesh, 100000.0);
         this.mesh = mesh;
         vel.y = 0.0;
         this.vel = vel;
-        this.vel.multiplyScalar(40.0);
+        this.vel.multiplyScalar(30.0);
 
         objects.push(this);
         this.rigidBody.setCollisionFlags(this.rigidBody.getCollisionFlags() & ~CF_NO_CONTACT_RESPONSE);
         this.rigidBody.setRestitution(1.0);
-        this.rigidBody.setDamping(0.1, 0.0);
+        this.rigidBody.setDamping(0.0, 0.0);
         this.gameObject = new GameObject(this.mesh, this.rigidBody);
         objects.push(this.gameObject);
 
         this.rigidBody.setLinearVelocity(pvec(this.vel));
+        //this.rigidBody.applyCentralForce(pvec(this.vel));
+
+        //keep upright
+        var c = new Ammo.btTransform();
+        c.setIdentity();
+        c.getBasis().setEulerZYX(-Math.PI / 2, 0, 0);
+        var uprightConstraint = new Ammo.btGeneric6DofConstraint(this.rigidBody, c, false);
+        uprightConstraint.setLinearLowerLimit(new Ammo.btVector3(1.0, 1.0, 1.0));
+        uprightConstraint.setLinearUpperLimit(new Ammo.btVector3(0.0, 0.0, 0.0));
+
+        //uprightConstraint.setAngularLowerLimit(new Ammo.btVector3(0.01, 0.0, 1.0));
+        uprightConstraint.setAngularLowerLimit(new Ammo.btVector3(0.0, 0.0, 1.0));
+        uprightConstraint.setAngularUpperLimit(new Ammo.btVector3(0.0, 0.0, 0.0));
+        physicsWorld.addConstraint(uprightConstraint);
+
+        this.aliveTime = 0.0;
+    }
+    shellCollect() {
+        objects.splice(objects.indexOf(this), 1);
+        objects.splice(objects.indexOf(this.gameObject), 1);
+        this.collect();
     }
     update(dt) {
-        
+        this.aliveTime += dt;
+
+        if(this.aliveTime > 4.5) {
+            //remove object
+            this.shellCollect();
+        }
         // var ms = this.rigidBody.getMotionState();
         // var c = new Ammo.btTransform();
         // ms.getWorldTransform(c);
@@ -219,7 +245,7 @@ class itemGreenShell extends mapItem {
     }
     beginContact() {
         console.log("shell contact");
-        this.collect();
+        this.shellCollect();
 
         //slow down local player
         localPlayer.stopHit();

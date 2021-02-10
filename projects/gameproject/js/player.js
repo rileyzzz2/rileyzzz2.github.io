@@ -58,6 +58,8 @@ const steeringClamp = .25;
 class Kart {
     constructor(startPos, startQuat) {
         this.placement = 0;
+        this.lapProgress = 0.0;
+
         this.collectedCoins = 0;
         this.heldItem = ITEM_NONE;
         this.itemAnimating = false;
@@ -237,7 +239,7 @@ class Kart {
 
         var forward = new THREE.Vector3();
         this.gameObject.mesh.getWorldDirection(forward);
-        const mushroomSpeed = 2000.0;
+        const mushroomSpeed = 20000.0;
 
         switch(this.heldItem) {
             case ITEM_BANANA:
@@ -248,7 +250,7 @@ class Kart {
                 this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(forward.x, 100.0, forward.z));
                 break;
             default:
-                case ITEM_SHELL_GREEN:
+            case ITEM_SHELL_GREEN:
                 placeNetItem(dropPos, forward, ITEM_SHELL_GREEN);
                 break;
             case ITEM_NONE:
@@ -532,6 +534,8 @@ class NPCKart {
         this.hasReceivedData = false;
         this.wheelSpeed = 0.0;
         this.placement = 0;
+        this.lapProgress = 0.0;
+
         // this.geometry = new THREE.BoxGeometry();
         // this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         // this.cube = new THREE.Mesh( this.geometry, this.material );

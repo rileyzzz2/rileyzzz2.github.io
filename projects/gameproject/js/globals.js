@@ -171,6 +171,7 @@ function setUIPlacement(place) {
 }
 
 function spawnItem(pos, vel, type) {
+    console.log("spawning item " + type);
     var item;
     switch(type) {
         default:

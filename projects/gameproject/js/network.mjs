@@ -183,7 +183,8 @@ function processConnectionData(data) {
             beginMatch();
         }
         else if(data.type === "updatePlacement") {
-            localPlayer.setPlacement(data.place);
+            if(localPlayer)
+                localPlayer.setPlacement(data.place);
         }
     }
 

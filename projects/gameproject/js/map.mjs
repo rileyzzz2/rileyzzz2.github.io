@@ -45,6 +45,7 @@ function createFaceCollision(child, geom, faces) {
     let object = new Ammo.btRigidBody(new Ammo.btRigidBodyConstructionInfo(0.0, mapMotionState, collideShape, localInertia));
     
     //object.setCollisionFlags(object.collisionFlags | CF_CUSTOM_MATERIAL_CALLBACK);
+    object.setRestitution(1.0);
     object.setContactProcessingThreshold(0.0);
     
     physicsWorld.addRigidBody(object);
@@ -110,6 +111,7 @@ class Map {
                 this.items.push(new ItemBox(itempos, i));
         }
 
+        this.maxLapProgressStep = 0.0;
         //process path data
         this.tracksegments = [];
         for(let i = 0; i < this.objectData.trackpaths.length; i++) {
@@ -159,6 +161,7 @@ class Map {
                     return minDist;
                 }
 
+                this.maxLapProgressStep = Math.max(this.maxLapProgressStep, points[0].distanceTo(points[1]));
                 this.tracksegments.push({
                     line: new THREE.Line3(points[0], points[1]),
                     globalDist: recursiveGetDistance(last, 0.0),
@@ -167,6 +170,8 @@ class Map {
                 });
             }
         }
+
+        this.maxLapProgressStep *= 3.0;
 
         this.collisionScene.traverse(function (child) {
             //let isRelevant = (child.name === "polygon147" || child.name === "polygon145");
@@ -279,15 +284,27 @@ class Map {
     }
     tick() {
         if(isHost) {
+            
             //trackPlayers.push(localPlayer);
             var placement = [];
             for(let i = 0; i < Players.length; i++) {
                 let p = Players[i];
                 let pos = p.mesh.position;
 
-                placement.push([this.getTrackDistance(pos), p]);
+                let playerDist = this.getTrackDistance(pos);
+                if(p.lapProgress + this.maxLapProgressStep > playerDist)
+                    p.lapProgress = playerDist;
+                else
+                    playerDist = p.lapProgress;
+                
+                placement.push([playerDist, p]);
             }
-            placement.push([this.getTrackDistance(localPlayer.gameObject.mesh.position), localPlayer]);
+            var localDist = this.getTrackDistance(localPlayer.gameObject.mesh.position);
+            if(localPlayer.lapProgress + this.maxLapProgressStep > localDist)
+                    localPlayer.lapProgress = localDist;
+                else
+                    localDist = localPlayer.lapProgress;
+            placement.push([localDist, localPlayer]);
 
             placement.sort((a, b) => { return b[0] - a[0]; });
             //console.log("placement count " + placement.length);
