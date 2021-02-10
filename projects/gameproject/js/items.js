@@ -338,7 +338,8 @@ class itemRedShell extends mapItem {
                 if(pos.distanceTo(targetPos) < 50.0) {
                     targetPos.sub(pos);
                     vel = targetPos.clone();
-                    vel.multiplyScalar(2.0);
+                    vel.normalize();
+                    vel.multiplyScalar(10.0);
                 }
             }
 
