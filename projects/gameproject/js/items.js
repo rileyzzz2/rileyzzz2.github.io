@@ -313,6 +313,7 @@ class itemRedShell extends mapItem {
             else
                 targetPos = this.target.targetPos.clone();
         }
+        console.log("target pos " + targetPos.x + " " + targetPos.y + " " + targetPos.z);
 
         let ms = this.rigidBody.getMotionState();
         ms.getWorldTransform(trans);
@@ -332,10 +333,10 @@ class itemRedShell extends mapItem {
             direction.multiplyScalar(30.0);
 
             let vel = new THREE.Vector3();
-            vel.lerpVectors(closestPoint, direction, 0.5);
+            vel.lerpVectors(closestPoint, direction, 0.3);
             
             if(this.target) {
-                if(pos.distanceTo(targetPos) < 50.0) {
+                if(pos.distanceTo(targetPos) < 75.0) {
                     targetPos.sub(pos);
                     vel = targetPos.clone();
                     vel.normalize();

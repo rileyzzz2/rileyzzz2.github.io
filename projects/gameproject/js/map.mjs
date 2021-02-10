@@ -171,7 +171,7 @@ class Map {
             }
         }
 
-        this.maxLapProgressStep *= 3.0;
+        this.maxLapProgressStep = 3000.0;
 
         this.collisionScene.traverse(function (child) {
             //let isRelevant = (child.name === "polygon147" || child.name === "polygon145");
