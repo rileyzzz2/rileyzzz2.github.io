@@ -5,6 +5,8 @@ import { RGBELoader } from './lib/three/examples/jsm/loaders/RGBELoader.js';
 
 import { UnrealBloomPass } from './lib/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { TAARenderPass } from './lib/three/examples/jsm/postprocessing/TAARenderPass.js';
+//https://discourse.threejs.org/t/how-to-combine-outline-effect-with-tone-mapping/16135/8
+import { ACESFilmicToneMappingShader } from "./lib/three/examples/jsm/shaders/ACESFilmicToneMappingShader.js";
 
 export function startRenderer() {
     tmpTrans = new Ammo.btTransform();
@@ -18,6 +20,7 @@ export function startRenderer() {
     };
 
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+    
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     
@@ -39,6 +42,9 @@ export function startRenderer() {
 
     const taaPass = new TAARenderPass(scene, camera);
     composer.addPass(taaPass);
+
+    let tmPass = new ShaderPass(ACESFilmicToneMappingShader);
+    composer.addPass(tmPass); 
 
     //PBR STUFF
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
