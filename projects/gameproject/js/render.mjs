@@ -4,7 +4,7 @@ import { GLTFLoader } from './lib/three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from './lib/three/examples/jsm/loaders/RGBELoader.js';
 
 import { UnrealBloomPass } from './lib/three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { TAARenderPass } from './lib/three/examples/jsm/postprocessing/TAARenderPass.js';
+import { SSAOPass } from './lib/three/examples/jsm/postprocessing/SSAOPass.js';
 //https://discourse.threejs.org/t/how-to-combine-outline-effect-with-tone-mapping/16135/8
 import { ACESFilmicToneMappingShader } from "./lib/three/examples/jsm/shaders/ACESFilmicToneMappingShader.js";
 
@@ -14,8 +14,8 @@ export function startRenderer() {
 
     var bloomParams = {
         exposure:   1.0,
-        bloomStrength: 4.0,
-        bloomThreshold: 0.8,
+        bloomStrength: 1.0,
+        bloomThreshold: 1.8,
         bloomRadius: 0.2
     };
 
@@ -24,9 +24,9 @@ export function startRenderer() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     
-    //var renderScene = new RenderPass(scene, camera);
+    var renderScene = new RenderPass(scene, camera);
     var composer = new EffectComposer(renderer);
-    //composer.addPass(renderScene);
+    composer.addPass(renderScene);
 
     var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
     bloomPass.threshold = bloomParams.bloomThreshold;
@@ -40,8 +40,8 @@ export function startRenderer() {
 	// ssaoPass.kernelRadius = 16;
     // composer.addPass( ssaoPass );
 
-    const taaPass = new TAARenderPass(scene, camera);
-    composer.addPass(taaPass);
+    //const taaPass = new TAARenderPass(scene, camera);
+    //composer.addPass(taaPass);
 
     //let tmPass = new ShaderPass(ACESFilmicToneMappingShader);
     //composer.addPass(tmPass); 
