@@ -34,6 +34,7 @@ export async function initResources() {
     gameModels.item_star =          await loadModel("3d/objects/star.glb");
 
     gameTextures.env = await loadRGBE('env.hdr');
+    //gameTextures.env = await loadTexture('3d/dl_vrhyrule_alb.png');
 }
 
 //initialize resources after the creation of the map, renderer, etc

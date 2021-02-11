@@ -91,7 +91,13 @@ class Kart {
         // });
 
         var mesh = gameModels.standardKart.scene.clone();//.clone();
-        mesh.castShadow = true;
+        mesh.traverse(function(child) {
+            if(child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+        
         
         this.playerModel = SkelUtils.clone(playerModels.mario.scene);
         //this.playerModel.scale.multiplyScalar(10.0);
@@ -143,6 +149,11 @@ class Kart {
         this.sparks_R.setEmissionRate(0.0);
         //mesh.add(this.spark.particleGroup.mesh);
         
+        // let testLight = new THREE.PointLight( 0xffffff, 16, 10 );
+        // testLight.position.set( 0, 4, 4 );
+        // mesh.add(testLight);
+        // testLight.castShadow = true;
+
         scene.add(mesh);
 
 

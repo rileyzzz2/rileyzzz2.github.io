@@ -61,8 +61,6 @@ class Map {
         this.collisionScene.scale.multiplyScalar(0.35);
 
         var startEmpty;
-        this.mapScene.castShadow = true;
-        this.mapScene.receiveShadow = true;
         //var startPos = new THREE.Vector3()
         var startQuat = new THREE.Quaternion();
         this.mapScene.traverse((child) => {
@@ -77,6 +75,9 @@ class Map {
             }
             if(child.isMesh) {
                 child.material.roughness = 0.9;
+
+                //child.castShadow = true;
+                child.receiveShadow = true;
                 //child.material.emissive = new THREE.Color(0xffffff);
                 //child.material = new THREE.MeshPhongMaterial({map: child.material.map, alphaMap: child.material.alphaMap});
             }
