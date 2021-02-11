@@ -15,7 +15,7 @@ export function startRenderer() {
     var bloomParams = {
         exposure:   1.0,
         bloomStrength: 4.0,
-        bloomThreshold: 0.98,
+        bloomThreshold: 0.8,
         bloomRadius: 0.2
     };
 
@@ -24,15 +24,15 @@ export function startRenderer() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     
-    var renderScene = new RenderPass(scene, camera);
+    //var renderScene = new RenderPass(scene, camera);
     var composer = new EffectComposer(renderer);
-    composer.addPass(renderScene);
+    //composer.addPass(renderScene);
 
     var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
     bloomPass.threshold = bloomParams.bloomThreshold;
     bloomPass.strength = bloomParams.bloomStrength;
     bloomPass.radius = bloomParams.bloomRadius;
-    //composer.addPass(bloomPass);
+    composer.addPass(bloomPass);
 
     // const ssaoPass = new SSAOPass( scene, camera, window.innerWidth, window.innerHeight );
     // ssaoPass.minDistance = 0.001;
@@ -43,12 +43,12 @@ export function startRenderer() {
     const taaPass = new TAARenderPass(scene, camera);
     composer.addPass(taaPass);
 
-    let tmPass = new ShaderPass(ACESFilmicToneMappingShader);
-    composer.addPass(tmPass); 
+    //let tmPass = new ShaderPass(ACESFilmicToneMappingShader);
+    //composer.addPass(tmPass); 
 
     //PBR STUFF
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1;
+    renderer.toneMappingExposure = 1.4; //1
     renderer.outputEncoding = THREE.sRGBEncoding;
 
 
