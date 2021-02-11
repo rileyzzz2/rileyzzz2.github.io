@@ -24,21 +24,27 @@ export function startRenderer() {
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     
-    var renderScene = new RenderPass(scene, camera);
     var composer = new EffectComposer(renderer);
+
+    var renderScene = new RenderPass(scene, camera);
     composer.addPass(renderScene);
 
-    var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-    bloomPass.threshold = bloomParams.bloomThreshold;
-    bloomPass.strength = bloomParams.bloomStrength;
-    bloomPass.radius = bloomParams.bloomRadius;
-    composer.addPass(bloomPass);
+    // var bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+    // bloomPass.threshold = bloomParams.bloomThreshold;
+    // bloomPass.strength = bloomParams.bloomStrength;
+    // bloomPass.radius = bloomParams.bloomRadius;
+    // composer.addPass(bloomPass);
 
     // const ssaoPass = new SSAOPass( scene, camera, window.innerWidth, window.innerHeight );
     // ssaoPass.minDistance = 0.001;
-    // ssaoPass.maxDistance = 0.01;
+    // ssaoPass.maxDistance = 0.1;
 	// ssaoPass.kernelRadius = 16;
     // composer.addPass( ssaoPass );
+
+    // var saoPass = new SAOPass( scene, camera, false, true );
+    // saoPass.saoBias = 0.8;
+    // saoPass.saoScale = 100.0;
+	// composer.addPass( saoPass );
 
     //const taaPass = new TAARenderPass(scene, camera);
     //composer.addPass(taaPass);
@@ -48,7 +54,7 @@ export function startRenderer() {
 
     //PBR STUFF
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.4; //1
+    renderer.toneMappingExposure = 1.0; //1
     renderer.outputEncoding = THREE.sRGBEncoding;
 
 
@@ -74,15 +80,15 @@ export function startRenderer() {
     scene.add(new THREE.AmbientLight(0x222222));
 
     let sunlight = new THREE.DirectionalLight(0xffffff, 1.0, 100);
-    sunlight.position.set(-10, 400, -10);
+    sunlight.position.set(-5, 300, -5);
     sunlight.castShadow = true;
 
-    sunlight.shadow.mapSize.width = 4096;
-    sunlight.shadow.mapSize.height = 4096;
+    sunlight.shadow.mapSize.width = 1024;
+    sunlight.shadow.mapSize.height = 1024;
     sunlight.shadow.camera.near = 0.5; // default
     sunlight.shadow.camera.far = 500; // default
 
-    let d = 300;
+    let d = 200;
     sunlight.shadow.camera.left = -d;
     sunlight.shadow.camera.bottom = -d;
     sunlight.shadow.camera.right = d;
