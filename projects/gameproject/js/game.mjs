@@ -53,7 +53,7 @@ export async function beginPlay() {
     await initResources();
     initPhysicsWorld();
     //activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb', '3d/maps/delfino_objects.json');
-    activeMap = await loadMap('3d/maps/luigicircuit.glb', '3d/maps/circuit_coll.glb', '3d/maps/delfino_objects.json');
+    activeMap = await loadMap('3d/maps/luigicircuit.glb', '3d/maps/circuit_coll.glb', '3d/maps/circuit_objects.json', 0.1);
     //activeMap = await loadMap('3d/maps/mall.glb', '3d/maps/mall_collision.glb');
     startRenderer();
     await PostInitResources();

@@ -1,6 +1,6 @@
 
 
-$.getJSON('3d/maps/delfino_objects.json', (data) => {mapObjects = data; buildTrackPaths();});
+$.getJSON('3d/maps/circuit_objects.json', (data) => {mapObjects = data; buildTrackPaths();});
 
 function saveJSON(content, fileName, contentType) {
     var a = document.createElement("a");

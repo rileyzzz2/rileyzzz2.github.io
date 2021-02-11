@@ -52,13 +52,13 @@ function createFaceCollision(child, geom, faces) {
 }
 
 class Map {
-    constructor(mapScene, collisionScene, objectData) {
+    constructor(mapScene, collisionScene, objectData, scale) {
         this.mapScene = mapScene;
         this.collisionScene = collisionScene;
         this.objectData = objectData;
 
-        this.mapScene.scale.multiplyScalar(0.35); // 0.5
-        this.collisionScene.scale.multiplyScalar(0.35);
+        this.mapScene.scale.multiplyScalar(0.35 * scale); // 0.5
+        this.collisionScene.scale.multiplyScalar(0.35 * scale);
 
         var startEmpty;
         //var startPos = new THREE.Vector3()
@@ -327,10 +327,10 @@ class Map {
         }
     }
 }
-export async function loadMap(file, collisionFile, JSONfile) {
+export async function loadMap(file, collisionFile, JSONfile, scale=1.0) {
     var mapModel = await loadModel(file);
     var collisionModel = await loadModel(collisionFile);
     var JSONdata;
     await $.getJSON(JSONfile, function( data ) {JSONdata = data;});
-    return new Map(mapModel.scene, collisionModel.scene, JSONdata);
+    return new Map(mapModel.scene, collisionModel.scene, JSONdata, scale);
 }
