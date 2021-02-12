@@ -8,6 +8,17 @@ const RGBE = new RGBELoader();
 const texLoader = new THREE.TextureLoader();
 RGBE.setDataType(THREE.UnsignedByteType).setPath('3d/');
 
+var resourcesLoaded = 0;
+const resourceCount = 21;
+
+function progressUpdate(str) {
+    $("#loadText").text(str + " (" + (resourcesLoaded + 1).toString() + "/" + resourceCount + ")");
+}
+function progressStep() {
+    resourcesLoaded++;
+    var progress = resourcesLoaded / resourceCount * 100.0;
+    $(".loadBarInner").width(progress + '%');
+}
 export async function initResources() {
     gameModels.standardKart =       await loadModel("3d/karts/standard.glb");
     kartData.standardKart =         loadKartData(gameModels.standardKart.scene);
@@ -57,20 +68,26 @@ export async function PostInitResources()
 }
 
 export function loadModel(file) {
+    progressUpdate("Loading model " + file);
     return new Promise((resolve, reject) => {
         loader.load(file, data => resolve(data), null, reject);
+        progressStep();
     });
 }
 
 export function loadTexture(file) {
+    progressUpdate("Loading texture " + file);
     return new Promise((resolve, reject) => {
         texLoader.load(file, data => resolve(data), null, reject);
+        progressStep();
     });
 }
 
 export function loadRGBE(file) {
+    progressUpdate("Loading envmap " + file);
     return new Promise((resolve, reject) => {
         RGBE.load(file, data => resolve(data), null, reject);
+        progressStep();
     });
 }
 

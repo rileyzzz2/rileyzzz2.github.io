@@ -62,6 +62,22 @@
                 text-align: center;
                 color: white;
             }
+            .loadBar {
+                margin: auto;
+                width: 300px;
+                height: 10px;
+                overflow: hidden;
+                background-color: black;
+                border-radius: 4px;
+            }
+            .loadBarInner {
+                width: 1%;
+                height: 100%;
+                background-color: blue;
+                transition: width 0.2s;
+                /* background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%); */
+                /* background-size: 10px 10px; */
+            }
             .lobbyInfo {
                 display: block;
             }
@@ -227,7 +243,9 @@
                     <p>Player List:</p>
                     <table class="playerList"></table>
                     <button type="button" class="startGame">Start Game</button>
-
+                    <!-- <div class="loadBar">
+                        <div class="loadBarInner"></div>
+                    </div> -->
                     <div id="winnerContainer">
                         <p>Last Match:</p>
                         <table class="winnerList"></table>
@@ -235,6 +253,10 @@
                 </div>
                 <div class="waitingPlayers">
                     <p>Waiting for players...</p>
+                    <div class="loadBar">
+                        <div class="loadBarInner"></div>
+                    </div>
+                    <p id="loadText"></p>
                 </div>
                 
             </div>
