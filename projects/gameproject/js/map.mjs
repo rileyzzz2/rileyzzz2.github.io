@@ -1,5 +1,7 @@
 import { loadModel } from './res.mjs';
 import { gameFinish } from './game.mjs';
+import { refreshPlayerList } from './network.mjs';
+
 //https://stackoverflow.com/questions/59665854/ammo-js-custom-mesh-collision-with-sphere
 
 function createFaceCollision(child, geom, faces) {
@@ -318,8 +320,18 @@ class Map {
                 if(playerDist === 0.0 && lastProgress > 100.0) {
                     //console.log("lap " + p.lap);
                     p.lapIncrement();
-                    if(p.lap === 3)
-                        winners.push(p.conn.id);
+                    if(p.lap === 3) {
+                        winners.push(p.conn.peer);
+                        refreshPlayerList();
+                    
+                        var data = {
+                            type: "updateWinners",
+                            winners: winners
+                        };
+
+                        for(const client in remoteConnections)
+                            remoteConnections[client].conn.send(data);
+                    }
                 }
 
                 placement.push([(p.lap * this.maxGlobalDist) + playerDist, p]);
@@ -336,8 +348,18 @@ class Map {
             
             if(localDist === 0.0 && lastProgress > 100.0) {
                 lapIncrement();
-                if(localPlayer.lap === 3)
+                if(localPlayer.lap === 3) {
                     winners.push(hostID);
+                    refreshPlayerList();
+
+                    var data = {
+                        type: "updateWinners",
+                        winners: winners
+                    };
+
+                    for(const client in remoteConnections)
+                        remoteConnections[client].conn.send(data);
+                }
             }
             
             placement.push([(localPlayer.lap * this.maxGlobalDist) + localDist, localPlayer]);

@@ -1,6 +1,7 @@
-import {beginPlay} from './game.mjs';
-import {startGame} from './game.mjs';
-import {beginMatch} from './game.mjs';
+import { beginPlay } from './game.mjs';
+import { startGame } from './game.mjs';
+import { beginMatch } from './game.mjs';
+
 //https://itnext.io/how-to-build-a-realtime-multiplayer-game-in-javascript-using-pubnub-5f410fd62f33
 
 var listener = {
@@ -190,6 +191,10 @@ function processConnectionData(data) {
         else if(data.type === "lapIncrement") {
             lapIncrement();
         }
+        else if(data.type === "updateWinners") {
+            winners = data.winners;
+            refreshPlayerList();
+        }
     }
 
     if(isHost) {
@@ -220,7 +225,7 @@ function processConnectionData(data) {
     }
 }
 
-function refreshPlayerList() {
+export function refreshPlayerList() {
     $(".playerList").empty();
     //let item = "<tr class='playerListElement'></tr>";
     var clientCount = 0;
@@ -238,6 +243,7 @@ function refreshPlayerList() {
         
         row.append(infoCol);
 
+
         $(".playerList").append(row);
         clientCount++;
     }
@@ -247,10 +253,30 @@ function refreshPlayerList() {
     for(const client in remoteConnections)
         addClient(client);
 
-    if(isHost && clientCount > 1)
+    if(isHost && clientCount > 1 && (winners.length === 0 || winners.length === clientCount))
         $(".startGame").show();
     else
         $(".startGame").hide();
+
+    $(".winnerList").empty();
+    if(winners.length > 0) {
+        $(".winnerList").show();
+
+        for(let i = 0; i < winners.length; i++) {
+            var row = $("<tr class='playerListElement'></tr>");
+            var nameCol = $("<td>" + winners[i] + "</td>");
+            row.append(nameCol);
+
+            var infoCol = $("<td>" + (i + 1).toString() + "</td>");
+            row.append(infoCol);
+            
+            $(".winnerList").append(row);
+        }
+    } else {
+        $(".winnerList").hide();
+    }
+    
+
 }
 
 $(".startGame").click(function() {
