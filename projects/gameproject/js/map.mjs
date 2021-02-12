@@ -1,4 +1,5 @@
 import { loadModel } from './res.mjs';
+import { gameFinish } from './game.mjs';
 //https://stackoverflow.com/questions/59665854/ammo-js-custom-mesh-collision-with-sphere
 
 function createFaceCollision(child, geom, faces) {
@@ -300,6 +301,7 @@ class Map {
                 let pos = p.mesh.position;
 
                 let playerDist = this.getTrackDistance(pos);
+                var lastProgress = p.lapProgress;
 
                 if(p.lapProgress <= 1.0 && playerDist > 100.0)
                     playerDist = 0.0;
@@ -309,11 +311,17 @@ class Map {
                 else
                     playerDist = p.lapProgress;
 
+                if(playerDist === 0.0 && lastProgress > 100.0) {
+                    //console.log("lap " + p.lap);
+                    p.lapIncrement();
+                    if(p.lap === 3)
+                        winners.push(p.conn.id);
+                }
 
                 placement.push([playerDist, p]);
             }
             var localDist = this.getTrackDistance(localPlayer.gameObject.mesh.position);
-
+            var lastProgress = localPlayer.lapProgress;
             if(localPlayer.lapProgress <= 1.0 && localDist > 100.0)
                     localDist = 0.0;
             
@@ -321,7 +329,12 @@ class Map {
                     localPlayer.lapProgress = localDist;
                 else
                     localDist = localPlayer.lapProgress;
-
+            
+            if(localDist === 0.0 && lastProgress > 100.0) {
+                lapIncrement();
+                if(localPlayer.lap === 3)
+                    winners.push(hostID);
+            }
             
             placement.push([localDist, localPlayer]);
 

@@ -59,6 +59,7 @@ class Kart {
     constructor(startPos, startQuat) {
         this.placement = 0;
         this.lapProgress = 0.0;
+        this.lap = 0;
 
         this.collectedCoins = 0;
         this.heldItem = ITEM_NONE;
@@ -287,6 +288,7 @@ class Kart {
         //console.log("setting local placement to " + place);
         setUIPlacement(place);
     }
+
     // setAnimationFrame(frame) {
     //     console.log("setting frame to " + frame);
     //     this.playerMixer.time = 0;
@@ -478,7 +480,7 @@ class Kart {
         forward.normalize();
         forward.multiplyScalar(500.0);
         if(bDrift && !this.drifting && speed > 1 && (bMoveLeft || bMoveRight)) {
-            console.log("jump");
+            //console.log("jump");
             this.startDrifting();
         }
         else if(this.drifting && (!bDrift || Math.abs(speed) < 1)) {
@@ -566,6 +568,7 @@ class NPCKart {
         this.wheelSpeed = 0.0;
         this.placement = 0;
         this.lapProgress = 0.0;
+        this.lap = 0;
 
         // this.geometry = new THREE.BoxGeometry();
         // this.material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
@@ -638,6 +641,12 @@ class NPCKart {
         this.conn.send({
             type: "updatePlacement",
             place: place
+        });
+    }
+    lapIncrement() {
+        this.lap++;
+        this.conn.send({
+            type: "lapIncrement"
         });
     }
     handleData(data) {

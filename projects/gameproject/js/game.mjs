@@ -38,6 +38,11 @@ $(document).ready(function() {
 //     // newcube.scale.set(1.0, 1.0, 1.0);
 //     // createRigidBox(newcube, 0.2);
 // }
+
+export function gameFinish() {
+    
+}
+
 export function startGame(playerIndex) {
     console.log("starting game");
     //$(".menuOverlay").hide();

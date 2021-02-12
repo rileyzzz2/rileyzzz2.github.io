@@ -30,6 +30,7 @@ var mapObjects = {
 //server variables
 var isHost = false;
 var readyState = [];
+var winners = [];
 
 var hostID = "";
 var hostConn;
@@ -200,6 +201,20 @@ function placeNetItem(pos, forward, type, target = 1) {
 
     for(const client in remoteConnections)
         remoteConnections[client].conn.send(data);
+}
+
+function returnToLobby() {
+    allowInput = false;
+    $(".menuOverlay").show();
+    $(".lobbyInfo").show();
+    $(".waitingPlayers").hide();
+}
+
+function lapIncrement() {
+    console.log("lap " + localPlayer.lap);
+    if(localPlayer.lap++ === 2) {
+        returnToLobby();
+    }
 }
 
 //network stuff

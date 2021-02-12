@@ -187,6 +187,9 @@ function processConnectionData(data) {
             if(localPlayer)
                 localPlayer.setPlacement(data.place);
         }
+        else if(data.type === "lapIncrement") {
+            lapIncrement();
+        }
     }
 
     if(isHost) {
