@@ -38,7 +38,8 @@ function createFaceCollision(child, geom, faces) {
     //let collideShape = new Ammo.btConvexTriangleMeshShape(collideMesh, true);
     //let collideShape = collideMesh;
 
-    collideShape.setMargin( 0.1 );
+    //collideShape.setMargin( 0.1 );
+    collideShape.setMargin( 0.15 );
 
     let localInertia = new Ammo.btVector3(0, 0, 0);
     collideShape.calculateLocalInertia( 0.0, localInertia );
@@ -93,7 +94,7 @@ class Map {
             for(let j = 0; j < 4; j++) {
                 let start = new THREE.Object3D();
                 start.add(gameModels.stopper.scene.clone());
-                start.position.x = ((j / 4.0) - 0.5) * -35.0 - 2.5;
+                start.position.x = ((j / 4.0) - 0.5) * -35.0 - 4.0;
                 start.position.z = i * -20.0 - (j / 4.0 * 5.0);
                 startEmpty.add(start);
                 this.startPositions.push(start);

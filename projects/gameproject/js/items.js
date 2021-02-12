@@ -218,21 +218,21 @@ class itemGreenShell extends mapItem {
 
         this.aliveTime = 0.0;
     }
-    shellCollect() {
+    collect() {
+        super.collect();
         objects.splice(objects.indexOf(this), 1);
         objects.splice(objects.indexOf(this.gameObject), 1);
-        this.collect();
     }
     update(dt) {
         this.aliveTime += dt;
 
         if(this.aliveTime > 4.5) {
             //remove object
-            this.shellCollect();
+            this.collect();
         }
     }
     beginContact() {
-        this.shellCollect();
+        this.collect();
 
         //slow down local player
         localPlayer.stopHit();
@@ -258,13 +258,15 @@ class itemRedShell extends mapItem {
         
         super(mesh, 100000.0);
         this.mesh = mesh;
-        vel.y = 0.0;
-        this.vel = vel;
+        
+        this.vel = vel.clone();
+        this.vel.y = 0.0;
         this.vel.multiplyScalar(30.0);
         this.target = null;
 
         for(let i = 0; i < Players.length; i++) {
             let p = Players[i];
+            console.log("placement " + target + " player " + p.placement);
             if(p.placement === target)
                 this.target = p;
         }
@@ -293,10 +295,10 @@ class itemRedShell extends mapItem {
 
         this.aliveTime = 0.0;
     }
-    shellCollect() {
+    collect() {
+        super.collect();
         objects.splice(objects.indexOf(this), 1);
         objects.splice(objects.indexOf(this.gameObject), 1);
-        this.collect();
     }
     update(dt) {
         this.aliveTime += dt;
@@ -309,9 +311,11 @@ class itemRedShell extends mapItem {
                 let ms = this.target.gameObject.rigidBody.getMotionState();
                 ms.getWorldTransform(trans);
                 targetPos = tvec(trans.getOrigin());
-            }
-            else
+                console.log("target local");
+            } else {
                 targetPos = this.target.targetPos.clone();
+                console.log("target npc");
+            }
         }
         console.log("target pos " + targetPos.x + " " + targetPos.y + " " + targetPos.z);
 
@@ -325,35 +329,36 @@ class itemRedShell extends mapItem {
             line.at(closest.key, closestPoint);
 
             closestPoint.sub(pos);
-            closestPoint.multiplyScalar(0.4);
+
+            closestPoint.multiplyScalar(2.0);
 
             let direction = new THREE.Vector3();
             line.delta(direction);
             direction.normalize();
-            direction.multiplyScalar(30.0);
+            direction.multiplyScalar(80.0);
 
             let vel = new THREE.Vector3();
             vel.lerpVectors(closestPoint, direction, 0.3);
             
             if(this.target) {
-                if(pos.distanceTo(targetPos) < 75.0) {
+                if(pos.distanceTo(targetPos) < 30.0) {
                     targetPos.sub(pos);
                     vel = targetPos.clone();
                     vel.normalize();
-                    vel.multiplyScalar(10.0);
+                    vel.multiplyScalar(40.0);
                 }
             }
 
             this.rigidBody.setLinearVelocity(pvec(vel));
         }
         
-        if(this.aliveTime > 4.5) {
+        if(this.aliveTime > 10.0) {
             //remove object
-            //this.shellCollect();
+            this.collect();
         }
     }
     beginContact() {
-        this.shellCollect();
+        this.collect();
 
         //slow down local player
         localPlayer.stopHit();

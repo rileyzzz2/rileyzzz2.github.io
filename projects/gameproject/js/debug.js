@@ -53,7 +53,7 @@ $( document ).on('keydown', function (event) {
         mapObjects.trackpaths[closest].last.push(mapObjects.trackpaths.length - 1);
         buildTrackPaths();
     }
-})
+});
 //junction 24 to 31
 //40 to
 var tracklines = [];

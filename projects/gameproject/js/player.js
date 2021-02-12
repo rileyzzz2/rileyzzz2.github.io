@@ -235,11 +235,13 @@ class Kart {
         this.hitAnim = 0.0;
         //allowInput = false;
 
-        const slipFriction = 0;
-        this.wheels[0].wheelInfo.set_m_frictionSlip(slipFriction);
-        this.wheels[1].wheelInfo.set_m_frictionSlip(slipFriction);
-        this.wheels[2].wheelInfo.set_m_frictionSlip(slipFriction);
-        this.wheels[3].wheelInfo.set_m_frictionSlip(slipFriction);
+        // const slipFriction = 0;
+        // this.wheels[0].wheelInfo.set_m_frictionSlip(slipFriction);
+        // this.wheels[1].wheelInfo.set_m_frictionSlip(slipFriction);
+        // this.wheels[2].wheelInfo.set_m_frictionSlip(slipFriction);
+        // this.wheels[3].wheelInfo.set_m_frictionSlip(slipFriction);
+
+        //this.gameObject.rigidBody.applyCentralImpulse(new Ammo.btVector3(0.0, 100.0, 0.0));
     }
 
     useItem() {
@@ -388,6 +390,20 @@ class Kart {
         this.engineForce = 0;
         this.breakingForce = 0;
         
+        const FRONT_LEFT = 0;
+        const FRONT_RIGHT = 1;
+        const BACK_LEFT = 2;
+        const BACK_RIGHT = 3;
+        
+        if(this.hitAnimating) {
+            this.vehicle.setBrake(maxBreakingForce / 2, FRONT_LEFT);
+		    this.vehicle.setBrake(maxBreakingForce / 2, FRONT_RIGHT);
+		    this.vehicle.setBrake(maxBreakingForce, BACK_LEFT);
+            this.vehicle.setBrake(maxBreakingForce, BACK_RIGHT);
+            return;
+        }
+
+
         if(bMoveForward) {
             if (speed < -1)
 				this.breakingForce = maxBreakingForce;
@@ -420,11 +436,6 @@ class Kart {
         //top speed
         if(speed > 45.0 || speed < -30.0)
             this.engineForce = 0;
-
-        const FRONT_LEFT = 0;
-        const FRONT_RIGHT = 1;
-        const BACK_LEFT = 2;
-        const BACK_RIGHT = 3;
 
         //console.log("engine " + this.engineForce + " brake " + this.breakingForce);
         //apply force to back wheels
@@ -530,6 +541,7 @@ class Kart {
                 pos: [p.x(), p.y(), p.z()],
                 rot: [q.x(), q.y(), q.z(), q.w()],
                 steering: this.vehicleSteering,
+                placement: this.placement,
                 wheelSpeed: this.wheels[2].wheelInfo.m_deltaRotation
             };
 
@@ -643,6 +655,7 @@ class NPCKart {
             this.targetRot.w = data.rot[3];
             this.wheelSpeed = data.wheelSpeed;
             this.targetSteering = data.steering;
+            this.placement = data.placement;
 
             //set initial position
             if(!this.hasReceivedData) {
