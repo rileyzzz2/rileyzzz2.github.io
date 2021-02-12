@@ -300,18 +300,29 @@ class Map {
                 let pos = p.mesh.position;
 
                 let playerDist = this.getTrackDistance(pos);
+
+                if(p.lapProgress <= 1.0 && playerDist > 100.0)
+                    playerDist = 0.0;
+                
                 if(p.lapProgress + this.maxLapProgressStep > playerDist)
                     p.lapProgress = playerDist;
                 else
                     playerDist = p.lapProgress;
-                
+
+
                 placement.push([playerDist, p]);
             }
             var localDist = this.getTrackDistance(localPlayer.gameObject.mesh.position);
+
+            if(localPlayer.lapProgress <= 1.0 && localDist > 100.0)
+                    localDist = 0.0;
+            
             if(localPlayer.lapProgress + this.maxLapProgressStep > localDist)
                     localPlayer.lapProgress = localDist;
                 else
                     localDist = localPlayer.lapProgress;
+
+            
             placement.push([localDist, localPlayer]);
 
             placement.sort((a, b) => { return b[0] - a[0]; });

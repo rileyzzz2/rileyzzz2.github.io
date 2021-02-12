@@ -344,10 +344,10 @@ class Kart {
             if(this.hitAnim > 1.5) {
                 this.hitAnimating = false;
                 //allowInput = true;
-                this.wheels[0].wheelInfo.set_m_frictionSlip(this.wheels[0].friction);
-                this.wheels[1].wheelInfo.set_m_frictionSlip(this.wheels[1].friction);
-                this.wheels[2].wheelInfo.set_m_frictionSlip(this.wheels[2].friction);
-                this.wheels[3].wheelInfo.set_m_frictionSlip(this.wheels[3].friction);
+                // this.wheels[0].wheelInfo.set_m_frictionSlip(this.wheels[0].friction);
+                // this.wheels[1].wheelInfo.set_m_frictionSlip(this.wheels[1].friction);
+                // this.wheels[2].wheelInfo.set_m_frictionSlip(this.wheels[2].friction);
+                // this.wheels[3].wheelInfo.set_m_frictionSlip(this.wheels[3].friction);
             }
         }
         if(this.itemAnimating) {
