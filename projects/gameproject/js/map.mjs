@@ -121,6 +121,7 @@ class Map {
         }
 
         this.maxLapProgressStep = 0.0;
+        this.maxGlobalDist = 0.0;
         //process path data
         this.tracksegments = [];
         for(let i = 0; i < this.objectData.trackpaths.length; i++) {
@@ -171,12 +172,15 @@ class Map {
                 }
 
                 this.maxLapProgressStep = Math.max(this.maxLapProgressStep, points[0].distanceTo(points[1]));
+                var globalDist = recursiveGetDistance(last, 0.0);
+                var length = points[0].distanceTo(points[1])
                 this.tracksegments.push({
                     line: new THREE.Line3(points[0], points[1]),
-                    globalDist: recursiveGetDistance(last, 0.0),
-                    length: points[0].distanceTo(points[1])
+                    globalDist: globalDist,
+                    length: length
                     //dist: points[0].distanceTo(pos)
                 });
+                this.maxGlobalDist = Math.max(this.maxGlobalDist, globalDist + length);
             }
         }
 
@@ -318,7 +322,7 @@ class Map {
                         winners.push(p.conn.id);
                 }
 
-                placement.push([playerDist, p]);
+                placement.push([(p.lap * this.maxGlobalDist) + playerDist, p]);
             }
             var localDist = this.getTrackDistance(localPlayer.gameObject.mesh.position);
             var lastProgress = localPlayer.lapProgress;
@@ -336,7 +340,7 @@ class Map {
                     winners.push(hostID);
             }
             
-            placement.push([localDist, localPlayer]);
+            placement.push([(localPlayer.lap * this.maxGlobalDist) + localDist, localPlayer]);
 
             placement.sort((a, b) => { return b[0] - a[0]; });
             //console.log("placement count " + placement.length);
