@@ -211,7 +211,8 @@ function returnToLobby() {
 }
 
 function lapIncrement() {
-    console.log("lap " + localPlayer.lap);
+    //console.log("lap " + localPlayer.lap);
+    $("#lapCount").text((localPlayer.lap + 1).toString() + "/3");
     if(localPlayer.lap++ === 2) {
         returnToLobby();
     }
