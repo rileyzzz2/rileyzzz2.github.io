@@ -127,6 +127,8 @@ peer.on('open', function(id) {
         hostID = playerID;
 
         $("#p2pid").text("Your P2P ID is:\n" + hostID);
+
+        
     }
 
     refreshPlayerList();

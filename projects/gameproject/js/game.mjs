@@ -43,6 +43,8 @@ export function gameFinish() {
     
 }
 
+var gameInit = false;
+
 export function startGame(playerIndex) {
     console.log("starting game");
     //$(".menuOverlay").hide();
@@ -61,23 +63,34 @@ export function startGame(playerIndex) {
         objects = [];
         thinkers = [];
         networkThinkers = [];
-        scene = new THREE.Scene();
+        while(scene.children.length > 0) { 
+            scene.remove(scene.children[0]); 
+        }
         winners = [];
         localPlayer = null;
         Players = [];
 
-        setCoinCount(0);
+        $("#coinCount").text(0);
+        $(".coinCounter").css("color", "white");
+        $(".itemIcon").attr("src", "img/ui/item/none.png");
+        $("#lapCount").text("1/3");
+        //setCoinCount(0);
         beginPlay();
     }
 }
 
 export async function beginPlay() {
     await initResources();
-    initPhysicsWorld();
+    if(!gameInit) {
+        gameInit = true;
+        initPhysicsWorld();
+        
+    }
+    startRenderer();
     //activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb', '3d/maps/delfino_objects.json');
     activeMap = await loadMap('3d/maps/luigicircuit.glb', '3d/maps/circuit_coll.glb', '3d/maps/circuit_objects.json', 0.1);
     //activeMap = await loadMap('3d/maps/mall.glb', '3d/maps/mall_collision.glb');
-    startRenderer();
+    
     await PostInitResources();
     activeMap.beginPlay();
     if(typeof(startDebug) === "function")

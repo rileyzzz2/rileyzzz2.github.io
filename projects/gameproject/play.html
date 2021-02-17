@@ -97,6 +97,33 @@
                 display: none;
                 width: 400px;
             }
+            .mapSelection {
+                display: flex;
+                width: 600px;
+                background-color: black;
+                border-radius: 4px;
+                margin: auto;
+            }
+            @keyframes bgscroll {
+                0% {background-position: 0% 0%;}
+                50% {background-position: 100% 0%;}
+                100% {background-position: 0% 0%;}
+            }
+            .mapSelector {
+                width: 200px;
+                height: 100px;
+                /* background-color: rgba(0, 0, 120, 0.8); */
+                background-image: url("3d/maps/delfino_banner.png");
+                
+                background-size: cover;
+                border-radius: 4px;
+                text-align: center;
+                margin: 10px auto;
+                animation-name: bgscroll;
+                animation-duration: 8s;
+                /* animation-timing-function: linear; */
+                animation-iteration-count: infinite;
+            };
             .waitingPlayers {
                 display: none;
             }
@@ -270,6 +297,11 @@
                     <!-- <div class="loadBar">
                         <div class="loadBarInner"></div>
                     </div> -->
+                    <div class="mapSelection">
+                        <div class="mapSelector"></div>
+                        <div class="mapSelector"></div>
+                    </div>
+
                     <div id="winnerContainer">
                         <p>Last Match:</p>
                         <table class="winnerList"></table>

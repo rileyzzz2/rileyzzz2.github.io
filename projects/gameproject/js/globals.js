@@ -15,6 +15,25 @@ var mapCollisionData = {};
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
+var maps = [
+    {
+    name: "Luigi Circuit",
+    model: "3d/maps/luigicircuit.glb",
+    collision: "3d/maps/circuit_coll.glb",
+    data: "3d/maps/circuit_objects.json",
+    scale: 0.1,
+    img : "3d/maps/circuit_banner.png"
+    },
+    {
+        name: "Delfino Plaza",
+        model: "3d/maps/delfino.glb",
+        collision: "3d/maps/delfino_collision.glb",
+        data: "3d/maps/delfino_objects.json",
+        scale: 1.0,
+        img : "3d/maps/delfino_banner.png"
+    }
+];
+
 var activeLobby = "";
 const netPlayer = {
         name: '',
