@@ -187,6 +187,11 @@ function initPhysicsWorld() {
     physicsWorld           = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
     physicsWorld.setGravity(new Ammo.btVector3(0.0, -9.8, 0.0));
 
+    physicsWorld._addbody = physicsWorld.addRigidBody;
+    physicsWorld.addRigidBody = function(body) {
+        physicsWorld._addbody(body);
+        rigidBodies.push(body);
+    }
 
     //https://github.com/kripken/ammo.js/blob/a4bec933859e452acd2c18e4152ac2a6a95e806f/tests/add-function.js
     console.log("adding callback");
@@ -210,6 +215,18 @@ function initPhysicsWorld() {
     }, Ammo.CONTACT_ADDED_CALLBACK_SIGNATURE);
     physicsWorld.setContactAddedCallback(callback);
     console.log("added callback");
+}
+
+function physicsCleanup() {
+    for(var i = 0; i < rigidBodies.length; i++) {
+        var body = rigidBodies[i];
+        if(body)
+            physicsWorld.removeRigidBody(body);
+    }
+    rigidBodies = [];
+
+    //physicsWorld.getBroadphase().resetPool(physicsWorld.getDispatcher());
+    //physicsWorld.getConstraintSolver().reset();
 }
 
 function createTransform(mesh) {

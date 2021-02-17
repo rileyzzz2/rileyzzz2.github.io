@@ -248,10 +248,13 @@ class itemGreenShell extends mapItem {
 }
 
 class itemRedShell extends mapItem {
-    constructor(pos, vel, target) {
+    constructor(pos, vel, target, meshOverride=null) {
         console.log("creating red shell with target " + target);
 
-        var mesh = gameModels.item_shell_red.scene.clone();
+        var mesh = meshOverride;
+        if(!meshOverride) 
+            mesh = gameModels.item_shell_red.scene.clone();
+        
         mesh.scale.multiplyScalar(0.14);
         mesh.position.set(pos.x, pos.y, pos.z);
         scene.add(mesh);
@@ -370,5 +373,12 @@ class itemRedShell extends mapItem {
 
         for(const client in remoteConnections)
             remoteConnections[client].conn.send(data);
+    }
+}
+
+class itemBlueShell extends itemRedShell {
+    constructor(pos, vel) {
+        var mesh = gameModels.item_shell_blue.scene.clone();
+        super(pos, vel, 1, mesh);
     }
 }

@@ -51,7 +51,24 @@ export function startGame(playerIndex) {
     $(".waitingPlayers").show();
 
     localPlayerIndex = playerIndex;
-    Ammo().then(beginPlay);
+
+
+    
+    if(typeof(Ammo) === "function")
+        Ammo().then(beginPlay);
+    else {
+        physicsCleanup();
+        objects = [];
+        thinkers = [];
+        networkThinkers = [];
+        scene = new THREE.Scene();
+        winners = [];
+        localPlayer = null;
+        Players = [];
+
+        setCoinCount(0);
+        beginPlay();
+    }
 }
 
 export async function beginPlay() {

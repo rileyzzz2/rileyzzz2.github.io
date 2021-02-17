@@ -247,14 +247,14 @@ class Kart {
 
     useItem() {
         var dropPos = new THREE.Vector3();
-        if(this.heldItem === ITEM_SHELL_GREEN || this.heldItem === ITEM_SHELL_RED || true)
+        if(this.heldItem === ITEM_SHELL_GREEN || this.heldItem === ITEM_SHELL_RED || this.heldItem === ITEM_SHELL_BLUE)
             this.dropTargetA.getWorldPosition(dropPos);
         else
             this.dropTargetB.getWorldPosition(dropPos);
 
         var forward = new THREE.Vector3();
         this.gameObject.mesh.getWorldDirection(forward);
-        const mushroomSpeed = 20000.0;
+        const mushroomSpeed = 10000.0;
 
         switch(this.heldItem) {
             case ITEM_BANANA:
@@ -275,6 +275,10 @@ class Kart {
                     placeNetItem(dropPos, forward, ITEM_SHELL_RED, nextTarget);
                 break;
             }
+            case ITEM_SHELL_BLUE:
+                if(this.placement !== 1)
+                    placeNetItem(dropPos, forward, ITEM_SHELL_BLUE);
+                break;
             case ITEM_NONE:
                 break;
         }

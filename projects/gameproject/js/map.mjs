@@ -346,7 +346,8 @@ class Map {
                 else
                     localDist = localPlayer.lapProgress;
             
-            if(localDist === 0.0 && lastProgress > 100.0) {
+            var lastSegment = this.tracksegments[this.tracksegments.length - 1];
+            if(localDist === 0.0 && lastProgress > lastSegment.globalDist) {
                 lapIncrement();
                 if(localPlayer.lap === 3) {
                     winners.push(hostID);

@@ -185,6 +185,9 @@ function spawnItem(pos, vel, type, target) {
         case ITEM_SHELL_RED:
             item = new itemRedShell(pos, vel, target);
             break;
+        case ITEM_SHELL_BLUE:
+            item = new itemBlueShell(pos, vel);
+            break;
     }
     if(item) activeMap.items.push(item);
 }
@@ -205,6 +208,7 @@ function placeNetItem(pos, forward, type, target = 1) {
 
 function returnToLobby() {
     allowInput = false;
+    inMatch = false;
     $(".menuOverlay").show();
     $(".lobbyInfo").show();
     $(".waitingPlayers").hide();
