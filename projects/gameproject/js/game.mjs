@@ -4,13 +4,39 @@ import {startRenderer} from './render.mjs';
 
 $(document).ready(function() {
 
-    
-
     //params.get('name') # => "n1";
     //alert("params " + params.get('join'));
     //Ammo().then(beginPlay);
 });
 
+function setMapSelection(idx) {
+    console.log("setmap " + idx);
+    for(var i = 0; i < maps.length; i++) {
+        let ele = $(".mapSelection").children().eq(i);
+        let map = maps[i];
+        if(i === idx)
+            ele.css("border-width", "4px");
+        else
+            ele.css("border-width", "0px");
+    }
+    selectedMap = idx;
+}
+
+export function updateMapList() {
+    console.log("updating map list");
+    $(".mapSelection").show();
+    $(".mapSelection").empty();
+    for(var i = 0; i < maps.length; i++) {
+        let map = maps[i];
+        var sel = $("<div class='mapSelector'>" + map.name + "</div>");
+        sel.css("background-image", "url(" + map.img + ")");
+        let idx = i;
+        sel.click(function() {
+            setMapSelection(idx);
+        });
+        $(".mapSelection").append(sel);
+    }
+}
 // document.addEventListener('click', onClick);
 // function onClick() {
 //     const mass = 0.2;
@@ -45,9 +71,10 @@ export function gameFinish() {
 
 var gameInit = false;
 
-export function startGame(playerIndex) {
+export function startGame(playerIndex, map) {
     console.log("starting game");
     //$(".menuOverlay").hide();
+    selectedMap = map;
 
     $(".lobbyInfo").hide();
     $(".waitingPlayers").show();
@@ -88,7 +115,10 @@ export async function beginPlay() {
     }
     startRenderer();
     //activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb', '3d/maps/delfino_objects.json');
-    activeMap = await loadMap('3d/maps/luigicircuit.glb', '3d/maps/circuit_coll.glb', '3d/maps/circuit_objects.json', 0.1);
+    
+    var usemap = maps[selectedMap];
+    activeMap = await loadMap(usemap.model, usemap.collision, usemap.data, usemap.scale);
+
     //activeMap = await loadMap('3d/maps/mall.glb', '3d/maps/mall_collision.glb');
     
     await PostInitResources();

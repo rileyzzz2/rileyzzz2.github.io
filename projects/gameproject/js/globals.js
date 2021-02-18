@@ -17,12 +17,12 @@ var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHei
 
 var maps = [
     {
-    name: "Luigi Circuit",
-    model: "3d/maps/luigicircuit.glb",
-    collision: "3d/maps/circuit_coll.glb",
-    data: "3d/maps/circuit_objects.json",
-    scale: 0.1,
-    img : "3d/maps/circuit_banner.png"
+        name: "Luigi Circuit",
+        model: "3d/maps/luigicircuit.glb",
+        collision: "3d/maps/circuit_coll.glb",
+        data: "3d/maps/circuit_objects.json",
+        scale: 0.1,
+        img : "3d/maps/circuit_banner.png"
     },
     {
         name: "Delfino Plaza",
@@ -33,6 +33,7 @@ var maps = [
         img : "3d/maps/delfino_banner.png"
     }
 ];
+var selectedMap = 0;
 
 var activeLobby = "";
 const netPlayer = {

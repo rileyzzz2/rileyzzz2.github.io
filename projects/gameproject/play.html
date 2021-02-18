@@ -103,6 +103,8 @@
                 background-color: black;
                 border-radius: 4px;
                 margin: auto;
+
+                font-family: "Open Sans";
             }
             @keyframes bgscroll {
                 0% {background-position: 0% 0%;}
@@ -112,18 +114,28 @@
             .mapSelector {
                 width: 200px;
                 height: 100px;
+                cursor: pointer;
                 /* background-color: rgba(0, 0, 120, 0.8); */
                 background-image: url("3d/maps/delfino_banner.png");
                 
                 background-size: cover;
                 border-radius: 4px;
                 text-align: center;
+
+                vertical-align: middle;
+                line-height: 100px;
+                
                 margin: 10px auto;
                 animation-name: bgscroll;
                 animation-duration: 8s;
                 /* animation-timing-function: linear; */
                 animation-iteration-count: infinite;
-            };
+                
+                box-sizing: border-box;
+                border: solid blue;
+                border-width: 0px;
+                transition: border-width 0.05s;
+            }
             .waitingPlayers {
                 display: none;
             }
@@ -297,10 +309,15 @@
                     <!-- <div class="loadBar">
                         <div class="loadBarInner"></div>
                     </div> -->
-                    <div class="mapSelection">
-                        <div class="mapSelector"></div>
-                        <div class="mapSelector"></div>
+                    
+                    <div id="mapContainer">
+                        <p id="mapText">Select a Map:</p>
+                        <div class="mapSelection">
+                            <!-- <div class="mapSelector">Delfino Plaza</div>
+                            <div class="mapSelector"></div> -->
+                        </div>
                     </div>
+                    
 
                     <div id="winnerContainer">
                         <p>Last Match:</p>

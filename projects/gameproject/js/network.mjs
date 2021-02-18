@@ -1,6 +1,7 @@
 import { beginPlay } from './game.mjs';
 import { startGame } from './game.mjs';
 import { beginMatch } from './game.mjs';
+import { updateMapList } from './game.mjs';
 
 //https://itnext.io/how-to-build-a-realtime-multiplayer-game-in-javascript-using-pubnub-5f410fd62f33
 
@@ -128,7 +129,7 @@ peer.on('open', function(id) {
 
         $("#p2pid").text("Your P2P ID is:\n" + hostID);
 
-        
+        updateMapList();
     }
 
     refreshPlayerList();
@@ -181,7 +182,7 @@ function processConnectionData(data) {
             //remoteConnections = data.players;
         }
         else if(data.type === "startGame") {
-            startGame(data.playerIndex);
+            startGame(data.playerIndex, data.map);
         }
         else if(data.type === "beginMatch") {
             beginMatch();
@@ -283,7 +284,7 @@ export function refreshPlayerList() {
 
 $(".startGame").click(function() {
     readyState = [];
-    startGame(0);
+    startGame(0, selectedMap);
     readyState[0] = true;
 
     var index = 1; //offset for host
@@ -291,7 +292,8 @@ $(".startGame").click(function() {
         readyState[index] = false;
         remoteConnections[client].conn.send({
             type: "startGame",
-            playerIndex: index++
+            playerIndex: index++,
+            map: selectedMap
             //eventually add specific parameters like map, etc
         });
     }
