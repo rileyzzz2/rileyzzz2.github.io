@@ -100,7 +100,7 @@ peer.on('open', function(id) {
     var singleplayer = params.get('singleplayer');
     if(singleplayer) {
         isHost = true;
-        startGame(0);
+        startGame(0, selectedMap);
         beginMatch();
         return;
     }

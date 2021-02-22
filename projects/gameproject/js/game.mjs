@@ -24,6 +24,7 @@ function setMapSelection(idx) {
 
 export function updateMapList() {
     console.log("updating map list");
+    console.trace();
     $(".mapSelection").show();
     $(".mapSelection").empty();
     for(var i = 0; i < maps.length; i++) {
@@ -37,6 +38,7 @@ export function updateMapList() {
         $(".mapSelection").append(sel);
     }
 }
+
 // document.addEventListener('click', onClick);
 // function onClick() {
 //     const mass = 0.2;
@@ -115,7 +117,7 @@ export async function beginPlay() {
     }
     startRenderer();
     //activeMap = await loadMap('3d/maps/delfino.glb', '3d/maps/delfino_collision.glb', '3d/maps/delfino_objects.json');
-    
+    console.log("selected " + selectedMap);
     var usemap = maps[selectedMap];
     activeMap = await loadMap(usemap.model, usemap.collision, usemap.data, usemap.scale);
 

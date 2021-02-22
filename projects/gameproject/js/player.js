@@ -267,6 +267,10 @@ class Kart {
             case ITEM_SHELL_GREEN:
                 placeNetItem(dropPos, forward, ITEM_SHELL_GREEN);
                 break;
+            case ITEM_COIN:
+                if(this.collectedCoins < 10)
+                    setCoinCount(this.collectedCoins + 1);
+                break;
             default:
             case ITEM_SHELL_RED:
             {
