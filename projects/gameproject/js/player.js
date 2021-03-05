@@ -283,12 +283,19 @@ class Kart {
                 if(this.placement !== 1)
                     placeNetItem(dropPos, forward, ITEM_SHELL_BLUE);
                 break;
+            case ITEM_LIGHTNING:
+                createLightningStrike();
+                break;
             case ITEM_NONE:
                 break;
         }
 
         this.heldItem = ITEM_NONE;
         setItemIcon(this.heldItem);
+    }
+
+    lightningHit() {
+        
     }
 
     setPlacement(place) {

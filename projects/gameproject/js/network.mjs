@@ -226,6 +226,9 @@ function processConnectionData(data) {
         vel.fromArray(data.vel);
         spawnItem(pos, vel, data.itemType, data.target);
     }
+    else if(data.type == "lightningStrike") {
+        lightningStrike(data.source);
+    }
 }
 
 export function refreshPlayerList() {

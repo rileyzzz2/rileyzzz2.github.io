@@ -226,6 +226,24 @@ function placeNetItem(pos, forward, type, target = 1) {
         remoteConnections[client].conn.send(data);
 }
 
+function createLightningStrike() {
+    lightningStrike(playerID);
+    
+    var data = {
+        type: "lightningStrike",
+        source: playerID
+    };
+
+    for(const client in remoteConnections)
+        remoteConnections[client].conn.send(data);
+}
+
+function lightningStrike(sourceplayer) {
+    if(sourceplayer !== playerID) {
+        localPlayer.lightningHit();
+    }
+}
+
 function returnToLobby() {
     allowInput = false;
     inMatch = false;
